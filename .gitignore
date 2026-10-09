@@ -1,0 +1,4 @@
+.DS_Store
+__pycache__/
+electrode-design/router-input.bin
+electrode-design/router-output.bin

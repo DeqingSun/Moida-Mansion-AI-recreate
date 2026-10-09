@@ -1,0 +1,23 @@
+{
+  "oneHot": 631,
+  "oneCold": 631,
+  "random": 64,
+  "extremes": true,
+  "geometricPass": true,
+  "physicalComplete": 165,
+  "physicalIncomplete": 466,
+  "browser_errors": [],
+  "ui_checks": [
+    "probe and edge contact modes",
+    "all on/off",
+    "selected segment",
+    "COM inversion",
+    "AC disable",
+    "voltage threshold",
+    "front/rear/overlay views",
+    "rear mirror",
+    "ID filter",
+    "scan start/stop",
+    "mobile no horizontal page overflow"
+  ]
+}

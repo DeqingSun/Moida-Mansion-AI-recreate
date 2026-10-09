@@ -1,0 +1,34 @@
+{
+  "status": "INCOMPLETE ROUTING \u2014 NOT FOR FABRICATION",
+  "architecture": "Static drive: 631 logical front SEG nets, one rear COM. Multiple contacts of one ID must be tied on an external PCB.",
+  "canvas_mm": [
+    150,
+    108
+  ],
+  "glass_envelope_example_mm": [
+    162,
+    120
+  ],
+  "trace_width_mm": 0.05,
+  "trace_clearance_mm": 0.05,
+  "contact_size_mm": 0.3,
+  "source_segments": 631,
+  "physical_islands": 769,
+  "routed_islands": 222,
+  "electrically_reachable_islands": 220,
+  "complete_logical_segments": 165,
+  "partial_logical_segments": 26,
+  "unreachable_logical_segments": 440,
+  "unrouted_islands": 547,
+  "rejected_paths": 3,
+  "rear_connected_components": 3,
+  "optical_mismatch_islands": 0,
+  "max_optical_error_native_sq": 0,
+  "limitations": [
+    "Routing is incomplete; isolated electrode shapes are not electrically driven.",
+    "No ITO resistance/capacitance, fringing fields, alignment tolerance, seal, connector or electro-optic material model.",
+    "Trace width and clearance are assumptions, not supplier-approved rules.",
+    "COM/SEG drive model is ideal static AC, not a multiplexed driver design.",
+    "Glass envelope is a working margin, not a released mechanical drawing."
+  ]
+}
