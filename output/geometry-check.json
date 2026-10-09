@@ -1,0 +1,16 @@
+{
+  "method": "Polygonized source paths with SVG nonzero winding rule; union within logical IDs; pairwise geometric distance. No electrode routing or minimum stroke-width check.",
+  "nearest_pair": {
+    "a": "C00S11",
+    "b": "C00S24",
+    "gap_native": 4.0,
+    "gap_mm_at_150": 0.2
+  },
+  "positive_area_overlap_pairs": 0,
+  "touching_pairs": 0,
+  "pairs_below_0_05mm_at_150": 0,
+  "pairs_below_0_1mm_at_150": 0,
+  "pairs_below_0_2mm_at_150": 0,
+  "logical_ids_with_disconnected_filled_islands": 61,
+  "filled_islands": 769
+}

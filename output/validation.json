@@ -1,0 +1,19 @@
+{
+  "asset_url": "https://html-classic.itch.zone/html/11926521/moida.js",
+  "sha256": "70e4f6a7113062c21254378efdd0d24c67f0e781119a157b41ab65850ec549b7",
+  "segment_count": 631,
+  "path_count": 751,
+  "contour_count": 964,
+  "banks": {
+    "C00": 255,
+    "C01": 256,
+    "C02": 120
+  },
+  "multiple_path_groups": 51,
+  "bounds": [
+    0.0,
+    0.0,
+    2998.0,
+    2149.0
+  ]
+}
