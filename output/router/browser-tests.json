@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "segments": 631,
+  "pads": 2048,
+  "errors": [],
+  "checks": [
+    "assign top/bottom nets",
+    "canvas polylines and automatic pad assignment",
+    "edit trace width",
+    "erase trace",
+    "undo and redo",
+    "physical per-island pad connectivity",
+    "save JSON and reload",
+    "invalid-load preservation",
+    "physical scaling with fixed trace width",
+    "autosave recovery",
+    "multipart segment checks",
+    "click-to-locate errors",
+    "SVG export",
+    "responsive layout"
+  ]
+}

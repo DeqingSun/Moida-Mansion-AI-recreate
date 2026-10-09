@@ -1,6 +1,6 @@
 # Moida Mansion — physical LCD recreation
 
-This project investigates recreating **Moida Mansion by dukope (Lucas Pope)** on a physical console with a custom segment LCD. Work so far covers the original display artwork, verification of its segment controls, and an experimental two-layer electrode design with an interactive simulator. The console hardware and game port have not been implemented.
+This project investigates recreating **Moida Mansion by dukope (Lucas Pope)** on a physical console with a custom segment LCD. Work so far covers the original display artwork, verification of its segment controls, an experimental two-layer electrode design with an interactive simulator, and a manual browser routing editor. The console hardware and game port have not been implemented.
 
 **Current status:** the original geometry and 631 independently addressable display groups are verified. The electrode-routing candidate is incomplete and is **not ready for fabrication**.
 
@@ -14,6 +14,7 @@ python3 -m http.server 8765 --bind 127.0.0.1 --directory output
 
 Then open:
 
+- [Manual routing editor](http://127.0.0.1:8765/router/index.html): assign nets, draw and erase traces, save/load projects, undo edits, and check electrode connectivity and overlaps.
 - [Segment explorer](http://127.0.0.1:8765/segment-explorer.html): inspect original shapes, IDs, positions and dimensions; isolate groups and adjust the example physical scale.
 - [Electrode workbench](http://127.0.0.1:8765/electrodes/index.html): inspect front/rear layers and overlaps, toggle arbitrary segment combinations, change drive phases, scan all 631 groups and run state checks.
 
@@ -100,6 +101,24 @@ Browser checks passed for all 631 one-hot states, 631 one-cold states, 64 determ
 
 See [browser test results](output/electrodes/browser-test.json).
 
+## 5. Added a manual routing editor
+
+The [manual editor](output/router/index.html) lets you route the display yourself, starting from the original artwork with no automatic routes or net assignments.
+
+- All **631 segment groups / 769 islands**, with independently assignable top and bottom nets.
+- **2,048 available edge pads**: 256 per edge per layer, each with a default net named after its pad ID. Nets with no traces are allowed; explicitly cleared pads are omitted. Existing layouts keep their custom names and receive defaults for unnamed pads.
+- Polyline drawing with configurable physical width, pad/vertex snapping, zoom and pan. Top conductors are red; bottom conductors are blue.
+- Finished traces and width edits automatically assign touched segments/pads to the trace net, unless another net’s trace touches that feature on the same layer. Multipart segments are checked across all islands; automatic assignments undo with the trace edit.
+- Whole-trace erasing, width editing, undo/redo, validated JSON save/load and local browser autosave.
+- Adjustable screen size; trace widths, pad sizes and clearance remain in millimetres when the screen is enlarged.
+- Top/bottom conductor SVG export, netlist CSV and downloadable check reports.
+
+The polygon-based checker verifies missing top/bottom assignments, duplicate net pairs, same-layer shorts/clearance, and top/bottom overlap outside the original shapes (including holes). It verifies **every island's actual same-layer path to an assigned edge pad**; disconnected pieces with matching net names do not pass simply because their names match.
+
+Checks run in a background worker, and clicking an issue locates it on the drawing. Numerical geometric checks do not replace factory rules, material characterization or electrical-drive design. The tool is ready for manual layout work; the existing automatic electrode candidate remains incomplete.
+
+See the [full editor guide](routing-editor/guide.md). Application source is in `routing-editor/`; run `python3 scripts/package_router.py` to rebuild `output/router/`. Geometry fixtures are in `tests/router-geometry.cjs`; real browser workflow tests are in `tests/router-browser.cjs`.
+
 ## Main files
 
 | File or directory | Purpose |
@@ -117,6 +136,8 @@ See [browser test results](output/electrodes/browser-test.json).
 | [electrode-design/](electrode-design/) | Candidate conductors, contact register, routing data and design notes |
 | [output/electrodes/](output/electrodes/) | Offline simulator and packaged electrode exports |
 | [research/](research/) | Code audit, geometry findings and manufacturing next steps |
+| [routing-editor/](routing-editor/) | Manual editor source, geometry engine and guide |
+| [output/router/](output/router/) | Packaged manual routing editor |
 | [scripts/](scripts/) | Reproducible extraction, audits, routing, packaging and browser checks |
 
 The optical SVG is authoritative for filled areas and holes; the DXF represents contour boundaries. The browser's scale control does not rewrite the fixed-size CAD exports.
