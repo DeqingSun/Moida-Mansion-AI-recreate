@@ -19,7 +19,7 @@ The [itch.io game page](https://dukope.itch.io/moida-mansion) embeds [browser bu
 
 The three source banks are sequential identifiers. There is **no evidence that C00/C01/C02 are physical LCD common electrodes**. Preserve them as stable references, not as a proposed pinout.
 
-The renderer `run__device95html_u798` creates one entry for each ID. `apply__device95html_u344` reads the corresponding one-based sprite-state bit; `onHEX3D__device95html_u67` switches the segment and its shadow together. The SVG shadow layer repeats the same paths with an (8,8) offset; it is excluded from manufacturing artwork. The `unwired` SVG group is empty. The glass texture and plastic enclosure are not LCD segments.
+The renderer `run__device95html_u798` creates one entry for each ID. `apply__device95html_u344` reads the corresponding zero-based sprite-state bit (0–630; ROM addresses are 1–631); `onHEX3D__device95html_u67` switches the segment and its shadow together. The SVG shadow layer repeats the same paths with an (8,8) offset; it is excluded from manufacturing artwork. The `unwired` SVG group is empty. The glass texture and plastic enclosure are not LCD segments.
 
 Every named group must preserve its original paths and holes. Multiple contours do not necessarily mean multiple electrodes: some are holes, some are disconnected pieces, some touch. The island register uses filled geometry to distinguish these cases. No attempt has been made to merge logical IDs based on apparent co-activation or to claim that every bit combination is reachable in gameplay.
 

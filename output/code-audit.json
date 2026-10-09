@@ -1,0 +1,24 @@
+{
+  "unique_segment_ids": 631,
+  "rom_sprite_records": 631,
+  "rom_addresses_match_one_based_ordinals": true,
+  "actual_state_bit_range": [
+    0,
+    630
+  ],
+  "one_hot_cases_passed": 631,
+  "one_cold_cases_passed": 631,
+  "icons": 352,
+  "unique_sprite_indices_in_icons": 630,
+  "unreferenced_indices": [
+    0
+  ],
+  "text_characters": 13,
+  "text_bits": 195,
+  "example": {
+    "id": "C02S106",
+    "state_bit": 617,
+    "rom_address": 618
+  },
+  "limitation": "Proves independent addressing by the original renderer. Does not prove that all bit combinations arise in unmodified gameplay, or a minimum electrode count after gameplay-specific optimization."
+}

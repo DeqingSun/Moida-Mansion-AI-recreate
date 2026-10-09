@@ -18,7 +18,7 @@ for index,g in enumerate(defs):
   assert set(re.findall('[A-Za-z]',p))<=set('MLZ')
   nums=list(map(float,re.findall(r'-?\d+(?:\.\d+)?',p))); coords+=list(zip(nums[::2],nums[1::2]))
  x0=min(x for x,y in coords);x1=max(x for x,y in coords);y0=min(y for x,y in coords);y1=max(y for x,y in coords)
- records.append(dict(id=sid,game_index=index+1,source_bank=sid[:3],x=x0,y=y0,width=x1-x0,height=y1-y0,center_x=(x0+x1)/2,center_y=(y0+y1)/2,path_count=len(paths),contour_count=sum(p.count('M') for p in paths),paths=paths))
+ records.append(dict(id=sid,game_index=index,rom_address=index+1,source_bank=sid[:3],x=x0,y=y0,width=x1-x0,height=y1-y0,center_x=(x0+x1)/2,center_y=(y0+y1)/2,path_count=len(paths),contour_count=sum(p.count('M') for p in paths),paths=paths))
  groups.append(f'<g id="{sid}"><title>{sid}</title>'+''.join(f'<path d="{p}"/>' for p in paths)+'</g>')
 body='\n'.join(groups)
 head='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3000 2160"'
