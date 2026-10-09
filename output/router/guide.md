@@ -14,12 +14,12 @@ Open [the routing editor](http://127.0.0.1:8765/router/index.html). Keep this fo
 
 ## Route a segment
 
-1. Select a shape, or find its original ID in the inspector. Shift-click adds/removes segments from the selection. All islands of a group share its assignments.
+1. Select a shape, or find its original ID in the inspector. Shift-click adds/removes segments from the selection. Multipart groups appear as independent entries with suffixes `_0`, `_1`, etc.; each island has its own assignments.
 2. Enter a **top net** and **bottom net**, then apply. Names are case-sensitive and scoped by layer: top `1` and bottom `1` are different electrical networks. Net names use letters, numbers, `_`, `-` and `.`; maximum length is 32 characters.
 3. Choose the active layer, select an existing routing net from the dropdown or type a new name, and set trace width in millimetres. Hover shows trace nets even while drawing. Use Pick net and left-click (or Alt/Option-click) a trace, assigned segment or pad to pick its net on the active layer, or use **Pick net** and click. Picking does not add a trace point. Right-click finishes a trace like Enter and returns to Pick net mode. With no unfinished trace, right-click switches to Pick net mode. Finish or cancel an unfinished trace before changing its net.
 4. Choose **Draw trace**. Click to place the starting point and bends. Double-click, right-click or press Enter to finish. Escape cancels the unfinished trace.
 5. Snap helps place endpoints on edge pads and existing trace vertices. To branch elsewhere along a trace, draw overlapping conductor geometry and verify it with the checker. A trace can have any number of straight polyline sections, with round joins and caps.
-6. When a trace is finished or its width edited, every segment and pad touched by its full width receives its net, including previously assigned features. If any trace of another net on the same layer touches that feature, its assignment is preserved and a message reports the conflict. For multipart segments, this guard checks every island. Opposite-layer traces do not block assignment. The trace and automatic assignments undo together. A named but isolated island is not connected merely because another island has the same net name.
+6. When a trace is finished or its width edited, every segment and pad touched by its full width receives its net, including previously assigned features. If any trace of another net on the same layer touches that feature, its assignment is preserved and a message reports the conflict. The guard checks only the touched editable island. Opposite-layer traces do not block assignment. The trace and automatic assignments undo together. A named but isolated island is not connected merely because another island has the same net name.
 7. Use **Check layout**, or leave Auto-check enabled. Click an issue to select its segment(s) and zoom to the affected region.
 
 Top is **red** and bottom is **blue**. Top and bottom shapes are shown in registered **front-view coordinates**. The viewer does not mirror the rear layer. Both SVG exports use this same convention.
@@ -62,8 +62,8 @@ The geometry engine uses locally bundled Clipper 6.4.2, not screen pixels. It ex
 
 | Check | What it verifies |
 |---|---|
-| Missing assignments | All 631 original groups have both a top and bottom net. |
-| Duplicate pair | No two different groups share the same ordered `(top net, bottom net)` pair. Multipart islands of one group are allowed to share that pair. |
+| Missing assignments | All 769 editable islands have both a top and bottom net. |
+| Duplicate pair | No islands from different original groups share the same ordered `(top net, bottom net)` pair. Islands of one original group may share a pair or use different pairs. |
 | Pad connectivity | Each island on each layer is covered by a connected component of its assigned net that reaches a same-layer pad assigned to that net. Merely using the same name in disconnected locations does not pass. |
 | Unwanted overlap | The intersection of all top and bottom conductors, minus the original filled segment artwork, must be empty. Original holes are not allowed display area. This rule is applied throughout the drawn layout, including the margins. |
 | Same-layer short | Different nets on one layer may not overlap or touch. |
@@ -100,3 +100,15 @@ The polygon engine is [Clipper 6.4.2](https://github.com/junmer/clipper-lib), pi
 Version 4 triples pad side lengths when loading older projects (0.30 mm becomes 0.90 mm), without moving pad centers. This happens only once; saved version-4 projects retain their chosen pad size. Trace widths are unchanged.
 
 Version 5 doubles pad side lengths again (0.90 mm becomes 1.80 mm). Loading versions 1–3 applies both size updates once; loading version 4 applies only this doubling. Version-5 saves retain the chosen size. Pad centers and traces stay fixed.
+
+## Independent islands and net renaming (version 6)
+
+All 769 filled islands are independently editable. Single-island groups keep their original ID. Multipart groups use stable suffixes, e.g. `C02S68_0`, `C02S68_1`, `C02S68_2`. They retain original group `C02S68` and its game bit, shown in the inspector and netlist CSV. Firmware must drive all of a group's island addresses from that original bit. Siblings may share or differ in net pair, but cannot share a pair with another original group. Existing saves copy each group's assignments into its children without changing artwork, routes or pad sizes.
+
+Select a routing net, enter a new name in **Rename routing net**, and click **Rename**. All matching island assignments, traces and pads on the active layer change together, in one undoable edit. The opposite layer is independent. Renaming to an already existing name is rejected to prevent accidental merging.
+
+When a new trace joins a floating net to a named edge pad, the entire floating net adopts the pad's name. This works when drawing from the floating route toward the pad or from the pad's net toward the floating route. “Floating” means none of that net's existing traces or assigned islands has a continuous geometric connection to a same-net pad; a pad merely carrying that name is insufficient. Disconnected pieces bearing the same old net name are renamed together, though they still need physical routes. A net with an existing physical pad connection is not automatically renamed into another net. Touching differently named pads or connected nets reports a conflict for the checker instead of merging them. The new trace and automatic renaming undo together. Width edits preserve named destination pads; finish a new trace to trigger whole-net adoption.
+
+Island display: colored solid fills mean a current geometry check verifies a path to an edge pad on that layer. Assigned but disconnected or unchecked islands have dashed outlines. A shared net name does not make an island connected. Hover gives separate top/bottom physical connection status and highlights every island belonging to the hovered original segment with a white outline, including during drawing.
+
+Connectivity uses each filled island’s interior point to identify its continuous conductor component and checks whether that component reaches a same-net edge pad. This avoids false disconnections from tiny polygon-rounding slivers; disconnected islands sharing a name still fail.

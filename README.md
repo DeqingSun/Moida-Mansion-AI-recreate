@@ -105,10 +105,11 @@ See [browser test results](output/electrodes/browser-test.json).
 
 The [manual editor](output/router/index.html) lets you route the display yourself, starting from the original artwork with no automatic routes or net assignments.
 
-- All **631 segment groups / 769 islands**, with independently assignable top and bottom nets.
+- All **631 segment groups / 769 individually editable islands**, with independent top and bottom nets. Multipart IDs use `_0`, `_1`, etc.; siblings may share a pair, but different original groups may not.
 - **64 available edge pads**: 48 top-layer pads along the top edge and 16 bottom-layer pads along the left edge. Each has a default net named after its pad ID. Older layouts preserve traces and segment nets, retain previous pad assignments in saved JSON, and show a notice to reconnect routes to the new pads.
 - Polyline drawing with configurable physical width, pad/vertex snapping, zoom and pan. Top conductors are red; bottom conductors are blue.
 - Finished traces and width edits automatically assign touched segments/pads to the trace net, unless another net’s trace touches that feature on the same layer. Multipart segments are checked across all islands; automatic assignments undo with the trace edit.
+- Whole-net renaming on the active layer. Floating nets adopt a destination edge pad’s net when routed to it; already connected nets are not silently merged.
 - Whole-trace erasing, width editing, undo/redo, validated JSON save/load and local browser autosave.
 - Adjustable screen size; trace widths, pad sizes and clearance remain in millimetres when the screen is enlarged.
 - Top/bottom conductor SVG export, netlist CSV and downloadable check reports.
