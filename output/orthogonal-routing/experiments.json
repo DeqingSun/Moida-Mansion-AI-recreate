@@ -1,0 +1,384 @@
+[
+  {
+    "directory": "orthogonal-routing",
+    "search": {
+      "algorithm": "Seeded coordinate descent over 14 directional Manhattan candidates per island per layer; fixed spatial column/row assignment with unique ordered pairs.",
+      "seed": 17,
+      "grid_native": 6,
+      "short_weight": 100,
+      "cross_weight": 10,
+      "passes": [
+        {
+          "pass": 1,
+          "changed_routes": 777,
+          "surrogate_cost_reduction": 1377792.7519275297
+        },
+        {
+          "pass": 2,
+          "changed_routes": 169,
+          "surrogate_cost_reduction": 85436.73323317565
+        },
+        {
+          "pass": 3,
+          "changed_routes": 52,
+          "surrogate_cost_reduction": 29227.49448665871
+        },
+        {
+          "pass": 4,
+          "changed_routes": 13,
+          "surrogate_cost_reduction": 2429.656176826631
+        }
+      ],
+      "segments": 631,
+      "islands": 769,
+      "routes": 1538,
+      "seconds_search": 4.98,
+      "limitations": [
+        "Finite candidate search, not a proof of optimality or impossibility.",
+        "Search uses coarse raster cells; exact polygon validation is authoritative.",
+        "Same-layer shorts and forbidden cross-layer overlaps may remain; not fabrication-ready.",
+        "Separate edge contacts with the same net require external PCB connections.",
+        "Column/row assignment is fixed during the path search."
+      ]
+    },
+    "comparison": {
+      "baseline": {
+        "segments": 631,
+        "assigned": 631,
+        "connectedBoth": 631,
+        "connectedIslandSides": 1538,
+        "totalIslandSides": 1538,
+        "usedPads": 517,
+        "topNets": 191,
+        "bottomNets": 175,
+        "traces": 1538,
+        "errors": 5368,
+        "warnings": 0,
+        "shorts": 1615,
+        "clearanceViolations": 20,
+        "unwantedOverlapMm2": 9.120804967500002,
+        "unwantedOverlapRegions": 3733,
+        "preferredDirectionPercent": 98.18224114668129,
+        "pathLengthMm": 61941.56299403547
+      },
+      "optimized": {
+        "segments": 631,
+        "assigned": 631,
+        "connectedBoth": 629,
+        "connectedIslandSides": 1536,
+        "totalIslandSides": 1538,
+        "usedPads": 492,
+        "topNets": 191,
+        "bottomNets": 175,
+        "traces": 1538,
+        "errors": 7244,
+        "warnings": 0,
+        "shorts": 1477,
+        "clearanceViolations": 29,
+        "unwantedOverlapMm2": 14.960760216250003,
+        "unwantedOverlapRegions": 5736,
+        "preferredDirectionPercent": 95.7220342690115,
+        "pathLengthMm": 68775.66738938993
+      }
+    }
+  },
+  {
+    "directory": "orthogonal-routing-cross-first",
+    "search": {
+      "algorithm": "Seeded coordinate descent over 14 directional Manhattan candidates per island per layer; fixed spatial column/row assignment with unique ordered pairs.",
+      "seed": 17,
+      "grid_native": 3.0,
+      "short_weight": 100.0,
+      "cross_weight": 1000.0,
+      "passes": [
+        {
+          "pass": 1,
+          "changed_routes": 1000,
+          "surrogate_cost_reduction": 3177279.0893655717
+        },
+        {
+          "pass": 2,
+          "changed_routes": 419,
+          "surrogate_cost_reduction": 683062.4084459213
+        },
+        {
+          "pass": 3,
+          "changed_routes": 254,
+          "surrogate_cost_reduction": 296579.1908325323
+        },
+        {
+          "pass": 4,
+          "changed_routes": 205,
+          "surrogate_cost_reduction": 366002.50656880584
+        }
+      ],
+      "segments": 631,
+      "islands": 769,
+      "routes": 1538,
+      "seconds_search": 8.2,
+      "limitations": [
+        "Finite candidate search, not a proof of optimality or impossibility.",
+        "Search uses coarse raster cells; exact polygon validation is authoritative.",
+        "Same-layer shorts and forbidden cross-layer overlaps may remain; not fabrication-ready.",
+        "Separate edge contacts with the same net require external PCB connections.",
+        "Column/row assignment is fixed during the path search."
+      ]
+    },
+    "comparison": {
+      "baseline": {
+        "segments": 631,
+        "assigned": 631,
+        "connectedBoth": 631,
+        "connectedIslandSides": 1538,
+        "totalIslandSides": 1538,
+        "usedPads": 517,
+        "topNets": 191,
+        "bottomNets": 175,
+        "traces": 1538,
+        "errors": 5368,
+        "warnings": 0,
+        "shorts": 1615,
+        "clearanceViolations": 20,
+        "unwantedOverlapMm2": 9.120804967500002,
+        "unwantedOverlapRegions": 3733,
+        "preferredDirectionPercent": 98.18224114668129,
+        "pathLengthMm": 61941.56299403547
+      },
+      "optimized": {
+        "segments": 631,
+        "assigned": 631,
+        "connectedBoth": 630,
+        "connectedIslandSides": 1537,
+        "totalIslandSides": 1538,
+        "usedPads": 496,
+        "topNets": 191,
+        "bottomNets": 175,
+        "traces": 1538,
+        "errors": 4682,
+        "warnings": 0,
+        "shorts": 1616,
+        "clearanceViolations": 10,
+        "unwantedOverlapMm2": 6.725894846250001,
+        "unwantedOverlapRegions": 3055,
+        "preferredDirectionPercent": 96.63760456276721,
+        "pathLengthMm": 66361.68267273891
+      }
+    }
+  },
+  {
+    "directory": "orthogonal-routing-trial23",
+    "search": {
+      "algorithm": "Seeded coordinate descent over 14 directional Manhattan candidates per island per layer; fixed spatial column/row assignment with unique ordered pairs.",
+      "seed": 23,
+      "grid_native": 3.0,
+      "short_weight": 100.0,
+      "cross_weight": 1000.0,
+      "passes": [
+        {
+          "pass": 1,
+          "changed_routes": 1006,
+          "surrogate_cost_reduction": 3567235.643135383
+        },
+        {
+          "pass": 2,
+          "changed_routes": 387,
+          "surrogate_cost_reduction": 521782.8925432325
+        },
+        {
+          "pass": 3,
+          "changed_routes": 235,
+          "surrogate_cost_reduction": 209891.0598651251
+        },
+        {
+          "pass": 4,
+          "changed_routes": 134,
+          "surrogate_cost_reduction": 119112.73009892699
+        },
+        {
+          "pass": 5,
+          "changed_routes": 128,
+          "surrogate_cost_reduction": 103518.75388879827
+        },
+        {
+          "pass": 6,
+          "changed_routes": 111,
+          "surrogate_cost_reduction": 101522.5794570431
+        },
+        {
+          "pass": 7,
+          "changed_routes": 54,
+          "surrogate_cost_reduction": 39906.70897042111
+        },
+        {
+          "pass": 8,
+          "changed_routes": 36,
+          "surrogate_cost_reduction": 21298.727909669597
+        }
+      ],
+      "segments": 631,
+      "islands": 769,
+      "routes": 1538,
+      "seconds_search": 14.31,
+      "limitations": [
+        "Finite candidate search, not a proof of optimality or impossibility.",
+        "Search uses coarse raster cells; exact polygon validation is authoritative.",
+        "Same-layer shorts and forbidden cross-layer overlaps may remain; not fabrication-ready.",
+        "Separate edge contacts with the same net require external PCB connections.",
+        "Column/row assignment is fixed during the path search."
+      ]
+    },
+    "comparison": {
+      "baseline": {
+        "segments": 631,
+        "assigned": 631,
+        "connectedBoth": 631,
+        "connectedIslandSides": 1538,
+        "totalIslandSides": 1538,
+        "usedPads": 517,
+        "topNets": 191,
+        "bottomNets": 175,
+        "traces": 1538,
+        "errors": 5368,
+        "warnings": 0,
+        "shorts": 1615,
+        "clearanceViolations": 20,
+        "unwantedOverlapMm2": 9.120804967500002,
+        "unwantedOverlapRegions": 3733,
+        "preferredDirectionPercent": 98.18224114668129,
+        "pathLengthMm": 61941.56299403547
+      },
+      "optimized": {
+        "segments": 631,
+        "assigned": 631,
+        "connectedBoth": 631,
+        "connectedIslandSides": 1538,
+        "totalIslandSides": 1538,
+        "usedPads": 504,
+        "topNets": 191,
+        "bottomNets": 175,
+        "traces": 1538,
+        "errors": 4865,
+        "warnings": 0,
+        "shorts": 1624,
+        "clearanceViolations": 12,
+        "unwantedOverlapMm2": 7.2520872812500015,
+        "unwantedOverlapRegions": 3229,
+        "preferredDirectionPercent": 96.56229744462205,
+        "pathLengthMm": 65214.16627845353
+      }
+    }
+  },
+  {
+    "directory": "orthogonal-routing-trial17",
+    "search": {
+      "algorithm": "Seeded coordinate descent over 14 directional Manhattan candidates per island per layer; fixed spatial column/row assignment with unique ordered pairs.",
+      "seed": 17,
+      "grid_native": 3.0,
+      "short_weight": 100.0,
+      "cross_weight": 1000.0,
+      "passes": [
+        {
+          "pass": 1,
+          "changed_routes": 1000,
+          "surrogate_cost_reduction": 3177279.0893655717
+        },
+        {
+          "pass": 2,
+          "changed_routes": 419,
+          "surrogate_cost_reduction": 683062.4084459213
+        },
+        {
+          "pass": 3,
+          "changed_routes": 254,
+          "surrogate_cost_reduction": 296579.1908325323
+        },
+        {
+          "pass": 4,
+          "changed_routes": 205,
+          "surrogate_cost_reduction": 366002.50656880584
+        },
+        {
+          "pass": 5,
+          "changed_routes": 121,
+          "surrogate_cost_reduction": 125793.14863506253
+        },
+        {
+          "pass": 6,
+          "changed_routes": 80,
+          "surrogate_cost_reduction": 66698.70115905977
+        },
+        {
+          "pass": 7,
+          "changed_routes": 51,
+          "surrogate_cost_reduction": 40415.13932639267
+        },
+        {
+          "pass": 8,
+          "changed_routes": 80,
+          "surrogate_cost_reduction": 58223.249122067624
+        },
+        {
+          "pass": 9,
+          "changed_routes": 28,
+          "surrogate_cost_reduction": 26791.21188168324
+        },
+        {
+          "pass": 10,
+          "changed_routes": 9,
+          "surrogate_cost_reduction": 5597.3399512898095
+        }
+      ],
+      "segments": 631,
+      "islands": 769,
+      "routes": 1538,
+      "seconds_search": 17.53,
+      "limitations": [
+        "Finite candidate search, not a proof of optimality or impossibility.",
+        "Search uses coarse raster cells; exact polygon validation is authoritative.",
+        "Same-layer shorts and forbidden cross-layer overlaps may remain; not fabrication-ready.",
+        "Separate edge contacts with the same net require external PCB connections.",
+        "Column/row assignment is fixed during the path search."
+      ]
+    },
+    "comparison": {
+      "baseline": {
+        "segments": 631,
+        "assigned": 631,
+        "connectedBoth": 631,
+        "connectedIslandSides": 1538,
+        "totalIslandSides": 1538,
+        "usedPads": 517,
+        "topNets": 191,
+        "bottomNets": 175,
+        "traces": 1538,
+        "errors": 5368,
+        "warnings": 0,
+        "shorts": 1615,
+        "clearanceViolations": 20,
+        "unwantedOverlapMm2": 9.120804967500002,
+        "unwantedOverlapRegions": 3733,
+        "preferredDirectionPercent": 98.18224114668129,
+        "pathLengthMm": 61941.56299403547
+      },
+      "optimized": {
+        "segments": 631,
+        "assigned": 631,
+        "connectedBoth": 631,
+        "connectedIslandSides": 1538,
+        "totalIslandSides": 1538,
+        "usedPads": 496,
+        "topNets": 191,
+        "bottomNets": 175,
+        "traces": 1538,
+        "errors": 4674,
+        "warnings": 0,
+        "shorts": 1615,
+        "clearanceViolations": 12,
+        "unwantedOverlapMm2": 6.615448570000001,
+        "unwantedOverlapRegions": 3047,
+        "preferredDirectionPercent": 96.48999190703464,
+        "pathLengthMm": 65891.93078384797
+      }
+    }
+  }
+]

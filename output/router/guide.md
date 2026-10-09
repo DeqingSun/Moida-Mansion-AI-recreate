@@ -1,6 +1,6 @@
 # Manual LCD routing editor
 
-This is a browser-based manual editor for the **631 original Moida Mansion segment groups**. It starts without traces or segment assignments. Every edge pad has its own default net, named after its ID (for example `T-N001` or `B-W042`). Pick a pad’s net and draw without typing. The 769 filled islands retain their original shapes and positions.
+This is a browser-based manual editor for the **631 original Moida Mansion segment groups**. It starts without traces or segment assignments. Every edge pad has its own default net, named after its ID (for example `T-N001` or `B-W016`). Pick a pad’s net and draw without typing. The 769 filled islands retain their original shapes and positions.
 
 ## Open
 
@@ -26,13 +26,14 @@ Top is **red** and bottom is **blue**. Top and bottom shapes are shown in regist
 
 ## Edge pads
 
-There are **2,048 available pads**: 256 on each of four edges, on each layer. Top and bottom pad rows are offset from one another. IDs use:
+There are **64 available pads**, evenly spaced along two edges:
 
-- `T` or `B`: top or bottom layer;
-- `N`, `E`, `S`, `W`: edge;
-- `001`–`256`: position along the edge.
+- **48 top-layer pads**, across the top edge: `T-N001`–`T-N048`.
+- **16 bottom-layer pads**, down the left edge: `B-W001`–`B-W016`.
 
-For example, `T-N001` and `B-S256`. Use “Find an edge pad” to locate a particular point, assign its net, or mark it unused. Pads with no trace are allowed. Named pads are conductive polygons in checks and exports; clearing a pad to “Unused” omits it. Existing version-1 projects receive defaults only for previously unnamed pads when loaded; existing net names and traces are preserved. Version-2 saves retain explicitly cleared pads.
+Every pad starts with a net matching its ID. Pick its net and draw without typing. Use “Find an edge pad” to locate a particular point, assign its net, or mark it unused. Pads with no trace are allowed. Named pads are conductive polygons in checks and exports; clearing a pad to “Unused” omits it.
+
+Version-3 projects store this 48-top / 16-left arrangement. Loading a version-1 or version-2 project preserves all trace coordinates and segment net assignments, creates the 64 default pad nets, and retains the former pad assignments in `previousPadLayout` in the saved JSON. Even reused pad IDs refer to new positions, so old contact names are not silently mapped onto them. A visible conversion notice tells you to reconnect the old routes to the new pads. On first autosave recovery of an old layout, the original browser snapshot is backed up under `moida-manual-routing-v1-before-64-pads`. Clearing pads in version 3 survives save/load.
 
 Several pads may have the same net name. The tool assumes those pads will be tied to that net externally. Every visible island still needs a continuous same-layer conductor path to at least one such pad. This allows separate islands of one logical group to use separate edge contacts without inventing an invisible connection on the glass.
 
@@ -51,7 +52,7 @@ Keyboard shortcuts: **V** select, **R** route, **E** erase, **H** pan, **Enter**
 
 The artwork uses its original 3000 × 2160 coordinate system. The active screen width sets its physical scale; height is always 72% of width. The default is 150 × 108 mm.
 
-**Trace widths, pad sizes and minimum clearance are stored in millimetres.** Enlarging the screen scales artwork, trace centerlines and pad positions, while preserving those physical widths and sizes. This creates more relative routing space. Re-run checks after resizing. The default trace width is 0.10 mm, pad size 0.30 mm, and same-layer clearance 0.05 mm. These defaults are not factory-approved specifications.
+**Trace widths, pad sizes and minimum clearance are stored in millimetres.** Enlarging the screen scales artwork, trace centerlines and pad positions, while preserving those physical widths and sizes. This creates more relative routing space. Re-run checks after resizing. The default trace width is 0.10 mm, pad size 1.80 mm, and same-layer clearance 0.05 mm. These defaults are not factory-approved specifications.
 
 The grid setting controls snapping. Grid display may omit intermediate lines when zoomed out; snapping still uses the configured spacing.
 
@@ -95,3 +96,7 @@ Project files do not embed the original artwork. Keep the compatible editor/data
 - `tests/router-browser.cjs` exercises real drawing, width edits, deletion, undo/redo, file download/load, autosave recovery, physical resizing, checks and SVG export. Its Playwright/Chrome paths are specific to this workspace.
 
 The polygon engine is [Clipper 6.4.2](https://github.com/junmer/clipper-lib), pinned and bundled locally under the Boost Software License. See `vendor/LICENSE-clipper.txt` and the source header for attribution. Original game/artwork attribution and project-wide findings are in the repository README.
+
+Version 4 triples pad side lengths when loading older projects (0.30 mm becomes 0.90 mm), without moving pad centers. This happens only once; saved version-4 projects retain their chosen pad size. Trace widths are unchanged.
+
+Version 5 doubles pad side lengths again (0.90 mm becomes 1.80 mm). Loading versions 1–3 applies both size updates once; loading version 4 applies only this doubling. Version-5 saves retain the chosen size. Pad centers and traces stay fixed.

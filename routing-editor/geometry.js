@@ -1,4 +1,4 @@
-(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./vendor/clipper.js'),require('./project.js'));else root.RouterGeometry=factory(root.ClipperLib,root.RouterProject)})(typeof globalThis!=='undefined'?globalThis:this,function(C,P){
+(function(root,factory){if(typeof module==='object'&&module.exports){module.exports=factory(require('./vendor/clipper.js'),require('./project.js'));module.exports.withProject=p=>factory(require('./vendor/clipper.js'),p);}else root.RouterGeometry=factory(root.ClipperLib,root.RouterProject)})(typeof globalThis!=='undefined'?globalThis:this,function(C,P){
 'use strict';
 const SCALE=1000,EPS_AREA=1/(SCALE*SCALE),ARC=2,PT=C.PolyType,FT=C.PolyFillType.pftNonZero,CT=C.ClipType;
 const point=p=>({X:Math.round(p[0]*SCALE),Y:Math.round(p[1]*SCALE)});

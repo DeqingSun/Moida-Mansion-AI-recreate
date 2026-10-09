@@ -1,0 +1,40 @@
+{
+  "baseline": {
+    "segments": 631,
+    "assigned": 631,
+    "connectedBoth": 631,
+    "connectedIslandSides": 1538,
+    "totalIslandSides": 1538,
+    "usedPads": 517,
+    "topNets": 191,
+    "bottomNets": 175,
+    "traces": 1538,
+    "errors": 5368,
+    "warnings": 0,
+    "shorts": 1615,
+    "clearanceViolations": 20,
+    "unwantedOverlapMm2": 9.120804967500002,
+    "unwantedOverlapRegions": 3733,
+    "preferredDirectionPercent": 98.18224114668129,
+    "pathLengthMm": 61941.56299403547
+  },
+  "optimized": {
+    "segments": 631,
+    "assigned": 631,
+    "connectedBoth": 631,
+    "connectedIslandSides": 1538,
+    "totalIslandSides": 1538,
+    "usedPads": 496,
+    "topNets": 191,
+    "bottomNets": 175,
+    "traces": 1538,
+    "errors": 4674,
+    "warnings": 0,
+    "shorts": 1615,
+    "clearanceViolations": 12,
+    "unwantedOverlapMm2": 6.615448570000001,
+    "unwantedOverlapRegions": 3047,
+    "preferredDirectionPercent": 96.48999190703464,
+    "pathLengthMm": 65891.93078384797
+  }
+}

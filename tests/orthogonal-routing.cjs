@@ -1,0 +1,8 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),P=require('../scripts/orthogonal-project-v2.cjs'),G=require('../routing-editor/geometry.js').withProject(P),D=require('../output/router/segments-data.json');
+const out=path.resolve(process.argv[2]||'output/orthogonal-routing');
+for(const label of ['baseline','optimized']){
+ const p=P.validate(JSON.parse(fs.readFileSync(path.join(out,label+'.moida-routing.json'))),D),pairs=new Set(),ids=new Set();assert.equal(Object.keys(p.assignments).length,631);assert.equal(p.traces.length,1538);
+ for(const s of D.segments){const a=p.assignments[s.id],key=JSON.stringify(a);assert(a.top&&a.bottom);assert(!pairs.has(key),'Duplicate pair '+s.id);pairs.add(key)}
+ for(const t of p.traces){assert(!ids.has(t.id));ids.add(t.id);const [sid,idx,layer]=t.id.split('-'),s=D.segments.find(s=>s.id===sid);assert.equal(t.layer,layer);assert.equal(t.net,p.assignments[sid][layer]);assert(G.contains(G.island(s.islands[Number(idx)]),t.points[0]),'Trace starts inside its island');for(let i=1;i<t.points.length;i++){const a=t.points[i-1],b=t.points[i];assert(a[0]===b[0]||a[1]===b[1],'Manhattan route')}const end=t.points.at(-1),port=P.PORTS.find(q=>q.layer===layer&&Math.hypot(q.x-end[0],q.y-end[1])<1e-6);assert(port,'Endpoint at real editor pad');assert.equal(p.pads[port.id],t.net)}
+ const r=G.check(p,D),saved=JSON.parse(fs.readFileSync(path.join(out,label+'-check.json')));assert.deepEqual(r.summary,saved.summary);assert(!r.issues.some(i=>i.code==='duplicate-pair'||i.code==='unassigned'));console.log(label,'validated all 631 pairs, 1538 island routes, pad endpoints and exact report');
+}

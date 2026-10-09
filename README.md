@@ -106,7 +106,7 @@ See [browser test results](output/electrodes/browser-test.json).
 The [manual editor](output/router/index.html) lets you route the display yourself, starting from the original artwork with no automatic routes or net assignments.
 
 - All **631 segment groups / 769 islands**, with independently assignable top and bottom nets.
-- **2,048 available edge pads**: 256 per edge per layer, each with a default net named after its pad ID. Nets with no traces are allowed; explicitly cleared pads are omitted. Existing layouts keep their custom names and receive defaults for unnamed pads.
+- **64 available edge pads**: 48 top-layer pads along the top edge and 16 bottom-layer pads along the left edge. Each has a default net named after its pad ID. Older layouts preserve traces and segment nets, retain previous pad assignments in saved JSON, and show a notice to reconnect routes to the new pads.
 - Polyline drawing with configurable physical width, pad/vertex snapping, zoom and pan. Top conductors are red; bottom conductors are blue.
 - Finished traces and width edits automatically assign touched segments/pads to the trace net, unless another net’s trace touches that feature on the same layer. Multipart segments are checked across all islands; automatic assignments undo with the trace edit.
 - Whole-trace erasing, width editing, undo/redo, validated JSON save/load and local browser autosave.
@@ -186,3 +186,14 @@ Original game and artwork: **[Moida Mansion by dukope (Lucas Pope)](https://duko
 `source/moida.js` is the unchanged downloaded asset; its SHA-256 is recorded in `output/validation.json`. SVG extraction did not execute the game code. The later renderer audit executed only the extracted display functions in an isolated test harness.
 
 The archived files are reference material extracted for this project. Their public availability does not establish a license or permission to manufacture reproductions; artwork and port permissions remain to be resolved with the creator.
+
+## Directional routing search
+
+A separate Python experiment now tries mostly vertical top traces and mostly horizontal bottom traces. It preserves all 631 logical segments and unique column/row pairs, tries 14 paths per island/layer, and checks the result with the manual editor's polygon engine. The selected run reduced forbidden overlap regions from 3,733 to 3,047 (18.4%) and overlap area from 9.12 to 6.62 mm² (27.5%). Same-layer shorts remain, so this is an experimental layout, not a manufacturing design.
+
+- [Comparison viewer](http://127.0.0.1:8765/orthogonal-routing/index.html)
+- [Algorithm, reproduction instructions and limitations](output/orthogonal-routing/README.md)
+- [Python router](scripts/route_orthogonal.py)
+- [Editable candidate](output/orthogonal-routing/optimized.moida-routing.json)
+
+Your manual layout is not changed by generating or viewing this experiment.

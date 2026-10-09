@@ -1,0 +1,70 @@
+{
+  "algorithm": "Seeded coordinate descent over 14 directional Manhattan candidates per island per layer; fixed spatial column/row assignment with unique ordered pairs.",
+  "seed": 17,
+  "grid_native": 3.0,
+  "short_weight": 100.0,
+  "cross_weight": 1000.0,
+  "passes": [
+    {
+      "pass": 1,
+      "changed_routes": 1000,
+      "surrogate_cost_reduction": 3177279.0893655717
+    },
+    {
+      "pass": 2,
+      "changed_routes": 419,
+      "surrogate_cost_reduction": 683062.4084459213
+    },
+    {
+      "pass": 3,
+      "changed_routes": 254,
+      "surrogate_cost_reduction": 296579.1908325323
+    },
+    {
+      "pass": 4,
+      "changed_routes": 205,
+      "surrogate_cost_reduction": 366002.50656880584
+    },
+    {
+      "pass": 5,
+      "changed_routes": 121,
+      "surrogate_cost_reduction": 125793.14863506253
+    },
+    {
+      "pass": 6,
+      "changed_routes": 80,
+      "surrogate_cost_reduction": 66698.70115905977
+    },
+    {
+      "pass": 7,
+      "changed_routes": 51,
+      "surrogate_cost_reduction": 40415.13932639267
+    },
+    {
+      "pass": 8,
+      "changed_routes": 80,
+      "surrogate_cost_reduction": 58223.249122067624
+    },
+    {
+      "pass": 9,
+      "changed_routes": 28,
+      "surrogate_cost_reduction": 26791.21188168324
+    },
+    {
+      "pass": 10,
+      "changed_routes": 9,
+      "surrogate_cost_reduction": 5597.3399512898095
+    }
+  ],
+  "segments": 631,
+  "islands": 769,
+  "routes": 1538,
+  "seconds_search": 17.53,
+  "limitations": [
+    "Finite candidate search, not a proof of optimality or impossibility.",
+    "Search uses coarse raster cells; exact polygon validation is authoritative.",
+    "Same-layer shorts and forbidden cross-layer overlaps may remain; not fabrication-ready.",
+    "Separate edge contacts with the same net require external PCB connections.",
+    "Column/row assignment is fixed during the path search."
+  ]
+}
