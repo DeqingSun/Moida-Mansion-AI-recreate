@@ -144,3 +144,11 @@ In **Pick net** mode, hovering over an island outlines all islands, traces and p
 Repeated slices now use flat, consecutive IDs per original island: `_sub0`, `_sub1`, `_sub2`, etc. Adding a cut can renumber siblings; their geometry and net assignments follow the correct pieces. Older projects automatically convert on load, preserving assignments and traces. Saved cut history retains internal ancestry identifiers for deterministic replay; the editor, assignment keys and netlist use flat names.
 
 **Erase** also removes slices: hover over a cut line for a pink preview, then click to rejoin the island. Slice hit targets take priority over traces. Removing an earlier slice also removes later cuts made in its descendant pieces; unrelated cuts remain. Matching net assignments survive the join; differing assignments on a layer are cleared. Traces remain in place. Undo restores the cuts and assignments together.
+
+In Pick net mode, the hovered island’s opposite-layer net is also outlined in darker grey (islands, traces and pads). Each layer uses its own assignment on the hovered island. Active-layer outlines remain light grey and the hovered original segment remains white; unassigned layers produce no net highlight.
+
+### Wanted overlap areas
+
+Choose **Wanted overlap** (**W**) and click two opposite corners to draw a rectangle. Its gold dashed border marks an area where intentional top/bottom overlap is excluded from unwanted-overlap errors and totals. Escape or right-click cancels a pending rectangle. In Erase mode, click its border to remove it. Undo/redo and JSON save/load preserve these areas. They apply to both layers and all nets at that location, scale with the artwork, and do not change conductors, SVG masks, connectivity, same-layer shorts or clearance checks. Allowed crossings can still be visible on the physical LCD.
+
+Trace colors alternate strongly by the trailing net number: even-numbered traces are light red or blue; odd-numbered traces are darker red or blue. Drawing previews follow this scheme. Islands and pads retain their uniform original layer colors. Names without a trailing number use the darker trace shade.
