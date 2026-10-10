@@ -5,10 +5,10 @@ const p=P.empty(data);p.pads={};p.assignments.A={top:'T1',bottom:'B1'};const top
 let r=G.check(p,data);assert(r.ok,JSON.stringify(r.issues));assert.equal(r.summary.connectedBoth,1);
 const gap=P.clone(p);gap.traces[0].points[0][1]=10;r=G.check(gap,data);assert(r.issues.some(x=>x.code==='unconnected'&&x.layer==='top'));
 const wrongPad=P.clone(p);wrongPad.pads[top.id]='OTHER';r=G.check(wrongPad,data);assert(r.issues.some(x=>x.code==='unconnected'));
-const cross=P.clone(p);cross.traces.push({id:'cross',layer:'bottom',net:'B1',widthMm:.1,points:[[-20,-20],[100,-20]]});r=G.check(cross,data);assert(r.issues.some(x=>x.code==='unwanted-overlap'));
-const short=P.clone(p);short.traces.push({id:'short',layer:'top',net:'T2',widthMm:.1,points:[[-20,-20],[100,-20]]});r=G.check(short,data);assert(r.issues.some(x=>x.code==='short'));
+const cross=P.clone(p);cross.traces.push({id:'cross',layer:'bottom',net:'B1',widthMm:.1,points:[[-20,60],[100,60]]});r=G.check(cross,data);assert(r.issues.some(x=>x.code==='unwanted-overlap'));
+const short=P.clone(p);short.traces.push({id:'short',layer:'top',net:'T2',widthMm:.1,points:[[-20,60],[100,60]]});r=G.check(short,data);assert(r.issues.some(x=>x.code==='short'));
 const floating=P.clone(p);floating.traces.push({id:'orphan',layer:'top',net:'T1',widthMm:.1,points:[[500,500],[600,500]]});r=G.check(floating,data);assert(r.issues.some(x=>x.code==='floating-trace'));
-const same=P.clone(p);same.traces.push({id:'same',layer:'top',net:'T1',widthMm:.1,points:[[-20,-20],[100,-20]]});r=G.check(same,data);assert(!r.issues.some(x=>x.code==='short'));
+const same=P.clone(p);same.traces.push({id:'same',layer:'top',net:'T1',widthMm:.1,points:[[-20,60],[100,60]]});r=G.check(same,data);assert(!r.issues.some(x=>x.code==='short'));
 const multi=JSON.parse(JSON.stringify(data));multi.segments[0].islands.push(rect(100,20,20,20));multi.segments[0].bounds=[0,20,120,50];r=G.check(p,multi);assert.equal(r.connected.A.top.connected,1);assert.equal(r.connected.A.top.total,2);assert(r.issues.some(x=>x.code==='unconnected'&&x.islands.includes(1)));
 const dup=JSON.parse(JSON.stringify(data));dup.segments.push({id:'B',bit:1,bounds:[100,20,120,40],islands:[rect(100,20,20,20)]});const dp=P.clone(p);dp.assignments.B={top:'T1',bottom:'B1'};r=G.check(dp,dup);assert(r.issues.some(x=>x.code==='duplicate-pair'));
 const unset=P.empty(data);r=G.check(unset,data);assert.equal(r.summary.assigned,0);assert(r.issues.some(x=>x.code==='unassigned'));assert.equal(r.summary.usedPads,64);

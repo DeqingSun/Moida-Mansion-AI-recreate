@@ -112,3 +112,35 @@ When a new trace joins a floating net to a named edge pad, the entire floating n
 Island display: colored solid fills mean a current geometry check verifies a path to an edge pad on that layer. Assigned but disconnected or unchecked islands have dashed outlines. A shared net name does not make an island connected. Hover gives separate top/bottom physical connection status and highlights every island belonging to the hovered original segment with a white outline, including during drawing.
 
 Connectivity uses each filled island’s interior point to identify its continuous conductor component and checks whether that component reaches a same-net edge pad. This avoids false disconnections from tiny polygon-rounding slivers; disconnected islands sharing a name still fail.
+
+### Lower top-layer pads and island counting
+
+The 48 top-layer pads now sit below the LCD. Their original IDs (`T-N001`–`T-N048`) and net names are retained for saved-project compatibility. The 16 bottom-layer pads remain on the left. Version 7 loads earlier projects without moving trace coordinates: reconnect routes that ended at the former upper pads.
+
+Choose **Count islands** (shortcut **C**) and move across the artwork. The yellow vertical line and purple horizontal line show intersected islands and their separate counts in the sidebar. Click to pin the position; click again or right-click to resume. Each disconnected island is counted once per line, including boundary touches, regardless of net assignment or layer visibility. Multiple islands of one original game segment count separately. Counting does not change the routing design.
+
+### Slice an island
+
+Select a single island, choose **Slice** (shortcut **S**), and set **Gap width (mm)**. Click two endpoints outside opposite sides of the island. An orange preview shows the cut after the first click; the second click applies it. Escape cancels the pending cut. Right-click cancels the cut and deselects the island, so you can click another island to select it. A cut must leave at least two pieces. Only the selected island is cut, on both layers.
+
+Pieces receive IDs such as `C02S68_0_sub0` and `_sub1`, inherit their former net assignments, and retain the original game bit/group. Select each piece to change its nets; select and slice a piece again to make more pieces. Each piece must physically reach its assigned edge pads. Undo/redo, autosave, JSON save/load, SVG exports, netlist exports, hover highlighting and island counting include the cuts. Saved projects use format version 8; earlier projects remain loadable.
+
+Existing traces are not cut or removed, so they can still bridge the new gap. Run checks after slicing and rerouting. Opposite-layer overlaps inside the removed gap are treated as unwanted overlap. Gaps scale with the artwork if you later change screen dimensions; the gap width input controls new cuts only.
+
+### Display boundary and pad spacing (version 9)
+
+Unwanted top/bottom overlap is checked only within the dark-green display rectangle (source coordinates 0–3000 by 0–2160). Crossings outside it are ignored; crossings straddling the boundary report only their inside portion. Same-layer shorts and clearance checks still apply everywhere.
+
+Pad center distances from the display edges have doubled: top-layer pads below the display are now 144 source units away, and bottom-layer pads on the left are 244 units away. At a 150 mm screen width these distances are 7.2 mm and 12.2 mm. Pad sizes, IDs and nets are preserved. Existing trace coordinates remain unchanged; extend routes to their new pad positions.
+
+### Reassign nets from connectors
+
+Use **Reassign nets from connectors** to discard existing net labels on both layers and rebuild them using physical contact between islands, traces and connector pads. Every connector returns to its own ID as its net name, including connectors previously marked unused. Geometry and cuts stay unchanged. Each group reaching exactly one connector takes its name; disconnected groups receive fresh `FLOAT_top_*` or `FLOAT_bottom_*` names. Groups reaching several connectors receive `CONFLICT_*` names and the panel lists their connector IDs; these require physical routing repairs. Same-layer contact uses the geometry engine's 0.001-source-unit tolerance. All island shapes participate, even previously unassigned ones. Undo restores the entire previous assignment state. Save JSON to retain the repaired assignments.
+
+Unwanted top/bottom overlap regions smaller than **0.0001 mm² each** are ignored in errors, highlighting and the reported overlap total. Regions equal to or larger than this threshold remain reported. The threshold uses the configured physical screen size; same-layer shorts and clearance checks are unchanged. This is a reporting tolerance, not proof that an ignored region is a rounding artifact.
+
+In **Pick net** mode, hovering over an island outlines all islands, traces and pads assigned to the same net on the active layer in grey. The hovered original segment (all its islands and sliced pieces) retains its white outline. Unassigned islands do not highlight other unassigned shapes; matching net names highlight even if the conductors are physically disconnected.
+
+Repeated slices now use flat, consecutive IDs per original island: `_sub0`, `_sub1`, `_sub2`, etc. Adding a cut can renumber siblings; their geometry and net assignments follow the correct pieces. Older projects automatically convert on load, preserving assignments and traces. Saved cut history retains internal ancestry identifiers for deterministic replay; the editor, assignment keys and netlist use flat names.
+
+**Erase** also removes slices: hover over a cut line for a pink preview, then click to rejoin the island. Slice hit targets take priority over traces. Removing an earlier slice also removes later cuts made in its descendant pieces; unrelated cuts remain. Matching net assignments survive the join; differing assignments on a layer are cleared. Traces remain in place. Undo restores the cuts and assignments together.

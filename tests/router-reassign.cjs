@@ -1,0 +1,6 @@
+const assert=require('node:assert/strict'),P=require('../routing-editor/project'),G=require('../routing-editor/geometry');
+const d={sourceHash:'reassign',segments:[]},a=P.PORT_BY_ID.get('T-N042'),b=P.PORT_BY_ID.get('T-N043');
+const t=(id,x,y,net='WRONG')=>({id,layer:'top',net,widthMm:.1,points:[[x,y],[x,y-50]]});
+let p=P.empty(d);p.pads[a.id]=b.id;p.traces=[t('a',a.x,a.y),t('b',b.x,b.y),t('float',100,100)];let r=G.reassignFromConnectors(p,d);assert.equal(p.pads[a.id],a.id);assert.equal(p.traces[0].net,a.id);assert.equal(p.traces[1].net,b.id);assert.match(p.traces[2].net,/^FLOAT_top_/);assert.equal(r.conflicts.length,0);assert.deepEqual(P.validate(p,d),p);const snap=P.clone(p);G.reassignFromConnectors(p,d);assert.deepEqual(p,snap);
+p.traces.push({id:'bridge',layer:'top',net:'IGNORE',widthMm:.1,points:[[a.x,a.y],[b.x,b.y]]});r=G.reassignFromConnectors(p,d);assert.equal(r.conflicts.length,1);assert.deepEqual(r.conflicts[0].pads,[a.id,b.id]);assert.match(p.traces[0].net,/^CONFLICT_top_/);assert.equal(p.pads[a.id],a.id);assert.equal(p.pads[b.id],b.id);
+console.log('Reassignment restores pad identity, separates old merged nets, labels floating groups, detects multiple pads, round trips and is repeatable.');
