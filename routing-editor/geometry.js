@@ -20,8 +20,10 @@ function contains(paths,p){let winding=0;for(const r of paths){let k=C.Clipper.P
 // Subtract a physical-width cut, preserving holes and choosing an interior scanline point.
 function sliceShape(s,points,width){
  const cut=trace({points,widthMm:width},3000);
- const pieces=C.JS.PolyTreeToExPolygons(bool(segment(s),cut,CT.ctDifference,true));
- if(pieces.length<2)throw Error('The cut must cross the island completely and leave at least two pieces.');
+ const original=segment(s);
+ if(area(bool(original,cut,CT.ctIntersection))<=EPS_AREA)throw Error('The cut does not remove any island area.');
+ const pieces=C.JS.PolyTreeToExPolygons(bool(original,cut,CT.ctDifference,true));
+ if(!pieces.length)throw Error('The cut removes the entire island. Leave some island area.');
  return pieces.map(ex=>{const paths=exPaths(ex),b=bounds(paths),rings=paths.map(r=>r.map(q=>[q.X/SCALE,q.Y/SCALE]));
  const ys=[...new Set(rings.flatMap(r=>r.map(p=>p[1])))].sort((a,b)=>a-b);let inside=null;
  for(let k=1;k<ys.length&&!inside;k++){const y=(ys[k-1]+ys[k])/2,xs=[];for(const r of rings)for(let i=0;i<r.length;i++){const a=r[i],z=r[(i+1)%r.length];if((a[1]>y)!==(z[1]>y))xs.push(a[0]+(y-a[1])*(z[0]-a[0])/(z[1]-a[1]))}xs.sort((a,b)=>a-b);for(let i=1;i<xs.length;i+=2)if(xs[i]-xs[i-1]>.002){inside=[(xs[i-1]+xs[i])/2,y];break}}

@@ -121,7 +121,7 @@ Choose **Count islands** (shortcut **C**) and move across the artwork. The yello
 
 ### Slice an island
 
-Select a single island, choose **Slice** (shortcut **S**), and set **Gap width (mm)**. Click two endpoints outside opposite sides of the island. An orange preview shows the cut after the first click; the second click applies it. Escape cancels the pending cut. Right-click cancels the cut and deselects the island, so you can click another island to select it. A cut must leave at least two pieces. Only the selected island is cut, on both layers.
+Select a single island, choose **Slice** (shortcut **S**), and set **Gap width (mm)**. Click two endpoints outside opposite sides of the island. An orange preview shows the cut after the first click; the second click applies it. Escape cancels the pending cut. Right-click cancels the cut and deselects the island, so you can click another island to select it. A cut can split the island or trim its edge while leaving a single piece. Cuts that miss the island or remove it entirely are rejected. Only the selected island is cut, on both layers.
 
 Pieces receive IDs such as `C02S68_0_sub0` and `_sub1`, inherit their former net assignments, and retain the original game bit/group. Select each piece to change its nets; select and slice a piece again to make more pieces. Each piece must physically reach its assigned edge pads. Undo/redo, autosave, JSON save/load, SVG exports, netlist exports, hover highlighting and island counting include the cuts. Saved projects use format version 8; earlier projects remain loadable.
 
@@ -152,3 +152,11 @@ In Pick net mode, the hovered island’s opposite-layer net is also outlined in 
 Choose **Wanted overlap** (**W**) and click two opposite corners to draw a rectangle. Its gold dashed border marks an area where intentional top/bottom overlap is excluded from unwanted-overlap errors and totals. Escape or right-click cancels a pending rectangle. In Erase mode, click its border to remove it. Undo/redo and JSON save/load preserve these areas. They apply to both layers and all nets at that location, scale with the artwork, and do not change conductors, SVG masks, connectivity, same-layer shorts or clearance checks. Allowed crossings can still be visible on the physical LCD.
 
 Trace colors alternate strongly by the trailing net number: even-numbered traces are light red or blue; odd-numbered traces are darker red or blue. Drawing previews follow this scheme. Islands and pads retain their uniform original layer colors. Names without a trailing number use the darker trace shade.
+
+### Hover net matrix
+
+The canvas includes a compact 5×5 viewport into the 48×16 electrical matrix. Hover an island to show its assigned connector pair (for example T3, B5); red columns represent top connectors and blue rows bottom connectors. A yellow dot marks the intersection. The viewport animates between islands, clamps at matrix edges, and respects reduced-motion preferences. It resolves custom net names through connector assignments. Missing, floating or multi-connector nets show a dash, not a guessed coordinate. This helper shows assignments; physical connection status remains a separate check.
+
+When the pointer leaves an island, the last matrix cross and dot fade over three seconds while its coordinates remain visible. Hovering another island interrupts the fade and animates directly to its net pair. The matrix viewport stays at its last location rather than resetting between islands.
+
+The net matrix also leaves a smaller gold dot at each previously hovered net pair. Each dot fades independently over three seconds, including while you hold the pointer on another island. The dots stay at their actual matrix coordinates as the viewport moves; history outside the 5×5 viewport is clipped.
