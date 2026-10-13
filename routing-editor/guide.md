@@ -160,3 +160,9 @@ The canvas includes a compact 5×5 viewport into the 48×16 electrical matrix. H
 When the pointer leaves an island, the last matrix cross and dot fade over three seconds while its coordinates remain visible. Hovering another island interrupts the fade and animates directly to its net pair. The matrix viewport stays at its last location rather than resetting between islands.
 
 The net matrix also leaves a smaller gold dot at each previously hovered net pair. Each dot fades independently over three seconds, including while you hold the pointer on another island. The dots stay at their actual matrix coordinates as the viewport moves; history outside the 5×5 viewport is clipped.
+
+Statistics now distinguish unique assigned connector crosses (out of 48×16 = 768), fully assigned original game segments (out of 631), assigned islands/pieces, and islands connected on both layers. A cross counts once even when several sibling pieces share it; both net names must resolve to exactly one connector each. Floating and ambiguous names do not occupy a counted cross. An island is assigned only when both nets resolve to exactly one connector each. An original segment counts only when all its current islands/pieces satisfy that rule. Floating and ambiguous nets do not count; assignment still does not imply physical connectivity.
+
+### Finetune trace points
+
+Choose **Finetune** (**F**), click a trace on the active layer, then drag one of its endpoint or bend handles. The Snap setting applies to pads, other vertices and the grid; hold Alt/Option during the drag for free movement. The drag is previewed until release and saved as one undo step. Escape cancels the drag; right-click cancels and deselects. Net names and trace width are preserved. Only that trace's selected point moves, including at a shared junction; checks rerun after release to reveal disconnections, shorts or unwanted overlaps. Save JSON preserves edited coordinates.
