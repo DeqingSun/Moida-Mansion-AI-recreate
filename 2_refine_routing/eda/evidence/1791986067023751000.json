@@ -1,0 +1,35 @@
+{
+  "arguments": [
+    "doc",
+    "api",
+    "--class-name",
+    "DMT_EditorControl",
+    "--method-name",
+    "openDocument"
+  ],
+  "response": {
+    "ok": true,
+    "value": {
+      "title": "打开文档",
+      "params": [
+        {
+          "name": "documentUuid",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "splitScreenId",
+          "type": "string",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "string | null"
+      }
+    },
+    "logs": [],
+    "durationMs": 197
+  },
+  "stderr": "",
+  "exitCode": 0
+}

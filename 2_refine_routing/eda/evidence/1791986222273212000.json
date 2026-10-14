@@ -1,0 +1,19 @@
+{
+  "arguments": [
+    "invoke",
+    "--session",
+    "b7e69100-9ade-40c7-8b1e-af8fc1e0678d",
+    "--ext-uuid",
+    "eda",
+    "--code",
+    "return {project:await eda.dmt_Project.getCurrentProjectInfo(),pcb:await eda.dmt_Pcb.getCurrentPcbInfo()};"
+  ],
+  "response": {
+    "ok": true,
+    "value": {},
+    "logs": [],
+    "durationMs": 7
+  },
+  "stderr": "",
+  "exitCode": 0
+}

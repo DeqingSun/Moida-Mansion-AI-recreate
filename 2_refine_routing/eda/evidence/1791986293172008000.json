@@ -1,0 +1,22 @@
+{
+  "arguments": [
+    "open",
+    "--path",
+    "/Users/deqinguser/Documents/GitHub/Moida-Mansion-AI-recreate/2_refine_routing/eda/prototype.eprj3",
+    "--headless",
+    "true"
+  ],
+  "response": {
+    "ok": true,
+    "value": {
+      "sessionId": "70b31618-3bfc-42f7-a3d7-dd139d42eb07",
+      "renderId": 7,
+      "path": "/Users/deqinguser/Documents/GitHub/Moida-Mansion-AI-recreate/2_refine_routing/eda/prototype.eprj3",
+      "headless": true
+    },
+    "logs": [],
+    "durationMs": 1695
+  },
+  "stderr": "",
+  "exitCode": 0
+}

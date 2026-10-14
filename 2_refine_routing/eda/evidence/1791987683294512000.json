@@ -1,0 +1,24 @@
+{
+  "arguments": [
+    "open",
+    "--path",
+    "/Users/deqinguser/Documents/GitHub/Moida-Mansion-AI-recreate/2_refine_routing/eda/exports/Moida-LCD-20261014-102120-e1b7ce/Moida-LCD-20261014-102120-e1b7ce.eprj3",
+    "--editor",
+    "pcb",
+    "--visible",
+    "true"
+  ],
+  "response": {
+    "ok": true,
+    "value": {
+      "sessionId": "78f0f4e1-fade-470a-9c7f-e4745eb1d6ec",
+      "renderId": 14,
+      "path": "/Users/deqinguser/Documents/GitHub/Moida-Mansion-AI-recreate/2_refine_routing/eda/exports/Moida-LCD-20261014-102120-e1b7ce/Moida-LCD-20261014-102120-e1b7ce.eprj3",
+      "headless": false
+    },
+    "logs": [],
+    "durationMs": 1861
+  },
+  "stderr": "",
+  "exitCode": 0
+}

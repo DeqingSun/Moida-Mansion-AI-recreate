@@ -1,0 +1,20 @@
+{
+  "arguments": [
+    "invoke",
+    "--session",
+    "f3e62c7b-9881-4fd2-8d42-03dee757e321",
+    "--ext-uuid",
+    "eda",
+    "--code",
+    "return {project:await eda.dmt_Project.getCurrentProjectInfo(),components:await eda.pcb_PrimitiveComponent.getAllPrimitiveId()};"
+  ],
+  "response": {
+    "ok": false,
+    "error": {
+      "code": "EXECUTION_ERROR",
+      "message": "Cannot read properties of null (reading 'map')"
+    }
+  },
+  "stderr": "EXECUTION_ERROR: Cannot read properties of null (reading 'map')\n",
+  "exitCode": 1
+}

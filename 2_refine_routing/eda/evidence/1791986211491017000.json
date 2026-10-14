@@ -1,0 +1,24 @@
+{
+  "arguments": [
+    "doc",
+    "api",
+    "--class-name",
+    "SYS_FileManager",
+    "--method-name",
+    "getDocumentFootprintSources"
+  ],
+  "response": {
+    "ok": true,
+    "value": {
+      "title": "获取文档封装源码",
+      "params": [],
+      "returns": {
+        "type": "Array<{ footprintUuid: string; documentSource: string }>"
+      }
+    },
+    "logs": [],
+    "durationMs": 140
+  },
+  "stderr": "",
+  "exitCode": 0
+}

@@ -1,0 +1,127 @@
+{
+  "arguments": [
+    "doc",
+    "api",
+    "--class-name",
+    "PCB_PrimitivePad",
+    "--method-name",
+    "create"
+  ],
+  "response": {
+    "ok": true,
+    "value": {
+      "title": "创建焊盘",
+      "params": [
+        {
+          "name": "layer",
+          "type": "TPCB_LayersOfPad",
+          "description": "层",
+          "required": true
+        },
+        {
+          "name": "padNumber",
+          "type": "string",
+          "description": "焊盘编号",
+          "required": true
+        },
+        {
+          "name": "x",
+          "type": "number",
+          "description": "位置 X",
+          "required": true
+        },
+        {
+          "name": "y",
+          "type": "number",
+          "description": "位置 Y",
+          "required": true
+        },
+        {
+          "name": "rotation",
+          "type": "number",
+          "description": "旋转角度",
+          "required": false
+        },
+        {
+          "name": "pad",
+          "type": "TPCB_PrimitivePadShape",
+          "description": "焊盘外形，在特殊焊盘外形实现前，该参数必传",
+          "required": false
+        },
+        {
+          "name": "net",
+          "type": "string",
+          "description": "网络名称",
+          "required": false
+        },
+        {
+          "name": "hole",
+          "type": "TPCB_PrimitivePadHole | null",
+          "description": "孔，`null` 标识无孔",
+          "required": false
+        },
+        {
+          "name": "holeOffsetX",
+          "type": "number",
+          "description": "孔偏移 X",
+          "required": false
+        },
+        {
+          "name": "holeOffsetY",
+          "type": "number",
+          "description": "孔偏移 Y",
+          "required": false
+        },
+        {
+          "name": "holeRotation",
+          "type": "number",
+          "description": "孔相对于焊盘的旋转角度",
+          "required": false
+        },
+        {
+          "name": "metallization",
+          "type": "boolean",
+          "description": "是否金属化孔壁",
+          "required": false
+        },
+        {
+          "name": "padType",
+          "type": "EPCB_PrimitivePadType",
+          "description": "焊盘类型",
+          "required": false
+        },
+        {
+          "name": "specialPad",
+          "type": "TPCB_PrimitiveSpecialPadShape",
+          "description": "特殊焊盘外形，当前暂未实现，请勿使用",
+          "required": false
+        },
+        {
+          "name": "solderMaskAndPasteMaskExpansion",
+          "type": "IPCB_PrimitiveSolderMaskAndPasteMaskExpansion | null",
+          "description": "阻焊/助焊扩展，`null` 表示遵循规则",
+          "required": false
+        },
+        {
+          "name": "heatWelding",
+          "type": "IPCB_PrimitivePadHeatWelding | null",
+          "description": "热焊优化参数",
+          "required": false
+        },
+        {
+          "name": "primitiveLock",
+          "type": "boolean",
+          "description": "是否锁定",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "IPCB_PrimitivePad | null"
+      }
+    },
+    "logs": [],
+    "durationMs": 195
+  },
+  "stderr": "",
+  "exitCode": 0
+}

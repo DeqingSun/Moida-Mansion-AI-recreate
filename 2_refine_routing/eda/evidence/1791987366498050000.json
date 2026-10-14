@@ -1,0 +1,46 @@
+{
+  "arguments": [
+    "invoke",
+    "--session",
+    "905fa0fe-4420-436d-ae7a-94a3b2826ecc",
+    "--ext-uuid",
+    "eda",
+    "--code",
+    "return {project:await eda.dmt_Project.getCurrentProjectInfo(),components:(await eda.pcb_PrimitiveComponent.getAll()).length,lines:(await eda.pcb_PrimitiveLine.getAll()).length,pads:(await eda.pcb_PrimitivePad.getAll()).length};"
+  ],
+  "response": {
+    "ok": true,
+    "value": {
+      "project": {
+        "itemType": "Project",
+        "uuid": "0799d5934d6a2dc9719b8f4e99141f6742128a416b8c0501a9b4ec37c8db6614",
+        "friendlyName": "Moida-LCD-finished",
+        "name": "/Moida-LCD-finished",
+        "teamUuid": "47619bad2c864f32ad60dbd428e0701b",
+        "description": "",
+        "data": [
+          {
+            "itemType": "Board",
+            "name": "LCD",
+            "schematic": null,
+            "pcb": {
+              "itemType": "PCB",
+              "name": "LCD",
+              "uuid": "f5ed743606c8c036",
+              "parentBoardName": "LCD",
+              "parentProjectUuid": "0799d5934d6a2dc9719b8f4e99141f6742128a416b8c0501a9b4ec37c8db6614"
+            },
+            "parentProjectUuid": "0799d5934d6a2dc9719b8f4e99141f6742128a416b8c0501a9b4ec37c8db6614"
+          }
+        ]
+      },
+      "components": 780,
+      "lines": 3267,
+      "pads": 20590
+    },
+    "logs": [],
+    "durationMs": 643
+  },
+  "stderr": "",
+  "exitCode": 0
+}

@@ -1,0 +1,93 @@
+{
+  "arguments": [
+    "session",
+    "list"
+  ],
+  "response": {
+    "ok": true,
+    "value": [
+      {
+        "sessionId": "6e7ac00e-3035-42f2-a38b-ae0a72b3c6d3",
+        "renderId": 3,
+        "status": "closed",
+        "headless": true
+      },
+      {
+        "sessionId": "1ce7f189-1cc2-4ee3-8447-0b074660644c",
+        "renderId": 4,
+        "status": "closed",
+        "headless": true
+      },
+      {
+        "sessionId": "b7e69100-9ade-40c7-8b1e-af8fc1e0678d",
+        "renderId": 5,
+        "status": "closed",
+        "headless": true
+      },
+      {
+        "sessionId": "93f10468-53a0-45cd-9910-78ecad648bac",
+        "renderId": 6,
+        "status": "closed",
+        "headless": true
+      },
+      {
+        "sessionId": "70b31618-3bfc-42f7-a3d7-dd139d42eb07",
+        "renderId": 7,
+        "status": "closed",
+        "headless": true
+      },
+      {
+        "sessionId": "ca7bfe66-cd7a-4b9b-82ae-9b41abff7106",
+        "renderId": 8,
+        "status": "closed",
+        "headless": false
+      },
+      {
+        "sessionId": "f3e62c7b-9881-4fd2-8d42-03dee757e321",
+        "renderId": 9,
+        "status": "closed",
+        "headless": true
+      },
+      {
+        "sessionId": "ca77e935-155d-44d9-8546-96ed62f2a4c6",
+        "renderId": 10,
+        "status": "closed",
+        "headless": true
+      },
+      {
+        "sessionId": "fbeb7232-2eaf-4ecc-8bf1-eb7bf6342e97",
+        "renderId": 11,
+        "status": "closed",
+        "headless": true
+      },
+      {
+        "sessionId": "905fa0fe-4420-436d-ae7a-94a3b2826ecc",
+        "renderId": 12,
+        "status": "closed",
+        "headless": false
+      },
+      {
+        "sessionId": "0dacc153-68ca-4a94-805c-2f65330f692f",
+        "renderId": 13,
+        "status": "alive",
+        "headless": false
+      },
+      {
+        "sessionId": "78f0f4e1-fade-470a-9c7f-e4745eb1d6ec",
+        "renderId": 14,
+        "status": "alive",
+        "headless": false
+      },
+      {
+        "sessionId": "c291413e-ffb4-4ff3-8eaa-671fc5729372",
+        "renderId": 15,
+        "status": "alive",
+        "headless": false
+      }
+    ],
+    "logs": [],
+    "durationMs": 1
+  },
+  "stderr": "",
+  "exitCode": 0
+}

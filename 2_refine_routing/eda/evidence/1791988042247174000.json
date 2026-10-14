@@ -1,0 +1,22 @@
+{
+  "arguments": [
+    "session",
+    "close",
+    "--session",
+    "2ed8e1b6-5f8d-4273-a95d-b22f4954bced",
+    "--destroy",
+    "true"
+  ],
+  "response": {
+    "ok": true,
+    "value": {
+      "sessionId": "2ed8e1b6-5f8d-4273-a95d-b22f4954bced",
+      "status": "closed",
+      "headless": false
+    },
+    "logs": [],
+    "durationMs": 7
+  },
+  "stderr": "",
+  "exitCode": 0
+}

@@ -1,0 +1,20 @@
+{
+  "arguments": [
+    "invoke",
+    "--session",
+    "1ce7f189-1cc2-4ee3-8447-0b074660644c",
+    "--ext-uuid",
+    "eda",
+    "--code",
+    "return {v:eda.sys_Environment.getEditorCurrentVersion(),editors:await eda.dmt_EditorControl.getAllEditors()};"
+  ],
+  "response": {
+    "ok": false,
+    "error": {
+      "code": "EXECUTION_ERROR",
+      "message": "eda.dmt_EditorControl.getAllEditors is not a function"
+    }
+  },
+  "stderr": "EXECUTION_ERROR: eda.dmt_EditorControl.getAllEditors is not a function\n",
+  "exitCode": 1
+}

@@ -1,0 +1,20 @@
+{
+  "arguments": [
+    "invoke",
+    "--session",
+    "70b31618-3bfc-42f7-a3d7-dd139d42eb07",
+    "--ext-uuid",
+    "eda",
+    "--code",
+    "const opened=await eda.dmt_EditorControl.openDocument(\"4f0125825fbda11e\");return {opened,source:await eda.sys_FileManager.getDocumentSource(),tree:await eda.dmt_EditorControl.getSplitScreenTree()};"
+  ],
+  "response": {
+    "ok": false,
+    "error": {
+      "code": "EXECUTION_ERROR",
+      "message": "Cannot destructure property 'message' of '(intermediate value)' as it is undefined."
+    }
+  },
+  "stderr": "EXECUTION_ERROR: Cannot destructure property 'message' of '(intermediate value)' as it is undefined.\n",
+  "exitCode": 1
+}

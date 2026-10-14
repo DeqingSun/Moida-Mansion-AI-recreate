@@ -1,0 +1,29 @@
+{
+  "roundtrip": {
+    "islands": 780,
+    "changedIslands": 0,
+    "traceSegments": 3267,
+    "connectors": 64,
+    "netChanges": 0
+  },
+  "checks": {
+    "assigned": 780,
+    "assignedCrosses": 664,
+    "totalCrosses": 768,
+    "assignedOriginalSegments": 631,
+    "totalOriginalSegments": 631,
+    "segments": 780,
+    "connectedBoth": 780,
+    "connectedIslandSides": 1560,
+    "totalIslandSides": 1560,
+    "usedPads": 64,
+    "topNets": 48,
+    "bottomNets": 16,
+    "traces": 3267,
+    "errors": 50,
+    "warnings": 0,
+    "shorts": 0,
+    "clearanceViolations": 48,
+    "unwantedOverlapMm2": 0.0029930200000000007
+  }
+}

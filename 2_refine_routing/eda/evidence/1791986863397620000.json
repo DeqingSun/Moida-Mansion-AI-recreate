@@ -1,0 +1,19 @@
+{
+  "arguments": [
+    "doc",
+    "api",
+    "--class-name",
+    "PCB_ManufactureData",
+    "--method-name",
+    "getPngFile"
+  ],
+  "response": {
+    "ok": false,
+    "error": {
+      "code": "DOC_QUERY_FAILED",
+      "message": "[help] eda.PCB_ManufactureData 下不存在方法：getPngFile"
+    }
+  },
+  "stderr": "DOC_QUERY_FAILED: [help] eda.PCB_ManufactureData 下不存在方法：getPngFile\n",
+  "exitCode": 1
+}

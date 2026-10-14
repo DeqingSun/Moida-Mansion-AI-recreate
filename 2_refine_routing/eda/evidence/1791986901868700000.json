@@ -1,0 +1,19 @@
+{
+  "arguments": [
+    "invoke",
+    "--session",
+    "fbeb7232-2eaf-4ecc-8bf1-eb7bf6342e97",
+    "--ext-uuid",
+    "eda",
+    "--code",
+    "await eda.dmt_EditorControl.openDocument(\"f5ed743606c8c036\");return true;"
+  ],
+  "response": {
+    "ok": true,
+    "value": true,
+    "logs": [],
+    "durationMs": 3749
+  },
+  "stderr": "",
+  "exitCode": 0
+}

@@ -1,0 +1,68 @@
+{
+  "arguments": [
+    "invoke",
+    "--session",
+    "0dacc153-68ca-4a94-805c-2f65330f692f",
+    "--ext-uuid",
+    "eda",
+    "--code",
+    "const all=JSON.parse(JSON.stringify(await eda.pcb_PrimitiveComponent.getAll()));return all.slice(0,1);"
+  ],
+  "response": {
+    "ok": true,
+    "value": [
+      {
+        "async": true,
+        "primitiveType": "Component",
+        "layer": 1,
+        "x": 5538.549868766404,
+        "y": -3959.6456692913393,
+        "rotation": 0,
+        "primitiveLock": false,
+        "addIntoBom": true,
+        "component": {
+          "libraryUuid": "515de0388bca577ec87b10faaf784ce9465e5bf697e279b97935d93ebf9e2366",
+          "uuid": {
+            "name": "C00S01",
+            "uuid": "",
+            "source": "",
+            "isCurrent": true,
+            "isPureText": true
+          }
+        },
+        "primitiveId": "4540f16b5d339161",
+        "footprint": {
+          "libraryUuid": "515de0388bca577ec87b10faaf784ce9465e5bf697e279b97935d93ebf9e2366",
+          "uuid": "d670407c5dc5cbf6",
+          "name": "C00S01"
+        },
+        "model3D": {
+          "libraryUuid": "0819f05c4eef4c71ace90d822a990e87"
+        },
+        "designator": "C00S01",
+        "pads": [
+          {
+            "primitiveId": "28c2c16b29643355",
+            "net": "T-N048",
+            "padNumber": "T"
+          },
+          {
+            "primitiveId": "da872ffd746d1903",
+            "net": "B-W016",
+            "padNumber": "B"
+          }
+        ],
+        "name": "",
+        "uniqueId": "",
+        "otherProperty": {
+          "Footprint": "C00S01",
+          "MoidaIsland": "C00S01"
+        }
+      }
+    ],
+    "logs": [],
+    "durationMs": 46
+  },
+  "stderr": "",
+  "exitCode": 0
+}

@@ -1,0 +1,22 @@
+{
+  "arguments": [
+    "invoke",
+    "--session",
+    "78f0f4e1-fade-470a-9c7f-e4745eb1d6ec",
+    "--ext-uuid",
+    "eda",
+    "--code",
+    "return await eda.dmt_EditorControl.openDocument(\"f5ed743606c8c036\");",
+    "--timeout",
+    "60000"
+  ],
+  "response": {
+    "ok": false,
+    "error": {
+      "code": "REQUEST_TIMEOUT",
+      "message": "invoke timed out after 59750ms (budget 60000ms; gave up waiting; the code may still be running in the render, and its result will be discarded)"
+    }
+  },
+  "stderr": "REQUEST_TIMEOUT: invoke timed out after 59750ms (budget 60000ms; gave up waiting; the code may still be running in the render, and its result will be discarded)\n",
+  "exitCode": 3
+}

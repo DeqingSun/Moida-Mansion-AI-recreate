@@ -1,0 +1,21 @@
+{
+  "arguments": [
+    "invoke",
+    "--session",
+    "5ce38c55-40d1-4c2b-bec3-ccaecfe5b270",
+    "--ext-uuid",
+    "eda",
+    "--code",
+    "return await eda.dmt_Project.getCurrentProjectInfo();",
+    "--timeout",
+    "60000"
+  ],
+  "response": {
+    "ok": true,
+    "value": null,
+    "logs": [],
+    "durationMs": 1
+  },
+  "stderr": "",
+  "exitCode": 0
+}

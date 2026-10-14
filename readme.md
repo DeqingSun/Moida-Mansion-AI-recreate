@@ -51,3 +51,8 @@ The failure is expected. So let's go one step back and just make a tool to manua
 And after about 30 hours of routing, it is proven to be possible with 16x48 matrix!
 
 
+## Refinement in 嘉立创EDA
+
+`2_refine_routing` now starts from the finished preliminary router and exchanges PCB-only projects with 嘉立创EDA. Each final island is a component with independent top/bottom polygon electrodes; wires become traces and edge connections become pads.
+
+Run `python3 2_refine_routing/eda/server.py` from this directory, then open http://127.0.0.1:8766/2_refine_routing/index.html. Use **Open in EDA**, adjust routing, and **Import from EDA**. See [exchange instructions and limitations](2_refine_routing/eda/README.md).

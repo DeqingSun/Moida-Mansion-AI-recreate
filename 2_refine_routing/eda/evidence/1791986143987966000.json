@@ -1,0 +1,169 @@
+{
+  "arguments": [
+    "invoke",
+    "--session",
+    "6e7ac00e-3035-42f2-a38b-ae0a72b3c6d3",
+    "--ext-uuid",
+    "eda",
+    "--code",
+    "const id=await eda.dmt_Pcb.createPcb();await eda.dmt_EditorControl.openDocument(id);return {id,project:await eda.dmt_Project.getCurrentProjectInfo()};"
+  ],
+  "response": {
+    "ok": true,
+    "value": {
+      "id": "4f0125825fbda11e",
+      "project": {
+        "itemType": "Project",
+        "uuid": "5cf7ef8ed8124c95663731709107cfa82bdb8f1e315d6c8ab3c9b0d7a93036a4",
+        "friendlyName": "bootstrap",
+        "name": "/bootstrap",
+        "teamUuid": "52159e623a734559a92667bdcb3b3e5d",
+        "description": "",
+        "data": [
+          {
+            "itemType": "Board",
+            "name": "波形变换电路",
+            "schematic": {
+              "itemType": "Schematic",
+              "uuid": "82a499c56bdf4f39ae4adc65596891a6",
+              "name": "波形产生与变换",
+              "page": [
+                {
+                  "itemType": "Schematic Page",
+                  "uuid": "1a9f744ca59348a3bb31b1ffbdf8c491",
+                  "name": "P1",
+                  "parentSchematicUuid": "82a499c56bdf4f39ae4adc65596891a6",
+                  "showTitleBlock": true,
+                  "titleBlockData": {
+                    "Symbol": {
+                      "showTitle": false,
+                      "showValue": false,
+                      "value": "Sheet-Symbol_A3_5"
+                    },
+                    "Company": {
+                      "showTitle": false,
+                      "showValue": true,
+                      "value": "嘉立创EDA"
+                    },
+                    "Drawed": {
+                      "showTitle": false,
+                      "showValue": true,
+                      "value": "嘉立创EDA"
+                    },
+                    "Reviewed": {
+                      "showTitle": false,
+                      "showValue": true,
+                      "value": "嘉立创EDA"
+                    },
+                    "Version": {
+                      "showTitle": false,
+                      "showValue": true,
+                      "value": "V0.1"
+                    },
+                    "Page Size": {
+                      "showTitle": false,
+                      "showValue": true,
+                      "value": "A3"
+                    },
+                    "@Project Name": {
+                      "showTitle": false,
+                      "showValue": true,
+                      "value": "bootstrap"
+                    },
+                    "Part Number": {
+                      "showTitle": false,
+                      "showValue": true,
+                      "value": "JLCPCB-001"
+                    },
+                    "@Page Count": {
+                      "showTitle": false,
+                      "showValue": true,
+                      "value": 1
+                    },
+                    "@Update Date": {
+                      "showTitle": false,
+                      "showValue": true,
+                      "value": "2024-05-16"
+                    },
+                    "@Create Date": {
+                      "showTitle": false,
+                      "showValue": true,
+                      "value": "2024-05-15"
+                    },
+                    "@Schematic Name": {
+                      "showTitle": false,
+                      "showValue": true,
+                      "value": "波形产生与变换"
+                    },
+                    "@Page No": {
+                      "showTitle": false,
+                      "showValue": true,
+                      "value": 1
+                    },
+                    "@Page Name": {
+                      "showTitle": false,
+                      "showValue": true,
+                      "value": "P1"
+                    },
+                    "Footprint": {
+                      "showTitle": false,
+                      "showValue": false,
+                      "value": ""
+                    },
+                    "Convert to PCB": {
+                      "showTitle": false,
+                      "showValue": false,
+                      "value": "yes"
+                    },
+                    "Add into BOM": {
+                      "showTitle": false,
+                      "showValue": false,
+                      "value": "yes"
+                    },
+                    "Device": {
+                      "showTitle": false,
+                      "showValue": false,
+                      "value": "Sheet-Symbol_A3_1"
+                    },
+                    "Description": {
+                      "showTitle": null,
+                      "showValue": null,
+                      "value": ""
+                    },
+                    "Name": {
+                      "showTitle": null,
+                      "showValue": null,
+                      "value": ""
+                    },
+                    "ID": {}
+                  }
+                }
+              ],
+              "parentProjectUuid": "5cf7ef8ed8124c95663731709107cfa82bdb8f1e315d6c8ab3c9b0d7a93036a4",
+              "parentBoardName": "波形变换电路"
+            },
+            "pcb": {
+              "itemType": "PCB",
+              "name": "PCB",
+              "uuid": "b2f4d387989c4c63ac68533b05f0eee3",
+              "parentBoardName": "波形变换电路",
+              "parentProjectUuid": "5cf7ef8ed8124c95663731709107cfa82bdb8f1e315d6c8ab3c9b0d7a93036a4"
+            },
+            "parentProjectUuid": "5cf7ef8ed8124c95663731709107cfa82bdb8f1e315d6c8ab3c9b0d7a93036a4"
+          },
+          {
+            "itemType": "PCB",
+            "name": "PCB1",
+            "uuid": "4f0125825fbda11e",
+            "parentBoardName": "",
+            "parentProjectUuid": "5cf7ef8ed8124c95663731709107cfa82bdb8f1e315d6c8ab3c9b0d7a93036a4"
+          }
+        ]
+      }
+    },
+    "logs": [],
+    "durationMs": 5994
+  },
+  "stderr": "",
+  "exitCode": 0
+}

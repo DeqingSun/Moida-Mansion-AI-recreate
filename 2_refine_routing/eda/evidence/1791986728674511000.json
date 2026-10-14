@@ -1,0 +1,22 @@
+{
+  "arguments": [
+    "open",
+    "--path",
+    "/Users/deqinguser/Documents/GitHub/Moida-Mansion-AI-recreate/2_refine_routing/eda/Moida-EDA-template/Moida-EDA-template.eprj3",
+    "--headless",
+    "true"
+  ],
+  "response": {
+    "ok": true,
+    "value": {
+      "sessionId": "ca77e935-155d-44d9-8546-96ed62f2a4c6",
+      "renderId": 10,
+      "path": "/Users/deqinguser/Documents/GitHub/Moida-Mansion-AI-recreate/2_refine_routing/eda/Moida-EDA-template/Moida-EDA-template.eprj3",
+      "headless": true
+    },
+    "logs": [],
+    "durationMs": 3748
+  },
+  "stderr": "",
+  "exitCode": 0
+}

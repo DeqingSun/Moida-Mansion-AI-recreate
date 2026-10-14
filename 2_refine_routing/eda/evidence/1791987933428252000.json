@@ -1,0 +1,19 @@
+{
+  "arguments": [
+    "invoke",
+    "--session",
+    "c291413e-ffb4-4ff3-8eaa-671fc5729372",
+    "--code",
+    "return 1;",
+    "--timeout",
+    "2000"
+  ],
+  "response": {
+    "ok": true,
+    "value": 1,
+    "logs": [],
+    "durationMs": 2
+  },
+  "stderr": "",
+  "exitCode": 0
+}

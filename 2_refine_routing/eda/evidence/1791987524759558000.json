@@ -1,0 +1,20 @@
+{
+  "arguments": [
+    "open",
+    "--path",
+    "/Users/deqinguser/Documents/GitHub/Moida-Mansion-AI-recreate/2_refine_routing/eda/exports/Moida-LCD-20261014-101842-4b1336/Moida-LCD-20261014-101842-4b1336.eprj3",
+    "--editor",
+    "pcb",
+    "--visible",
+    "true"
+  ],
+  "response": {
+    "ok": false,
+    "error": {
+      "code": "SESSION_LIMIT_EXCEEDED",
+      "message": "too many live sessions (max 8)"
+    }
+  },
+  "stderr": "SESSION_LIMIT_EXCEEDED: too many live sessions (max 8)\n",
+  "exitCode": 3
+}

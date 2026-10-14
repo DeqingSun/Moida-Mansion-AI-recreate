@@ -1,0 +1,10 @@
+{
+  "arguments": [
+    "doc",
+    "api",
+    "--help"
+  ],
+  "response": null,
+  "stderr": "",
+  "exitCode": 0
+}

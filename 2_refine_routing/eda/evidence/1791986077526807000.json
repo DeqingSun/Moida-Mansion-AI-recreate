@@ -1,0 +1,19 @@
+{
+  "arguments": [
+    "invoke",
+    "--session",
+    "1ce7f189-1cc2-4ee3-8447-0b074660644c",
+    "--ext-uuid",
+    "eda",
+    "--code",
+    "const id=await eda.dmt_Pcb.createPcb();await eda.dmt_EditorControl.openDocument(id);return {id,project:await eda.dmt_Project.getCurrentProjectInfo()};"
+  ],
+  "response": {
+    "ok": true,
+    "value": {},
+    "logs": [],
+    "durationMs": 12
+  },
+  "stderr": "",
+  "exitCode": 0
+}

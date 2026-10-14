@@ -1,0 +1,21 @@
+{
+  "arguments": [
+    "session",
+    "close",
+    "--session",
+    "93f10468-53a0-45cd-9910-78ecad648bac",
+    "--destroy"
+  ],
+  "response": {
+    "ok": true,
+    "value": {
+      "sessionId": "93f10468-53a0-45cd-9910-78ecad648bac",
+      "status": "closed",
+      "headless": true
+    },
+    "logs": [],
+    "durationMs": 7
+  },
+  "stderr": "",
+  "exitCode": 0
+}
