@@ -16,7 +16,7 @@ class StableExchange(unittest.TestCase):
                 self.assertFalse(loaded['savedLive'])
                 self.assertTrue(Path(loaded['backup']).exists())
                 previous=(folder/'pcb/LCD.epcb2').read_bytes()
-                invalid=json.loads(json.dumps(project));invalid['assignments']['C00S01']['top']=''
+                invalid=json.loads(json.dumps(project));invalid['traces'][0]['widthMm']=-1
                 with self.assertRaises(RuntimeError):server.exchange('export',{'project':invalid})
                 self.assertEqual((folder/'pcb/LCD.epcb2').read_bytes(),previous)
                 project['traces'][0]['widthMm']=.12

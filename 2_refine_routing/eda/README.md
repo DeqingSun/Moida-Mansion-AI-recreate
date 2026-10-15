@@ -117,3 +117,9 @@ Exports set trace-to-via clearance to **0.10 mm** and default via diameter/hole 
 All via-to-object and drill-to-object clearance pairs are **0.10 mm** on export, including via-to-via, via-to-drill and drill-to-drill. Other clearance pairs retain their existing rules.
 
 Exported segment components and their top/bottom polygon pads are locked to prevent accidental movement in EDA. Traces remain unlocked for routing adjustments.
+
+## Persistent HTTP API
+
+Starting `python3 2_refine_routing/eda/server.py` now starts one authenticated EDA MCP HTTP process bound to `127.0.0.1:3030`, discovers its commands, and opens/reuses the permanent PCB. All bridge commands use this process over HTTP; there is no per-request CLI launch. `MOIDA_EDA_API_PORT` overrides 3030; `MOIDA_PORT` still controls the webpage port (8766). An occupied API port fails startup rather than attaching to an unknown service. The random token stays in the Python process and is not sent to the webpage or written to the log. Logs are in ignored `eda/evidence/http-api.log`.
+
+Ctrl+C or SIGTERM stops the bridge-owned HTTP process. Failed commands are not automatically retried. Restart the bridge if its API process stops. Standalone `cli.py` retains direct CLI operation for diagnostics. Send to EDA still closes/reopens the project after rewriting its files; HTTP transport does not make the live editor reload disk changes. Import saves the live document through HTTP and then reads traces from disk.

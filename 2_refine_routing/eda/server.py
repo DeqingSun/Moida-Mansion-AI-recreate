@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Loopback-only webpage / installed 嘉立创EDA bridge. No external packages."""
-import json, os, shutil, subprocess, threading, time, uuid, tempfile, hashlib
+import json, os, shutil, subprocess, threading, time, uuid, tempfile, hashlib, signal
 from pathlib import Path
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+import cli
 from cli import call
+from http_api import EdaHttpApi
 ROOT=Path(__file__).resolve().parent
 REPO=ROOT.parent.parent
 PORT=int(os.environ.get('MOIDA_PORT','8766'))
@@ -27,7 +29,7 @@ def wait_project(session):
     # too early can leave the native editor waiting indefinitely.
     for attempt in range(30):
         info=invoke(session,'return await eda.dmt_Project.getCurrentProjectInfo();')
-        if isinstance(info,dict) and info.get('data'):return
+        if isinstance(info,dict) and (info.get('data') or info.get('uuid')):return
         time.sleep(1)
     raise RuntimeError('EDA project has not finished loading. Keep its window open and try again.')
 
@@ -128,6 +130,22 @@ class Handler(SimpleHTTPRequestHandler):
             body=json.loads(self.rfile.read(length));result=exchange(self.path.rsplit('/',1)[1],body);self.send_json(200,result)
         except Exception as e:self.send_json(400,{'error':str(e)[:3000]})
         finally:LOCK.release()
-if __name__=='__main__':
-    print(f'Moida EDA bridge: http://127.0.0.1:{PORT}/2_refine_routing/index.html',flush=True)
-    ThreadingHTTPServer(('127.0.0.1',PORT),Handler).serve_forever()
+def main():
+    # Bind the webpage first: a duplicate bridge must not launch another API.
+    httpd=ThreadingHTTPServer(('127.0.0.1',PORT),Handler)
+    api=EdaHttpApi(cli.EXE,ROOT)
+    def stop_signal(signum,frame):raise KeyboardInterrupt
+    signal.signal(signal.SIGTERM,stop_signal)
+    try:
+        api.start();cli.HTTP_API=api
+        print(f'EDA HTTP API ready on 127.0.0.1:{api.port}',flush=True)
+        if PROJECT_FILE.exists():
+            opened=open_project()
+            print('EDA project ready: '+opened['path'],flush=True)
+        print(f'Moida EDA bridge: http://127.0.0.1:{PORT}/2_refine_routing/index.html',flush=True)
+        httpd.serve_forever()
+    except KeyboardInterrupt:pass
+    finally:
+        httpd.server_close();cli.HTTP_API=None;api.stop()
+
+if __name__=='__main__':main()

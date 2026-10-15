@@ -5,7 +5,10 @@ from pathlib import Path
 EXE='/Applications/嘉立创EDA(专业版).app/Contents/MacOS/LCEDA-Pro'
 ROOT=Path(__file__).resolve().parent
 
+HTTP_API=None
+
 def call(*args,timeout=180):
+    if HTTP_API is not None:return HTTP_API.call(*args,timeout=timeout)
     result=subprocess.run([EXE,*args],capture_output=True,text=True,timeout=timeout)
     response=None
     for line in result.stdout.splitlines():
