@@ -1,3 +1,6 @@
 eda/__pycache__/
 eda/sessions.json
 eda/exports/Moida-LCD-*/
+eda/backups/
+eda/.prepare-*/
+eda/evidence/
