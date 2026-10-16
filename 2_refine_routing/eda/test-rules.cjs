@@ -63,3 +63,12 @@ assert(rows.filter(r=>r.head.type==='COMPONENT').every(r=>r.body.locked===true))
 assert(rows.filter(r=>r.head.type==='PAD'&&r.body.defaultPad.padType==='POLYGON').every(r=>r.body.locked===true));
 assert(rows.filter(r=>r.head.type==='LINE').every(r=>r.body.locked===false));
 console.log('PASS: exported segment components and electrode pads locked; traces editable');
+
+const template=C.parse(fs.readFileSync(path.join(__dirname,'blank.epcb2'),'utf8'));
+for(const r of rows.filter(r=>r.head.type==='PRIMITIVE')){
+ const original=template.find(t=>t.head.type==='PRIMITIVE'&&t.head.id===r.head.id);
+ assert.equal(r.body.display,original.body.display);
+ assert.equal(r.body.transparency,original.body.transparency);
+ if(Object.hasOwn(r.body,'pick'))assert.equal(r.body.pick,['TRACK','UNLOCKED'].includes(JSON.parse(r.head.id)[1]));
+}
+console.log('PASS: only traces selectable, default visibility/transparency preserved');

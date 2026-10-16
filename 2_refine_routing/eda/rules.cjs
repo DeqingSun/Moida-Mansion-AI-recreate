@@ -3,6 +3,8 @@ const LIMITS={traceWidthMm:.12,traceSpacingMm:.12,segmentTraceSpacingMm:.12,cros
 function applyRules(records){
  for(const r of records){
   const b=r.body;
+  // Selection filtering is independent of visibility. UNLOCKED is a state gate.
+  if(r.head.type==='PRIMITIVE'&&Object.hasOwn(b,'pick')){const kind=JSON.parse(r.head.id)[1];b.pick=kind==='TRACK'||kind==='UNLOCKED';}
   if(r.head.type==='CANVAS')b.unit='mm';
   if(r.head.type==='PREFERENCE'){b.startTrackWidthFollowLast=false;b.lastTrackWidth=LIMITS.traceWidthMm/.0254;b.startViaSizeFollowLast=false;b.lastViaDiameter=.12/.0254;b.lastViaInnerDiameter=.06/.0254;}
   if(r.head.type!=='RULE')continue;
