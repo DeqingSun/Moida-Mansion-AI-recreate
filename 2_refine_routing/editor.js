@@ -173,3 +173,5 @@ $('#quickSegmentSearch').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();fi
 for(const id of ['topNet','bottomNet'])$('#'+id).readOnly=true;
 for(const id of ['reassignNets','renameNet','applyTop','applyBottom','applyPair','assignActive']){$('#'+id).disabled=true;$('#'+id).title='Segment nets are frozen from Step 1 finished routing';}
 $('#reassignResult').textContent='Segment nets are locked to Step 1 finished routing. Touching traces never reassign them.';
+
+$('#exportDXF').onclick=()=>{try{const layers=[['dxfTop','TOP'],['dxfBottom','BOTTOM'],['dxfSegment','SEGMENT']].filter(([id])=>$('#'+id).checked).map(([,name])=>name);download(filename()+'.v2.dxf',RouterDXF.exportDXF(project,D,layers),'application/dxf');toast('DXF exported: '+layers.join(', ')+' · mm, registered front view.')}catch(e){toast('DXF export failed: '+e.message,true)}};

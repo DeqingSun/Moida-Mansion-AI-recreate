@@ -166,3 +166,26 @@ Statistics now distinguish unique assigned connector crosses (out of 48×16 = 76
 ### Finetune trace points
 
 Choose **Finetune** (**F**), click a trace on the active layer, then drag one of its endpoint or bend handles. The Snap setting applies to pads, other vertices and the grid; hold Alt/Option during the drag for free movement. The drag is previewed until release and saved as one undo step. Escape cancels the drag; right-click cancels and deselects. Net names and trace width are preserved. Only that trace's selected point moves, including at a shared junction; checks rerun after release to reveal disconnections, shorts or unwanted overlaps. Save JSON preserves edited coordinates.
+
+## DXF for factory preview
+
+In **Export conductors**, select any combination of **TOP**, **BOTTOM**, and
+**SEGMENT (edited)**, then click **Export DXF**. The download contains those
+AutoCAD layers in one file: red top, blue bottom, green segments.
+
+TOP and BOTTOM contain assigned electrodes, traces at their actual widths, and
+connector pads, merged into continuous conductor regions. SEGMENT contains the
+current edited islands, including slices, movements, and vertex edits, without
+traces or pads. The export uses current webpage data; import recent EDA routing
+first if needed.
+
+Coordinates are 1:1 millimetres with the screen's upper-left corner at (0,0),
+positive X right and negative Y down. Both electrode layers share the same front
+view; BOTTOM is not mirrored. Closed polylines provide editable boundaries and
+solid HATCH entities provide previews, with interior holes preserved. Toggle
+layers in AutoCAD to compare them. This export does not add fabrication margins,
+registration marks, or a glass outline.
+
+Validation: `node 2_refine_routing/eda/test-dxf.cjs` exercises all seven nonempty
+layer combinations. Independent ezdxf audits and filled-area comparisons also
+passed for each combination.
