@@ -63,15 +63,20 @@ module.exports.importProject=importProject;
 function importTraces(folder){
  const map=JSON.parse(fs.readFileSync(path.join(folder,'moida-map.json'),'utf8'));
  const records=parse(fs.readFileSync(path.join(folder,'pcb/LCD.epcb2'),'utf8'));
- let board=false;const traces=[];
+ let board=false;const traces=[],arcs=[];
  for(const r of records){if(r.head.type==='DOCHEAD'){board=r.body.uuid===map.boardId;continue}if(!board)continue;
-  const z=r.body;if(r.head.type==='ARC'&&[1,2].includes(z.layerId))throw Error('Arc traces are unsupported; convert them to straight traces before import.');
+  const z=r.body;if(r.head.type==='ARC'&&[1,2].includes(z.layerId)){
+   const mm=v=>Number.isFinite(v)?(v*.0254).toFixed(4):'?';
+   arcs.push(`${z.layerId===1?'Top':'Bottom'} · net ${z.netName||'(unassigned)'} · ID ${r.head.id}: start X=${mm(z.startX)}, Y=${mm(z.startY)}; end X=${mm(z.endX)}, Y=${mm(z.endY)} mm`);
+   continue;
+  }
   if(r.head.type!=='LINE'||![1,2].includes(z.layerId))continue;
   if(z.startX===z.endX&&z.startY===z.endY)continue;
   traces.push({id:'eda-'+r.head.id,layer:z.layerId===1?'top':'bottom',net:z.netName,widthMm:z.width*.0254,points:[[z.startX/map.scale,-z.startY/map.scale],[z.endX/map.scale,-z.endY/map.scale]]});
  }
  if(!records.some(r=>r.head.type==='DOCHEAD'&&r.body.uuid===map.boardId))throw Error('Mapped PCB document missing.');
- const p=P.clone(map.project);delete p.edaGeometry;p.traces=traces;
- return {project:P.validate(p,BASE),summary:{traceSegments:traces.length}};
+ if(arcs.length)throw Error(`Arc traces are unsupported (${arcs.length}). Convert these to straight traces before import. EDA coordinates in mm (native origin, Y sign preserved):\n${arcs.join('\n')}`);
+ const p=P.clone(map.project);delete p.edaGeometry;p.traces=require('./join-traces.cjs')(traces,p.settings.widthMm);
+ return {project:P.validate(p,BASE),summary:{traceSegments:traces.length,traceWires:p.traces.length}};
 }
 module.exports.importTraces=importTraces;

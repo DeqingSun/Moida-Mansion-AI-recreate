@@ -4,9 +4,9 @@ function applyRules(records){
  for(const r of records){
   const b=r.body;
   // Selection filtering is independent of visibility. UNLOCKED is a state gate.
-  if(r.head.type==='PRIMITIVE'&&Object.hasOwn(b,'pick')){const kind=JSON.parse(r.head.id)[1];b.pick=kind==='TRACK'||kind==='UNLOCKED';}
+  if(r.head.type==='PRIMITIVE'&&Object.hasOwn(b,'pick')){const kind=JSON.parse(r.head.id)[1];b.pick=kind==='TRACK'||kind==='VIA'||kind==='UNLOCKED';}
   if(r.head.type==='CANVAS')b.unit='mm';
-  if(r.head.type==='PREFERENCE'){b.startTrackWidthFollowLast=false;b.lastTrackWidth=LIMITS.traceWidthMm/.0254;b.startViaSizeFollowLast=false;b.lastViaDiameter=.12/.0254;b.lastViaInnerDiameter=.06/.0254;}
+  if(r.head.type==='PREFERENCE'){b.routingCorner='L';b.startTrackWidthFollowLast=false;b.lastTrackWidth=LIMITS.traceWidthMm/.0254;b.startViaSizeFollowLast=false;b.lastViaDiameter=.12/.0254;b.lastViaInnerDiameter=.06/.0254;}
   if(r.head.type!=='RULE')continue;
   const key=JSON.parse(r.head.id),ctx=b.ruleContext;
   if(!ctx)continue;
@@ -26,6 +26,8 @@ function applyRules(records){
     // Native v4 matrix order: Track, SMD Pad, TH Pad, SMD test point,
     // TH test point, Via, Fill Region, Copper/Plane Zone, ...
     row.content[0][0]=LIMITS.traceSpacingMm/.0254;
+    // SMD/SMD, through-hole/SMD and through-hole/through-hole pad pairs.
+    for(const [i,j] of [[1,1],[2,1],[2,2]])row.content[i][j]=.1/.0254;
     // Temporary single-layer test points used as manual LCD routing obstacles.
     if(row.content[3])row.content[3][0]=.1/.0254;
     // Lower-triangular matrix: update both each object's row and its column.
@@ -41,7 +43,7 @@ module.exports={LIMITS,applyRules};
 // Append settings updates to a native journal; never rewrite copper primitives.
 function updateFile(file){
  const fs=require('fs'),{parse}=require('./convert.cjs'),text=fs.readFileSync(file,'utf8'),records=parse(text);
- const before=new Map(records.filter(r=>['CANVAS','PREFERENCE','RULE'].includes(r.head.type)).map(r=>[r.head.type+':'+r.head.id,JSON.stringify(r.body)]));
+ const before=new Map(records.filter(r=>['CANVAS','PREFERENCE','RULE','PRIMITIVE'].includes(r.head.type)).map(r=>[r.head.type+':'+r.head.id,JSON.stringify(r.body)]));
  applyRules(records);
  let ticket=Math.max(...text.split('\n').filter(l=>l.includes('||')).map(l=>JSON.parse(l.slice(0,l.indexOf('||'))).ticket||0));
  const changed=records.filter(r=>before.has(r.head.type+':'+r.head.id)&&before.get(r.head.type+':'+r.head.id)!==JSON.stringify(r.body));

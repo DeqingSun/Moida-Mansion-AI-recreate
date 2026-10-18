@@ -1,0 +1,23 @@
+const assert=require('node:assert/strict'),P=require('../project.js'),C=require('./convert.cjs');
+const raw=require('../Moida-routing.moida-routing_finished.json');
+const index=raw.cuts.findIndex(c=>c.target==='C01S234');
+assert(index>=0,'C01S234 fixture slice');
+const p=P.clone(raw),layout=C.layout(p),pieces=layout.segments.filter(s=>s.cutId.startsWith('C01S234_sub'));
+assert(pieces.length);
+p.localGeometry??={};
+for(const s of pieces)p.localGeometry[s.cutId]=P.clone(s.islands);
+const original=JSON.stringify(p);
+const restored=P.eraseSlice(p,C.BASE,index);
+assert(restored.removed>0);
+assert.equal(JSON.stringify(p),original,'erase preserves original for undo');
+assert(!Object.keys(restored.project.localGeometry).some(k=>k.startsWith('C01S234_sub')));
+P.layoutData(C.BASE,restored.project.cuts,restored.project.edaGeometry,restored.project.localGeometry);
+const key=pieces[0].cutId;
+p.localGeometry[key][0].rings[0][0][0]+=.00001;
+assert.doesNotThrow(()=>P.eraseSlice(p,C.BASE,index),'roundoff does not block erase');
+p.localGeometry[key][0].rings[0][0][0]+=1;
+assert.throws(()=>P.eraseSlice(p,C.BASE,index),/manually edited/,'real vertex edit stays protected');
+const moved=P.clone(raw);moved.localGeometry={};
+for(const s of pieces){moved.localGeometry[s.cutId]=P.clone(s.islands);for(const is of moved.localGeometry[s.cutId])for(const r of is.rings)for(const q of r)q[0]+=5;}
+assert.throws(()=>P.eraseSlice(moved,C.BASE,index),/manually edited/,'real movement stays protected');
+console.log('C01S234 restored-slice regression tests passed');

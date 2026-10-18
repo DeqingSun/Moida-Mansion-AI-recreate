@@ -9,12 +9,27 @@ const PORTS=ports(),PORT_BY_ID=new Map(PORTS.map(p=>[p.id,p]));
 function freezeAssignments(project,data){if(data.sourceHash!==FROZEN.sourceHash)return project;const nets=FROZEN.nets;project.assignments=Object.fromEntries(data.segments.map(s=>{let key=s.cutId||s.id;while(!nets[key]&&key.includes('_sub'))key=key.slice(0,key.lastIndexOf('_sub'));let a=nets[key];if(!a){const descendants=Object.entries(nets).filter(([k])=>k.startsWith((s.cutId||s.id)+'_sub')).map(([,v])=>v);if(descendants.length&&descendants.every(v=>v.top===descendants[0].top&&v.bottom===descendants[0].bottom))a=descendants[0];}if(!a)a={top:'',bottom:''};return [s.id,{...a}]}));return project;}
 function empty(data){return {format:FORMAT,version:VERSION,sourceHash:data.sourceHash,name:'Moida routing',settings:{widthMm:150,padSizeMm:1.8,clearanceMm:.1,gridMm:.1},assignments:Object.fromEntries(data.segments.map(s=>[s.id,{top:'',bottom:''}])),pads:Object.fromEntries(PORTS.map(p=>[p.id,p.id])),traces:[]}}
 function islandData(data){return {...data,segments:data.segments.flatMap(s=>s.islands.length===1?[{...s,parentId:s.parentId||s.id}]:s.islands.map((i,index)=>({...s,id:s.id+'_'+index,parentId:s.id,islandIndex:index,bounds:i.bounds,islands:[i],paths:[i.rings.map(r=>'M '+r.map(p=>p.join(' ')).join(' L ')+' Z').join(' ')]})))} }
-function layoutData(data,cuts=[],geometry={},localGeometry={}){
+function sameIslandGeometry(a,b,epsilon){
+ return a.length===b.length&&a.every((is,i)=>is.rings.length===b[i].rings.length&&is.rings.every((r,j)=>{
+ const other=b[i].rings[j];if(r.length!==other.length)return false;
+ const near=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1])<=epsilon;
+ return other.some((q,start)=>near(r[0],q)&&[1,-1].some(dir=>r.every((p,k)=>near(p,other[(start+dir*k+r.length)%r.length]))));
+ }));
+}
+function pruneRestoredGeometry(project,data){
+ const redundant=new Set(),epsilon=COMPARISON_TOLERANCE_MM/(project.settings.widthMm/3000);
+ layoutData(data,project.cuts,project.edaGeometry,project.localGeometry,(id,before,after)=>{
+ if(Object.hasOwn(project.localGeometry||{},id)&&!Object.hasOwn(project.edaGeometry||{},id)&&sameIslandGeometry(before,after,epsilon))redundant.add(id);
+ });
+ for(const id of redundant)delete project.localGeometry[id];
+ return project;
+}
+function layoutData(data,cuts=[],geometry={},localGeometry={},inspectOverride=null){
  geometry={...geometry,...localGeometry};
  if(!geometry||typeof geometry!=='object'||Array.isArray(geometry))throw Error('Invalid EDA geometry');
  const used=new Set(),g=typeof module==='object'&&module.exports?require('./geometry.js'):globalThis.RouterGeometry;
  function apply(){result.segments=result.segments.map(s=>{if(used.has(s.id)||!Object.hasOwn(geometry,s.id))return s;const islands=geometry[s.id];if(!Array.isArray(islands)||!islands.length||islands.length>1000)throw Error('Invalid island geometry: '+s.id);let count=0;for(const i of islands){if(!Array.isArray(i.rings)||!i.rings.length||!Array.isArray(i.point)||i.point.length!==2||i.point.some(v=>!Number.isFinite(v)))throw Error('Invalid island geometry');for(const ring of i.rings)if(!Array.isArray(ring)||ring.length<3||(count+=ring.length)>100000||ring.some(p=>!Array.isArray(p)||p.length!==2||p.some(v=>!Number.isFinite(v)||Math.abs(v)>100000)))throw Error('Invalid island ring');}
- used.add(s.id);const clean=islands.map(i=>({...i,bounds:g.bounds(g.island(i))}));return {...s,islands:clean,bounds:g.bounds(clean.flatMap(g.island)),paths:clean.map(i=>g.svgPath(g.island(i)))};});}
+ if(inspectOverride)inspectOverride(s.id,s.islands,islands);used.add(s.id);const clean=islands.map(i=>({...i,bounds:g.bounds(g.island(i))}));return {...s,islands:clean,bounds:g.bounds(clean.flatMap(g.island)),paths:clean.map(i=>g.svgPath(g.island(i)))};});}
 
  if(!Array.isArray(cuts)||cuts.length>2000)throw Error('Invalid island cuts.');
  let result={...data,segments:data.segments.slice()};
@@ -33,6 +48,7 @@ function layoutData(data,cuts=[],geometry={},localGeometry={}){
  return result;
 }
 function eraseSlice(project,data,index){
+ project=pruneRestoredGeometry(clone(project),data);
  const cut=project.cuts?.[index];if(!cut)throw Error('Slice not found.');
  if(Object.keys(project.localGeometry||{}).some(k=>k.startsWith(cut.target+'_sub')))throw Error('This slice has manually edited pieces. Undo those shape edits before erasing the slice.');
  const before=layoutData(data,project.cuts,project.edaGeometry,project.localGeometry),candidate=clone(project);
@@ -51,5 +67,5 @@ function nets(p,layer){const n=new Set();for(const a of Object.values(p.assignme
 // A connected island projects to one interval on either axis. Count each island once,
 // including boundary touches, regardless of holes or its electrical assignments.
 function axisIslands(data,point){const vertical=[],horizontal=[];for(const s of data.segments)for(let i=0;i<s.islands.length;i++){const b=s.islands[i].bounds,id=s.islands.length===1?s.id:s.id+'_'+i;if(point[0]>=b[0]&&point[0]<=b[2])vertical.push(id);if(point[1]>=b[1]&&point[1]<=b[3])horizontal.push(id)}return {vertical,horizontal}}
-return {freezeAssignments,COMPARISON_TOLERANCE_MM,MANUFACTURING,eraseSlice,layoutData,axisIslands,FORMAT,VERSION,LAYERS,PORTS,PORT_BY_ID,empty,islandData,renameNet,clone,validNet,validate,nets};
+return {pruneRestoredGeometry,freezeAssignments,COMPARISON_TOLERANCE_MM,MANUFACTURING,eraseSlice,layoutData,axisIslands,FORMAT,VERSION,LAYERS,PORTS,PORT_BY_ID,empty,islandData,renameNet,clone,validNet,validate,nets};
 });

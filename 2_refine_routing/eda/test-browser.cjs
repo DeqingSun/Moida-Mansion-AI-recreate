@@ -8,15 +8,15 @@ const assert=require('node:assert/strict'),c=require('./convert.cjs'),path=requi
  const initial=await p.evaluate(()=>RouterApp.getProject());
  // Import works on a fresh browser without an export or local session token.
  await p.locator('#edaImport').click();await p.waitForFunction(()=>document.querySelector('#edaStatus').textContent.startsWith('Imported '),{},{timeout:90000});
- assert.equal(await p.evaluate(()=>RouterApp.getProject().traces.length),expected.summary.traceSegments);
+ assert.equal(await p.evaluate(()=>RouterApp.getProject().traces.length),expected.summary.traceWires);
  assert.deepEqual(await p.evaluate(()=>RouterApp.getProject().assignments),expected.project.assignments);
  await p.locator('#undo').click();assert.deepEqual(await p.evaluate(()=>RouterApp.getProject()),initial);
- await p.locator('#redo').click();assert.equal(await p.evaluate(()=>RouterApp.getProject().traces.length),expected.summary.traceSegments);
+ await p.locator('#redo').click();assert.equal(await p.evaluate(()=>RouterApp.getProject().traces.length),expected.summary.traceWires);
  // Opening is a separate non-exporting action, always targeting the Git file.
  await p.locator('#edaOpen').click();await p.waitForFunction(()=>document.querySelector('#edaStatus').textContent.startsWith('Opened '),{},{timeout:90000});
  assert.match(await p.locator('#edaStatus').innerText(),/exports\/Moida-LCD\/Moida-LCD.eprj3/);
  await p.locator('#edaImport').click();await p.waitForFunction(()=>document.querySelector('#edaStatus').textContent.startsWith('Imported '),{},{timeout:90000});
- assert.equal(await p.evaluate(()=>RouterApp.getProject().traces.length),expected.summary.traceSegments);
+ assert.equal(await p.evaluate(()=>RouterApp.getProject().traces.length),expected.summary.traceWires);
  assert.match(await p.locator('#edaStatus').innerText(),/Saved the open EDA project/);
  assert.deepEqual(errors,[]);console.log('PASS: fresh-browser import without export, deleted wires preserved, undo/redo, open stable project, live save/import.');
 }finally{await b.close()}})().catch(e=>{console.error(e);process.exitCode=1});

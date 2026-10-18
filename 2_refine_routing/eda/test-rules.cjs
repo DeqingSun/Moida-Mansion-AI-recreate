@@ -69,6 +69,12 @@ for(const r of rows.filter(r=>r.head.type==='PRIMITIVE')){
  const original=template.find(t=>t.head.type==='PRIMITIVE'&&t.head.id===r.head.id);
  assert.equal(r.body.display,original.body.display);
  assert.equal(r.body.transparency,original.body.transparency);
- if(Object.hasOwn(r.body,'pick'))assert.equal(r.body.pick,['TRACK','UNLOCKED'].includes(JSON.parse(r.head.id)[1]));
+ if(Object.hasOwn(r.body,'pick'))assert.equal(r.body.pick,['TRACK','VIA','UNLOCKED'].includes(JSON.parse(r.head.id)[1]));
 }
-console.log('PASS: only traces selectable, default visibility/transparency preserved');
+console.log('PASS: only traces and vias selectable, default visibility/transparency preserved');
+
+assert.equal(pref.routingCorner,'L','free-angle straight-line routing');
+for(const r of rows.filter(r=>r.head.type==='RULE'&&JSON.parse(r.head.id)[1]==='SAFE'))
+ for(const row of r.body.ruleContext.safeSpacing)
+  for(const [i,j] of [[1,1],[2,1],[2,2]])assert(Math.abs(row.content[i][j]*.0254-.1)<1e-12);
+console.log('PASS: pad-to-pad 0.1 mm and free-angle straight routing');

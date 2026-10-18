@@ -125,3 +125,15 @@ Starting `python3 2_refine_routing/eda/server.py` now starts one authenticated E
 Ctrl+C or SIGTERM stops the bridge-owned HTTP process. Failed commands are not automatically retried. Restart the bridge if its API process stops. Standalone `cli.py` retains direct CLI operation for diagnostics. Send to EDA still closes/reopens the project after rewriting its files; HTTP transport does not make the live editor reload disk changes. Import saves the live document through HTTP and then reads traces from disk.
 
 Export selection filters enable only traces (with the unlocked-object gate enabled). Other object types cannot be selected; display/visibility and transparency remain at template defaults.
+
+### Continuous wires on import
+
+Import from EDA joins endpoint-connected LINE sections of the same layer, net,
+and width into editable polylines. Fine-tune a bend once to move both adjoining
+sections. Chains stop at branches and width transitions; closed loops are retained.
+Endpoint and width comparisons allow 0.0001 mm rounding tolerance. Interior
+crossings are not converted into bends. Re-import to apply this to previously
+imported traces; webpage shape edits remain preserved. Export still writes native
+EDA LINE sections, so the PCB format and routing workflow are unchanged.
+
+Regression check: `node 2_refine_routing/eda/test-join-traces.cjs`.
