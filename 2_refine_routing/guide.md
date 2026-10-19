@@ -189,3 +189,23 @@ registration marks, or a glass outline.
 Validation: `node 2_refine_routing/eda/test-dxf.cjs` exercises all seven nonempty
 layer combinations. Independent ezdxf audits and filled-area comparisons also
 passed for each combination.
+
+## Zebra-bar contacts
+
+The webpage starts the final contact layout on first refresh: left-to-right
+**16 COM (B-W001…016), two empty positions, 48 SEG (T-N001…048)**.
+The 66-position row has 2 mm pitch: 1 mm copper contact width and 1 mm edge gap.
+Contacts are 3 mm long. Its 131 mm outer span is centered on the display, with
+3 mm from the screen's lower edge to the contacts' upper edge. COM remains on
+the bottom electrode layer and SEG on the top electrode layer; both groups are
+physically below the screen. Existing traces stay fixed.
+
+Use **Move segment** in the top toolbar and drag any contact to move all 64
+contacts together, preserving their spacing and the two empty positions. Dragging
+an island still moves its original segment. Grid snapping applies;
+hold Alt for free movement. Hold Shift while dragging to lock X or Y based on
+the initial movement direction; release Shift to move freely again. Escape cancels. Undo/redo and saved JSON retain these
+positions. **Center zebra contacts** restores the regular row and is undoable.
+A legacy JSON retains its previous layout until this button is used (or the
+webpage is reopened). Existing net names and segment assignments are unchanged.
+The checker, SVG/DXF, and EDA export all use the moved rectangular contacts.

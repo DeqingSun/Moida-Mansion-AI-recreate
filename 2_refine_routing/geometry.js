@@ -12,7 +12,7 @@ function bounds(paths){let a=[Infinity,Infinity,-Infinity,-Infinity];for(const p
 function meets(a,b,margin=0){return a[0]<=b[2]+margin&&a[2]+margin>=b[0]&&a[1]<=b[3]+margin&&a[3]+margin>=b[1]}
 function offset(paths,d){if(!paths.length)return [];const co=new C.ClipperOffset(2,ARC);co.AddPaths(paths,C.JoinType.jtRound,C.EndType.etClosedPolygon);let out=[];co.Execute(out,d*SCALE);return out}
 function trace(t,widthMm){const co=new C.ClipperOffset(2,ARC),r=t.points.map(point);co.AddPath(r,C.JoinType.jtRound,C.EndType.etOpenRound);const out=[];co.Execute(out,t.widthMm/(widthMm/3000)*SCALE/2);return out}
-function pad(port,p){const h=p.settings.padSizeMm/(p.settings.widthMm/3000)/2;return [ring([[port.x-h,port.y-h],[port.x+h,port.y-h],[port.x+h,port.y+h],[port.x-h,port.y+h]])]}
+function pad(port,p){port=P.getPort(p,port.id)||port;const scale=p.settings.widthMm/3000,h=(port.widthMm??p.settings.padSizeMm)/scale/2,v=(port.heightMm??p.settings.padSizeMm)/scale/2;return [ring([[port.x-h,port.y-v],[port.x+h,port.y-v],[port.x+h,port.y+v],[port.x-h,port.y+v]])]}
 function svgPath(paths){return paths.map(r=>'M'+r.map(q=>`${q.X/SCALE},${q.Y/SCALE}`).join(' L')+' Z').join(' ')}
 function exPaths(ex){return [ex.outer,...ex.holes]}
 function contains(paths,p){let winding=0;for(const r of paths){let k=C.Clipper.PointInPolygon(point(p),r);if(k===-1)return true;if(k===1)winding+=C.Clipper.Orientation(r)?1:-1}return winding!==0}
@@ -55,7 +55,7 @@ function autoAssignTouched(project,data,changedTrace,options={}){
   if(old!==net){if(kind==='segments')project.assignments[id][layer]=net;else project.pads[id]=net;result[kind].push(id)}
  }
  for(const s of data.segments)assign(s.id,segment(s),'segments');
- for(const p of P.PORTS)if(p.layer===layer)assign(p.id,pad(p,project),'pads');
+ for(const p of P.getPorts(project))if(p.layer===layer)assign(p.id,pad(p,project),'pads');
  return result;
 }
 // A connection is geometric, not just an edge pad bearing the same name.
@@ -65,7 +65,7 @@ function addRoutedTrace(project,data,t){
  const touching=paths=>meets(sb,bounds(paths),.001)&&area(bool(offset(stroke,.001),paths,CT.ctIntersection))>EPS_AREA;
  const anchored=name=>{const n=before.get(name);if(!n)return false;const conductors=[...data.segments.filter(s=>project.assignments[s.id][t.layer]===name).flatMap(segment),...project.traces.filter(r=>r.layer===t.layer&&r.net===name).flatMap(r=>trace(r,project.settings.widthMm))];return conductors.length>0&&n.powered.length>0&&area(bool(conductors,n.powered,CT.ctIntersection))>EPS_AREA};
  const oldAnchored=new Map([...before.keys()].map(n=>[n,anchored(n)]));
- const pads=P.PORTS.filter(p=>p.layer===t.layer&&project.pads[p.id]&&touching(pad(p,project)));
+ const pads=P.getPorts(project).filter(p=>p.layer===t.layer&&project.pads[p.id]&&touching(pad(p,project)));
  const destinations=new Set(pads.map(p=>project.pads[p.id]));const adopted=[];let conflict=false;
  let target=source;
  if(destinations.size===1){const dest=[...destinations][0];if(dest!==source){if(oldAnchored.get(source))conflict=true;else target=dest}}
@@ -81,9 +81,9 @@ function addRoutedTrace(project,data,t){
 // Rebuild from geometry on each layer; old net labels never participate.
 function reassignFromConnectors(project,data){
  const result={connected:0,floating:0,conflicts:[]};
- project.pads=Object.fromEntries(P.PORTS.map(p=>[p.id,p.id]));
+ project.pads=Object.fromEntries(P.getPorts(project).map(p=>[p.id,p.id]));
  for(const layer of P.LAYERS){
- const features=[...P.PORTS.filter(p=>p.layer===layer).map(p=>({kind:'pad',id:p.id,paths:pad(p,project)})),...data.segments.map(s=>({kind:'island',id:s.id,paths:segment(s)})),...project.traces.filter(t=>t.layer===layer).map(t=>({kind:'trace',id:t.id,trace:t,paths:trace(t,project.settings.widthMm)}))];
+ const features=[...P.getPorts(project).filter(p=>p.layer===layer).map(p=>({kind:'pad',id:p.id,paths:pad(p,project)})),...data.segments.map(s=>({kind:'island',id:s.id,paths:segment(s)})),...project.traces.filter(t=>t.layer===layer).map(t=>({kind:'trace',id:t.id,trace:t,paths:trace(t,project.settings.widthMm)}))];
  const parent=features.map((_,i)=>i),root=i=>{while(parent[i]!==i){parent[i]=parent[parent[i]];i=parent[i]}return i};
  features.forEach((f,i)=>{f.index=i;f.bounds=bounds(f.paths)});
  const sorted=features.slice().sort((a,b)=>a.bounds[0]-b.bounds[0]);
@@ -98,12 +98,12 @@ function reassignFromConnectors(project,data){
  }return result;
 }
 
-function build(project,data){const netMap={top:new Map(),bottom:new Map()},byId=new Map(data.segments.map(s=>[s.id,s]));function add(layer,name,paths,feature){if(!name)return;let n=netMap[layer].get(name);if(!n){n={name,layer,raw:[],features:[],pads:[]};netMap[layer].set(name,n)}n.raw.push(...paths);n.features.push(feature);if(feature.type==='pad')n.pads.push(feature.id)}for(const s of data.segments)for(const layer of P.LAYERS){const n=project.assignments[s.id]?.[layer];if(n)add(layer,n,segment(s),{type:'segment',id:s.id})}for(const t of project.traces)add(t.layer,t.net,trace(t,project.settings.widthMm),{type:'trace',id:t.id});for(const [id,name]of Object.entries(project.pads)){const p=P.PORT_BY_ID.get(id);if(p)add(p.layer,name,pad(p,project),{type:'pad',id})}for(const layer of P.LAYERS)for(const n of netMap[layer].values()){const tree=bool(n.raw,[],CT.ctUnion,true);n.components=C.JS.PolyTreeToExPolygons(tree).map(e=>({paths:exPaths(e),bounds:bounds(exPaths(e)),pads:[]}));for(const id of n.pads){const pt=P.PORT_BY_ID.get(id);for(const comp of n.components)if(contains(comp.paths,[pt.x,pt.y]))comp.pads.push(id)}n.paths=n.components.flatMap(c=>c.paths);n.bounds=bounds(n.paths);n.powered=n.components.filter(c=>c.pads.length).flatMap(c=>c.paths)}return {netMap,byId}}
+function build(project,data){const netMap={top:new Map(),bottom:new Map()},byId=new Map(data.segments.map(s=>[s.id,s]));function add(layer,name,paths,feature){if(!name)return;let n=netMap[layer].get(name);if(!n){n={name,layer,raw:[],features:[],pads:[]};netMap[layer].set(name,n)}n.raw.push(...paths);n.features.push(feature);if(feature.type==='pad')n.pads.push(feature.id)}for(const s of data.segments)for(const layer of P.LAYERS){const n=project.assignments[s.id]?.[layer];if(n)add(layer,n,segment(s),{type:'segment',id:s.id})}for(const t of project.traces)add(t.layer,t.net,trace(t,project.settings.widthMm),{type:'trace',id:t.id});for(const [id,name]of Object.entries(project.pads)){const p=P.getPort(project,id);if(p)add(p.layer,name,pad(p,project),{type:'pad',id})}for(const layer of P.LAYERS)for(const n of netMap[layer].values()){const tree=bool(n.raw,[],CT.ctUnion,true);n.components=C.JS.PolyTreeToExPolygons(tree).map(e=>({paths:exPaths(e),bounds:bounds(exPaths(e)),pads:[]}));for(const id of n.pads){const pt=P.getPort(project,id);for(const comp of n.components)if(contains(comp.paths,[pt.x,pt.y]))comp.pads.push(id)}n.paths=n.components.flatMap(c=>c.paths);n.bounds=bounds(n.paths);n.powered=n.components.filter(c=>c.pads.length).flatMap(c=>c.paths)}return {netMap,byId}}
 function assignmentStats(project,data){
  let assignedIslands=0;const groups=new Map(),crosses=new Set(),pads={top:new Map(),bottom:new Map()};
- for(const port of P.PORTS){const net=project.pads[port.id];if(!net)continue;const ids=pads[port.layer].get(net)||[];ids.push(port.id);pads[port.layer].set(net,ids)}
+ for(const port of P.getPorts(project)){const net=project.pads[port.id];if(!net)continue;const ids=pads[port.layer].get(net)||[];ids.push(port.id);pads[port.layer].set(net,ids)}
  for(const s of data.segments){const a=project.assignments[s.id]||{},id=s.parentId||s.id,t=pads.top.get(a.top),b=pads.bottom.get(a.bottom),assigned=t?.length===1&&b?.length===1;groups.set(id,(groups.get(id)??true)&&assigned);if(assigned){assignedIslands++;crosses.add(t[0]+'|'+b[0])}}
- return {assigned:assignedIslands,assignedCrosses:crosses.size,totalCrosses:P.PORTS.filter(p=>p.layer==='top').length*P.PORTS.filter(p=>p.layer==='bottom').length,assignedOriginalSegments:[...groups.values()].filter(Boolean).length,totalOriginalSegments:groups.size};
+ return {assigned:assignedIslands,assignedCrosses:crosses.size,totalCrosses:P.getPorts(project).filter(p=>p.layer==='top').length*P.getPorts(project).filter(p=>p.layer==='bottom').length,assignedOriginalSegments:[...groups.values()].filter(Boolean).length,totalOriginalSegments:groups.size};
 }
 // Projected top/bottom trace clearance. Clip before buffering so conductors
 // entirely inside intended segment artwork cannot create false outside alarms.
