@@ -3,12 +3,12 @@
 <style>
 body{font:16px system-ui;background:#17191b;color:#eee;max-width:780px;margin:24px auto;padding:0 20px}h1{font-size:24px}p{color:#bcc3c5;line-height:1.5}button,select{font:inherit;padding:8px 14px}button{cursor:pointer}[hidden]{display:none!important}nav{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}#screen{background:#9caa81;border:10px solid #363b33;border-radius:8px}svg{display:block;width:100%;fill:#172419}svg [id^=shad_],svg [id^=unwired_]{display:none}#status{min-height:3em}a{color:#9bd2ef}
 </style>
-<h1>Native C mansion reveal</h1>
-<p>C now generates the mansion, puzzles, room types and decorations from a seed. Press any game button to reveal its entrance. After the reveal, use the exploration controls to walk through open passages. This diagnostic mode has no movement animation, searching, or encounters yet.</p>
-<nav><button id="reset">Start / Reset</button><button id="pause" disabled>Pause</button><label>Seed <input id="seed" value="1700000000000" inputmode="numeric" style="width:180px"></label><button id="new">New mansion</button><label><input id="sound" type="checkbox"> Sound</label></nav>
+<h1>Moida Mansion — native C</h1>
+<p>Use Left/Right to move, Stairs/Exit to change floors or leave, and Search to cycle objects. Press Search again before a search finishes to change targets. Any game button advances dialogue after its reading delay. Keyboard: ← / →, ↑ or Space for Stairs/Exit, Enter for Search.</p>
+<nav><button id="reset">Start / Reset</button><button id="pause" disabled>Pause</button><label>Seed <input id="seed" value="1700000000000" inputmode="numeric" style="width:180px"></label><button id="new">New mansion</button><label><input id="sound" type="checkbox"> Sound</label><label><input id="encounters" type="checkbox" checked> Monster encounters</label></nav>
 <p><a href="layout.html">New: explore native C-generated mansion layouts by seed</a></p>
 <div id="screen"></div>
-<nav><button class="game" data-button="2" disabled>← Left</button><button class="game" data-button="0" disabled>↑ Mode</button><button class="game" data-button="1" disabled>Enter / View</button><button class="game" data-button="3" disabled>Right →</button></nav>
-<nav id="explore" hidden><strong>Explore rooms (diagnostic)</strong><button data-direction="0">← West</button><button data-direction="1">East →</button><button data-direction="2">Upstairs ↑</button><button data-direction="3">Downstairs ↓</button></nav>
-<p id="walkStatus"></p><p id="generation"></p><p id="status">Loading artwork…</p>
+<nav><button class="game" data-button="2" disabled>← Left</button><button class="game" data-button="0" disabled>↑ Stairs / Exit</button><button class="game" data-button="1" disabled>Search</button><button class="game" data-button="3" disabled>Right →</button></nav>
+<details><summary>Diagnostic controls</summary><nav id="explore" hidden><strong>Explore rooms (diagnostic)</strong><button data-direction="0">← West</button><button data-direction="1">East →</button><button data-direction="2">Upstairs ↑</button><button data-direction="3">Downstairs ↓</button><button id="escape" hidden>Leave mansion</button><button id="searchNext">Search next object</button></nav>
+</details><p id="walkStatus"></p><p id="generation"></p><p id="status">Loading artwork…</p>
 <script src="live.js"></script></html>

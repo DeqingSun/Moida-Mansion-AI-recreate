@@ -23,6 +23,8 @@ void moida_melody_set(MoidaMelody *, const uint8_t *, size_t, int);
 void moida_melody_clear(MoidaMelody *);
 bool moida_melody_pop(MoidaMelody *, uint8_t *);
 double moida_note_hz(unsigned);
+/* 0 none; 1 left; 2 right; 3 up; 4 down; 5 search; 6 escape. */
+unsigned moida_control_action(uint8_t pressed,bool escape,bool up,bool down);
 bool moida_just_pressed(uint8_t current, uint8_t previous, unsigned button);
 typedef struct { int routine, step; } MoidaPosition;
 typedef struct {
@@ -42,6 +44,10 @@ bool moida_runner_push(MoidaRunner *, int routine);
 void moida_runner_queue(MoidaRunner *, int routine, int wait_first);
 void moida_runner_tick(MoidaRunner *, const MoidaRoutineEnv *);
 typedef struct { int count; uint16_t codes[13]; } MoidaText;
+void moida_erase_ghost(MoidaDisplay *,MoidaRandom *);
+void moida_theme_melody(MoidaMelody *);
+void moida_stat_text(MoidaDisplay *,unsigned label,unsigned value,unsigned value_strand);
+unsigned moida_strand_length(unsigned id);
 void moida_text_clear(MoidaText *);
 void moida_text_append(MoidaText *, unsigned strand, unsigned family, unsigned offset);
 void moida_text_center(MoidaText *);

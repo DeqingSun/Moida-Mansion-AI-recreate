@@ -131,3 +131,45 @@ void moida_erase_top(MoidaDisplay *d,unsigned percent) {
     if(moida_sprite_get(d,bit)&&sprite_center_y[bit]<=cutoff)moida_sprite_set(d,bit,false);
   }
 }
+/* Direction ordering follows the house: left, right, up, down. */
+void moida_erase_direction(MoidaDisplay *d,unsigned direction,unsigned percent) {
+  if(direction>3)return;
+  int32_t extent=direction<2?4414:3137,origin=direction<2?29:6;
+  int32_t cutoff=extent*(int32_t)percent/100+origin;
+  bool reverse=direction==1||direction==3;
+  if(reverse)cutoff=extent+origin-cutoff;
+  for(unsigned i=icon_offsets[351];i<icon_offsets[352];i++) {
+    unsigned bit=icon_sprites[i];int32_t center=direction<2?sprite_center_x[bit]:sprite_center_y[bit];
+    if(reverse?center>=cutoff:center<=cutoff)moida_sprite_set(d,bit,false);
+  }
+}
+
+void moida_flicker_lights(MoidaDisplay *d,bool on){
+ for(unsigned i=icon_child_offsets[154];i<icon_child_offsets[155];i++){
+  unsigned fixture=icon_children[i];
+  if(moida_icon_all(d,fixture))for(unsigned j=icon_child_offsets[fixture];j<icon_child_offsets[fixture+1];j++)moida_icon_set(d,icon_children[j],on);
+ }
+}
+void moida_icon_reveal(MoidaDisplay *d,unsigned icon,unsigned percent){
+ if(icon>=352)return;int32_t low=INT32_MAX,high=INT32_MIN;
+ for(unsigned i=icon_offsets[icon];i<icon_offsets[icon+1];i++){int32_t y=sprite_bottom_y[icon_sprites[i]];if(y<low)low=y;if(y>high)high=y;}
+ if(low==INT32_MAX)return;int32_t cutoff=low+(int32_t)((100-percent)*(unsigned)(high-low)/100);
+ for(unsigned i=icon_offsets[icon];i<icon_offsets[icon+1];i++)if(sprite_bottom_y[icon_sprites[i]]>=cutoff)moida_sprite_set(d,icon_sprites[i],true);
+ for(unsigned c=icon_child_offsets[icon];c<icon_child_offsets[icon+1];c++){unsigned child=icon_children[c];for(unsigned i=icon_offsets[child];i<icon_offsets[child+1];i++)if(sprite_bottom_y[icon_sprites[i]]>=cutoff)moida_sprite_set(d,icon_sprites[i],false);}
+}
+
+void moida_erase_border(MoidaDisplay *d,unsigned percent,unsigned icon){
+ int x0=29+2207*(int)percent/100,x1=4443-2207*(int)percent/100;
+ int y0=6+1568*(int)percent/100,y1=3143-1569*(int)percent/100;
+ for(unsigned bit=0;bit<631;bit++)if(sprite_center_x[bit]<x0||sprite_center_x[bit]>x1||sprite_center_y[bit]<y0||sprite_center_y[bit]>y1)moida_sprite_set(d,bit,false);
+ if(!icon)return;
+ unsigned list[2]={311,icon};for(unsigned k=0;k<2;k++)for(unsigned i=icon_offsets[list[k]];i<icon_offsets[list[k]+1];i++){unsigned bit=icon_sprites[i];if(sprite_center_x[bit]<x0||sprite_center_x[bit]>x1||sprite_center_y[bit]<y0||sprite_center_y[bit]>y1)moida_sprite_set(d,bit,true);}
+ moida_icon_clear_children(d,icon);
+}
+
+void moida_erase_ghost(MoidaDisplay *d,MoidaRandom *random){
+ int x=29+(int)moida_random_bounded(random,3311),y=6+(int)moida_random_bounded(random,2092);
+ for(unsigned i=icon_offsets[107];i<icon_offsets[108];i++){unsigned bit=icon_sprites[i];if(sprite_center_x[bit]>=x&&sprite_center_x[bit]<x+1103&&sprite_center_y[bit]>=y&&sprite_center_y[bit]<y+1045)moida_sprite_set(d,bit,false);}
+}
+
+unsigned moida_control_action(uint8_t pressed,bool escape,bool up,bool down){if(pressed&4)return 1;if(pressed&8)return 2;if(pressed&1)return up?3:down?4:escape?6:0;if(pressed&2)return 5;return 0;}

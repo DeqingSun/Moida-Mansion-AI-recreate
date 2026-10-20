@@ -16,7 +16,7 @@ try{
   }
   const result=spawnSync(exe,[String(seed)],{input:commands.join('\n')+'\n',encoding:'utf8',maxBuffer:8*1024*1024});assert.equal(result.status,0,result.stderr);
   const [ready,...frames]=result.stdout.trim().split('\n').map(JSON.parse);assert(ready.ready);assert.equal(frames.length,commands.length);
-  frames.slice(12).forEach((f,j)=>{const {status,beeperHz,beeperDurationInMs,...actual}=f;assert.equal(status,2);assert.deepEqual(actual,expected[j],`seed ${seed}, step ${j}`);checks++;});
+  frames.slice(12).forEach((f,j)=>{const {searchResult,inventory,searchIcon,status,beeperHz,beeperDurationInMs,...actual}=f;assert.equal(status,2);assert.deepEqual(actual,expected[j],`seed ${seed}, step ${j}`);checks++;});
  }
  assert(outcomes.every(n=>n>0));console.log(`PASS: ${checks} diagnostic walking steps match original room rendering and passage rules; no passage/open/locked/hidden: ${outcomes}. No claim of original input/animation equivalence.`);
 }finally{fs.rmSync(dir,{recursive:true,force:true});}

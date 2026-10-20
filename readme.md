@@ -50,6 +50,13 @@ The failure is expected. So let's go one step back and just make a tool to manua
 
 And after about 30 hours of routing, it is proven to be possible with 16x48 matrix!
 
+Some tricks in routing. Since the topology of LCD matrix is a grid, we need to assign the segment in a grid way to avoid trace crossing. The grid in matrix area might be simple and easy to understand (yellow), but the grid can also be distorted to fit the segments (green).
+
+![grid topology](workingLog/06_grid.png)
+
+Also to make the routing possible, 
+
+
 
 ## Refinement in 嘉立创EDA
 

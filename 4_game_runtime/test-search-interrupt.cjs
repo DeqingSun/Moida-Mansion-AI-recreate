@@ -1,0 +1,13 @@
+const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),vm=require('node:vm'),assert=require('node:assert/strict');const {spawnSync}=require('node:child_process');const {loadOriginal}=require('./runtime.cjs');
+const dir=fs.mkdtempSync(path.join(os.tmpdir(),'moida-search-interrupt-'));
+try{
+ const exe=path.join(dir,'game');const build=spawnSync('cc',['-std=c11','-Wall','-Wextra','-Werror','-fsanitize=address,undefined',...['moida_core.c','moida_text.c','moida_room.c','moida_layout.c','moida_puzzle.c','moida_house.c','house_game.c'].map(f=>path.join(__dirname,'native',f)),'-o',exe],{encoding:'utf8'});assert.equal(build.status,0,build.stderr);
+ let checks=0;
+ for(let seedIndex=0;seedIndex<4;seedIndex++)for(const delay of [0,1,2,3,5,8,10,15,25,40,59,61,65]){
+ const seed=1700000000000+seedIndex*1234567,{context}=loadOriginal({seedTime:seed});
+ context.events=[256,...Array(delay).fill(0),256,0,256,...Array(80).fill(0)];
+ const expected=JSON.parse(vm.runInContext(`JSON.stringify((()=>{const g=g_553648167[0];g.activeRunnerKind=0;start__game_u483(g.runners[0],0);draw_house__game_u446(g);let done=true;apply_search_found__game_u2113=()=>{done=true;draw_house__game_u446(g);};return events.map(event=>{g.output.beeperHz=0;g.output.beeperDurationInMs=0;if(event&&listeningToInput__game_u3628(g,{curButtonIds:{1:true},preButtonIds:{}})){search__game_u3895(g);if(curRoutineId__game_u853(g.runners[0])!==22)throw Error('special search outside test scope');done=false;}if(!done)step__game_u4297(g.runners[0],g);return {status:done?2:4,searchIcon:g.varIcons[0].id0,words:Array.from(g.output.spriteState.data),beeperHz:g.output.beeperHz,beeperDurationInMs:g.output.beeperDurationInMs};});})())`,context));
+ const commands=[1,...Array(11).fill(0),...context.events];const result=spawnSync(exe,[String(seed)],{input:commands.join('\n')+'\n',encoding:'utf8',maxBuffer:4*1024*1024});assert.equal(result.status,0,result.stderr);const frames=result.stdout.trim().split('\n').map(JSON.parse).slice(13);assert.equal(frames.length,expected.length);frames.slice(0,frames.findIndex(f=>f.status===5)<0?frames.length:frames.findIndex(f=>f.status===5)).forEach((f,i)=>{const actual=Object.fromEntries(Object.keys(expected[i]).map(key=>[key,f[key]]));assert.deepEqual(actual,expected[i],`seed ${seed}, delay ${delay}, frame ${i}`);checks++;});
+ }
+ console.log(`PASS: ${checks} frames across 52 interrupted-search sequences match original input eligibility, target cycling, restart timing, segments and sound; comparison stops when the result screen starts.`);
+}finally{fs.rmSync(dir,{recursive:true,force:true});}

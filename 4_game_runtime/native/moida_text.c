@@ -71,13 +71,13 @@ bool moida_opening_tick(MoidaOpening *g) {
   g->complete=g->runner.index<0;
   return true;
 }
-static unsigned strand_length(unsigned id) {
+unsigned moida_strand_length(unsigned id) {
   if(id>=sizeof strand_first/sizeof *strand_first) return 0;
   return strand_starts[strand_first[id]+1]-strand_starts[strand_first[id]];
 }
 static void scroll_text(MoidaIntro *g,unsigned id) {
   MoidaText *t=&g->opening.text;
-  g->scroll_skip%=strand_length(id)+4;
+  g->scroll_skip%=moida_strand_length(id)+4;
   moida_text_clear(t);
   for(unsigned i=g->scroll_skip;i<4;i++)moida_text_append(t,6,0,0);
   moida_text_append(t,id,0,g->scroll_skip<4?0:g->scroll_skip-4);
@@ -86,7 +86,7 @@ static void scroll_text(MoidaIntro *g,unsigned id) {
   moida_text_draw(t,&g->opening.display);g->scroll_skip++;
 }
 static void speak_text(MoidaIntro *g) {
-  MoidaOpening *o=&g->opening;unsigned length=strand_length(97);
+  MoidaOpening *o=&g->opening;unsigned length=moida_strand_length(97);
   if(length<=13)centered(o,97);else scroll_text(g,97);
   if(g->speaker_frames<length && !(g->speaker_frames&1)) {
     moida_melody_clear(&o->melody);o->beep_hz=moida_note_hz(43);o->beep_duration_ms=50;
@@ -107,7 +107,7 @@ static void intro_step(void *user,MoidaRunner *runner,int id,int step) {
     g->scroll_skip=0;g->speaker_frames=0;o->runner.waiting_input=true;
     static const unsigned icons[]={287,286,288,290,289};
     for(unsigned i=0;i<sizeof icons/sizeof *icons;i++)moida_icon_set(&o->display,icons[i],false);
-    moida_runner_queue(&o->runner,94,(int)strand_length(97));
+    moida_runner_queue(&o->runner,94,(int)moida_strand_length(97));
     moida_runner_start(&g->loop,2);return;
   }
   if(id==2) {
@@ -141,3 +141,6 @@ MoidaIntroStatus moida_intro_tick(MoidaIntro *g,uint8_t buttons) {
   if(moida_melody_pop(&o->melody,&note)) {o->beep_hz=moida_note_hz(note);o->beep_duration_ms=o->melody.duration_ms;}
   return g->status;
 }
+
+void moida_theme_melody(MoidaMelody *m){moida_melody_set(m,theme_notes,sizeof theme_notes,60);}
+void moida_stat_text(MoidaDisplay *d,unsigned label,unsigned value,unsigned value_strand){MoidaText t={0},number={0};moida_text_append(&t,label,0,0);if(value_strand)moida_text_append(&number,value_strand,0,0);else{unsigned digits[10],n=0;do{digits[n++]=value%10;value/=10;}while(value&&n<10);while(n)number.codes[number.count++]=(uint8_t)(digits[--n]+11);}while(t.count+number.count<13)t.codes[t.count++]=1;for(int i=0;i<number.count&&t.count<13;i++)t.codes[t.count++]=number.codes[i];moida_text_draw(&t,d);}

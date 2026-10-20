@@ -141,6 +141,18 @@ def main():
                                 if type(direction) is not int or not 0 <= direction <= 3:
                                     raise ValueError('Direction must be 0..3')
                                 buttons |= (direction + 1) << 4
+                                if data.get('animate') is True:
+                                    buttons |= 128
+                            if data.get('ghosts') is True:
+                                buttons |= 4096
+                            if data.get('spiders') is True:
+                                buttons |= 2048
+                            if data.get('encounters') is True:
+                                buttons |= 1024
+                            if data.get('idleAnimation') is True:
+                                buttons |= 512
+                            if data.get('searchNext') is True:
+                                buttons |= 256
                             process, _ = sessions[key]
                             process.stdin.write(f'{buttons}\n')
                             process.stdin.flush()

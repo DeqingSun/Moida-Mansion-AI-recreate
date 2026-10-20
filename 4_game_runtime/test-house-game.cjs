@@ -11,7 +11,7 @@ try{
  let previous={};for(let tick=0;tick<buttons.length;tick++){
   const current=Object.fromEntries([0,1,2,3].filter(n=>buttons[tick]&(1<<n)).map(n=>[n,true]));context.input={curButtonIds:current,preButtonIds:previous};previous=current;
   const expected=JSON.parse(vm.runInContext(`JSON.stringify((()=>{const o=tick__main_u41(input);return {words:Array.from(o.spriteState.data),beeperHz:o.beeperHz,beeperDurationInMs:o.beeperDurationInMs};})())`,context));
-  const {status,coord,moveResult,moves,...actual}=frames[tick];assert.deepEqual(actual,expected,`seed ${seed} frame ${tick}`);assert.equal(status,tick<at?0:tick===buttons.length-1?2:1);
+  const {searchResult,inventory,status,searchIcon,coord,moveResult,moves,...actual}=frames[tick];assert.deepEqual(actual,expected,`seed ${seed} frame ${tick}`);assert.equal(status,tick<at?0:tick===buttons.length-1?2:1);
  }
  }
  console.log('PASS: 40 independently generated native houses match original startup, welcome variant, and every intro/reveal frame and beep.');
