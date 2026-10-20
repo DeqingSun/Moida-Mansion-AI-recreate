@@ -71,6 +71,7 @@ void moida_room_move_frame(const MoidaRoom *destination,MoidaDisplay *d,unsigned
 }
 
 static int search_count(void *u,int id){(void)u;return (id==28||id==26)?2:id==27?17:id==29?10:id==23?2:id==24?7:id==25?11:id==22?2:id==20?5:id==19?6:21;}
+static void search_draw(MoidaSearch *s){moida_room_draw_initial(s->room,&s->display);s->drew_room=true;}
 static void search_step(void *u,MoidaRunner *runner,int id,int step){
  MoidaSearch *s=u;
  if(id==28||id==26){if(step==0)moida_runner_queue(runner,id==28?20:24,0);else{s->attacked=true;s->complete=true;}return;}
@@ -83,7 +84,7 @@ static void search_step(void *u,MoidaRunner *runner,int id,int step){
  }
  if(id==27){
   if(step==16){moida_runner_queue(runner,23,0);return;}
-  if(step==0||step==2){moida_room_draw_initial(s->room,&s->display);MoidaText text={0};moida_text_append(&text,step==0?28:52,0,0);if(step==2)moida_text_center(&text);moida_text_draw(&text,&s->display);}
+  if(step==0||step==2){search_draw(s);MoidaText text={0};moida_text_append(&text,step==0?28:52,0,0);if(step==2)moida_text_center(&text);moida_text_draw(&text,&s->display);}
   if(step==0){moida_icon_set(&s->display,s->icon,false);moida_icon_set(&s->display,s->lock_icon,false);moida_icon_set(&s->display,288,false);s->hz=moida_note_hz(43);s->duration=50;}
   else if(step==1){s->hz=moida_note_hz(43);s->duration=50;runner->wait=1;}
   else if(step==2){moida_icon_set(&s->display,s->lock_icon,true);runner->wait=3;}
@@ -96,7 +97,7 @@ static void search_step(void *u,MoidaRunner *runner,int id,int step){
  if(id==25&&step==0){moida_runner_queue(runner,24,0);return;}
  if(id==25&&step==10){s->complete=true;return;}
  if(id==24||id==25){
-  if(id==24&&step==0){moida_room_draw_initial(s->room,&s->display);MoidaText text={0};moida_text_draw(&text,&s->display);}
+  if(id==24&&step==0){search_draw(s);MoidaText text={0};moida_text_draw(&text,&s->display);}
   bool on=id==24?step%2==0:step==2||step==5||step==8;
   moida_icon_set(&s->display,s->icon,on);static const unsigned notes[]={52,61,64};s->hz=moida_note_hz(notes[step%3]);s->duration=50;return;
  }
@@ -111,7 +112,7 @@ static void search_step(void *u,MoidaRunner *runner,int id,int step){
   if(step==2)runner->wait=3;
   if(step==3){note=51;runner->wait=1;}
  }else{strand=(id==19?29:32)+(unsigned)step/2;hide=step%2==0;note=hide?47:51;runner->wait=1;}
- if(draw){moida_room_draw_initial(s->room,&s->display);if(hide){moida_icon_set(&s->display,s->icon,false);if(s->locked)moida_icon_set(&s->display,s->lock_icon,false);}
+ if(draw){search_draw(s);if(hide){moida_icon_set(&s->display,s->icon,false);if(s->locked)moida_icon_set(&s->display,s->lock_icon,false);}
   if(id==20&&step==0)moida_icon_set(&s->display,288,false);
   MoidaText text={0};moida_text_append(&text,strand,0,0);moida_text_draw(&text,&s->display);
  }
@@ -122,10 +123,10 @@ void moida_search_init(MoidaSearch *s,const MoidaRoom *room,unsigned icon){
  moida_runner_init(&s->runner);moida_runner_start(&s->runner,22);
 }
 bool moida_search_tick(MoidaSearch *s){
- if(s->complete)return false;s->hz=0;s->duration=0;s->count_search=false;
+ if(s->complete)return false;s->hz=0;s->duration=0;s->count_search=false;s->drew_room=false;
  MoidaRoutineEnv env={search_count,search_step,s};moida_runner_tick(&s->runner,&env);
  uint8_t note;if(moida_melody_pop(&s->melody,&note)){s->hz=moida_note_hz(note);s->duration=s->melody.duration_ms;}
- if(s->complete)moida_room_draw_initial(s->room,&s->display);
+ if(s->complete&&!s->attacked&&!s->preserve_completion)search_draw(s);
  return true;
 }
 
@@ -275,7 +276,7 @@ static void result_step(void *u,MoidaRunner *r,int id,int step){
  }
  if((id==42&&step==1)||(id!=42&&step==11)){s->complete=true;s->display=s->base;return;}
  if(step==0){
-  s->display=s->base;MoidaText text={0};moida_text_append(&text,id==42?42:id==44?45:id==47?49:47,0,0);moida_text_center(&text);moida_text_draw(&text,&s->display);
+  if(id==42||id==44)s->display=s->base;MoidaText text={0};moida_text_append(&text,id==42?42:id==44?45:id==47?49:47,0,0);moida_text_center(&text);moida_text_draw(&text,&s->display);
   static const uint8_t part[]={40,43,49,52,61};
   static const uint8_t empty[]={55,34,13},found[]={55,49,43,38,43,49,55,59};
   moida_melody_set(&s->melody,id==42?empty:id==47?part:found,id==42?3:id==47?5:8,60);
@@ -285,9 +286,10 @@ static void result_step(void *u,MoidaRunner *r,int id,int step){
 void moida_result_init(MoidaResult *s,const MoidaDisplay *base,unsigned outcome){
  memset(s,0,sizeof *s);s->base=*base;s->display=*base;s->reward_icon=271;moida_runner_init(&s->loop);moida_runner_init(&s->runner);moida_runner_start(&s->runner,(int)outcome);
 }
+void moida_result_loop_tick(MoidaResult *s){s->hz=0;s->duration=0;MoidaRoutineEnv env={result_count,result_step,s};moida_runner_tick(&s->loop,&env);uint8_t note;if(moida_melody_pop(&s->melody,&note)){s->hz=moida_note_hz(note);s->duration=s->melody.duration_ms;}}
 void moida_result_tick(MoidaResult *s){
  s->hz=0;s->duration=0;if(s->complete)return;
- MoidaRoutineEnv env={result_count,result_step,s};moida_runner_tick(&s->runner,&env);moida_runner_tick(&s->loop,&env);if(s->runner.index<0&&!s->complete){s->complete=true;s->display=s->base;}
+ MoidaRoutineEnv env={result_count,result_step,s};moida_runner_tick(&s->runner,&env);if(s->room_ambient&&!s->dead){moida_ambient_tick(s->room_ambient,&s->display);if(s->room_ambient->duration){moida_melody_clear(&s->melody);s->hz=s->room_ambient->hz;s->duration=s->room_ambient->duration;}}moida_runner_tick(&s->loop,&env);if(s->runner.index<0&&!s->complete){s->complete=true;s->display=s->base;}
  uint8_t note;if(moida_melody_pop(&s->melody,&note)){s->hz=moida_note_hz(note);s->duration=s->melody.duration_ms;}
 }
 
@@ -298,11 +300,11 @@ static void ambient_step(void *u,MoidaRunner *r,int id,int step){
  if(id==61){if(step==2){moida_runner_queue(r,id,0);return;}s->visible=step==0;moida_icon_set(s->target,s->icon,s->visible);moida_icon_set(s->target,43,s->visible);r->wait=step==0?5:1;return;}
  if(id==11){if(step==4)moida_runner_queue(r,id,0);else if(step==1||step==3)r->wait=2;else moida_flicker_lights(s->target,step==0);return;}
  if((id==10&&step==4)||(id==12&&step==8)){moida_runner_queue(r,id,0);return;}
- if(id==10){s->visible=step%2!=0;if(step==3)r->wait=10;return;}
+ if(id==10){s->visible=step%2!=0;moida_icon_set(s->target,s->icon,s->visible);if(step==3)r->wait=10;return;}
  if(step==0){r->wait=20;return;}if(step==3){r->wait=10;return;}
- s->visible=step==1||step==4||step==6;s->hz=moida_note_hz(s->visible?22:21);s->duration=50;
+ s->visible=step==1||step==4||step==6;moida_icon_set(s->target,s->icon,s->visible);s->hz=moida_note_hz(s->visible?22:21);s->duration=50;
 }
 void moida_ambient_init(MoidaAmbient *s,unsigned routine,unsigned icon){memset(s,0,sizeof *s);s->icon=icon;s->visible=routine==10;moida_runner_init(&s->runner);if(routine)moida_runner_start(&s->runner,(int)routine);}
-void moida_ambient_tick(MoidaAmbient *s,MoidaDisplay *d){s->hz=0;s->duration=0;if(!s->icon)return;s->target=d;MoidaRoutineEnv env={ambient_count,ambient_step,s};moida_runner_tick(&s->runner,&env);if(s->icon!=154)moida_icon_set(d,s->icon,s->visible);}
+void moida_ambient_tick(MoidaAmbient *s,MoidaDisplay *d){s->hz=0;s->duration=0;if(s->runner.index<0)return;s->target=d;MoidaRoutineEnv env={ambient_count,ambient_step,s};moida_runner_tick(&s->runner,&env);}
 
 void moida_search_fairy_init(MoidaSearch *s,const MoidaRoom *room,unsigned icon){moida_search_init(s,room,icon);moida_runner_start(&s->runner,25);}

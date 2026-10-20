@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Local desktop host for the native C intro. No JavaScript game logic used."""
+"""Local desktop host for the native C game. No JavaScript game logic used."""
 import argparse
 import json
 import os
@@ -166,7 +166,7 @@ def main():
                     self.reply(400, {'error': str(error)})
 
         server = ThreadingHTTPServer(('127.0.0.1', args.port), Handler)
-        print(f'Live C intro: http://127.0.0.1:{args.port}/4_game_runtime/live.html', flush=True)
+        print(f'Live C game: http://127.0.0.1:{args.port}/4_game_runtime/live.html', flush=True)
         try:
             server.serve_forever()
         except KeyboardInterrupt:

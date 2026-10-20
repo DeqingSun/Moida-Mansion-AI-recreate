@@ -93,7 +93,7 @@ try:
         frame = post('/api/tick', dict(session, buttons=0))
         assert frame['status'] == 0
     assert post('/api/tick', dict(session, buttons=1))['status'] == 1
-    for _ in range(11):
+    for _ in range(12):
         frame = post('/api/tick', dict(session, buttons=0))
     assert frame['status'] == 2
     post('/api/tick', dict(session, direction=0))
@@ -169,7 +169,7 @@ try:
     assert post('/api/tick', dict(session, buttons=0))['status'] == 0
     session = post('/api/start', {'session': session['session'], 'seed': '1700002469134'})
     post('/api/tick', dict(session, buttons=1))
-    for _ in range(11):
+    for _ in range(12):
         frame = post('/api/tick', dict(session, buttons=0))
     for direction in [0, 2]:
         frame = post('/api/tick', dict(session, direction=direction))
@@ -189,7 +189,7 @@ try:
     assert frame['coord'] == 9
     session = post('/api/start', {'session': session['session'], 'seed': '1700000000000'})
     post('/api/tick', dict(session, buttons=1))
-    for _ in range(11):
+    for _ in range(12):
         post('/api/tick', dict(session, buttons=0))
     frame = post('/api/tick', dict(session, direction=0))
     assert frame['coord'] == 4
@@ -307,17 +307,17 @@ try:
     assert frame['status'] == 9
     for _ in range(600):
         frame = post('/api/tick', dict(session, searchNext=frame.get('waitingForInput', False)))
-        if frame['status'] == 10:
+        if frame['cycle'] == 1:
             break
-    assert frame['status'] == 10 and frame['gotCrown']
-    final_words = frame['words']
-    frame = post('/api/tick', dict(session, direction=0, searchNext=True))
-    assert frame['status'] == 10 and frame['words'] == final_words
+    assert frame['status'] == 0 and frame['cycle'] == 1 and not frame['gotCrown']
+    assert frame['inventory'] == '0' and frame['buttonHolders'] == [-1, -1, -1]
+    frame = post('/api/tick', dict(session, buttons=1))
+    assert frame['status'] == 1
     session = post('/api/start', {'session': session['session'], 'seed': '1700000000000'})
     def encounter_tick(**kwargs):
         return post('/api/tick', dict(session, encounters=True, **kwargs))
     encounter_tick(buttons=1)
-    for _ in range(11):
+    for _ in range(12):
         frame = encounter_tick()
     frame = encounter_tick(searchNext=True)
     for _ in range(600):
@@ -362,15 +362,15 @@ try:
         if frame.get('monsterDying') and not frame.get('waitingForInput'):
             stuck_coord = frame['coord']
             frame = encounter_tick(direction=0)
-            assert frame['coord'] == stuck_coord and frame['status'] in (12, 13), frame
-        if frame['status'] == 13:
+            assert frame['cycle'] == 1 or (frame['coord'] == stuck_coord and frame['status'] == 12), frame
+        if frame['cycle'] == 1:
             break
-    assert saw_attack and frame['status'] == 13
+    assert saw_attack and frame['status'] == 0 and frame['cycle'] == 1
     session = post('/api/start', {'session': session['session'], 'seed': '1700000000000'})
     def spider_tick(**kwargs):
         return post('/api/tick', dict(session, spiders=True, **kwargs))
     spider_tick(buttons=1)
-    for _ in range(11):
+    for _ in range(12):
         frame = spider_tick()
     for i in range(100):
         frame = spider_tick(direction=0 if i % 2 == 0 else 1)

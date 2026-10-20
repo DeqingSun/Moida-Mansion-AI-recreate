@@ -1,3 +1,23 @@
+## Full-session comparison and automatic restart
+
+The live C game now restarts after the original ending/retry dialogue is acknowledged. It generates a **new mansion using the continuing PRNG state**, clears inventory, friends, monsters, search state and statistics, and returns to the intro. Start / Reset still explicitly starts a new session from the seed field. The browser keeps ticking through automatic restarts and displays the mansion number.
+
+Run the uninterrupted comparison:
+
+```sh
+node 4_game_runtime/test-session.cjs
+```
+
+The test calls the original `tick__main_u41` without replacing any game routines, outcomes, random calls, or restart behavior. An oracle-side player chooses legal button presses; that exact timed button stream is replayed into the compiled C executable with all effects enabled. Every tick compares all 20 display words, beep frequency/duration, room coordinate, inventory, used keys, move/search/attack statistics, and both 64-bit PRNG words. C runs with AddressSanitizer and UndefinedBehaviorSanitizer.
+
+Current result: **49,699 matching ticks across 17 sessions**, with sanitizers enabled.
+
+Coverage includes complete escape and restart, Dot collection and escape, the ghost-dependent fairy/latch/final-friend route, tutorials and spider collection, death/restart/further play, and 12 seeded runs of varied timing with held and simultaneous buttons. Successful runs also wait at the entrance for the escape prompt and continue through the next intro/room reveal. Individual scenarios can be run by name: `escape`, `dot-escape`, `ghost-escape`, `tutorial-spider-escape`, `death-restart`, or `timed-inputs`.
+
+This comparison fixed handoff delays, early random consumption, lost melody tails, interrupted warning loops, search-target memory when revisiting a room, idle muting, ambient redraws, queued death timing, and the ending slideshow's starting room. Debug random/stat fields are emitted only when `MOIDA_SESSION_TRACE` is set; normal HTTP responses include a `cycle` counter for restarts.
+
+These are exact matches for the tested sessions, not a proof over every possible seed and input stream. MCU integration remains separate work. Earlier sections below record historical milestones and their limitations.
+
 ## Original controls and tutorial/safety behavior
 
 The live player now uses the original four actions: **Left**, **Right**, **Search**, and **Stairs/Exit**. Keyboard: ← / →, Enter, and ↑ or Space. Stairs chooses upstairs before downstairs; at an eligible entrance it exits. The old directional controls remain under Diagnostic controls.
@@ -8,7 +28,7 @@ Before the first friend is rescued, every second empty search plays the original
 
 Validation: `test-results.cjs` compares **3,101 display/audio frames** with the original, now including tutorial and rustling routines. `test-server.py` checks raw button holds, stairs, search cancellation, first-friend departure, alternating tutorial triggers, dialogue acknowledgement, and the existing full rescue/escape/monster regressions. `test-search-animation.cjs` and `test-search-interrupt.cjs` cover normal search and interrupted target switching.
 
-Remaining work: full-session scheduler/random-state equivalence and an MCU-facing game API/hardware adapter. Routine tests use substituted room-restoration boundaries; they do not establish complete frame-for-frame session parity. Earlier sections below are historical milestones.
+The full-session comparison above now covers integrated scheduler/random-state behavior. MCU-facing API and hardware adaptation remain. The component tests described here still use substituted restoration boundaries; the new session tests do not.
 
 ## Ghost encounters and revealed-item progression
 

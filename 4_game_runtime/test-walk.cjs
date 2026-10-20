@@ -7,7 +7,7 @@ try{
  for(let i=0;i<40;i++){
   const seed=1700000000000+i*1234567,{context}=loadOriginal({seedTime:seed});
   let coord=vm.runInContext('toCoord__houseZcoord_u91(g_553648167[0].playerLoc)',context),rng=i+1;
-  const commands=[1,...Array(11).fill(0)],expected=[];
+  const commands=[1,...Array(12).fill(0)],expected=[];
   for(let step=0;step<250;step++){
    rng=(Math.imul(rng,1664525)+1013904223)>>>0;const direction=rng>>>30;commands.push((direction+1)<<4);
    const kind=vm.runInContext(`canMove__house_u852(g_553648167[0].house,g_553648167[0].house.rooms[${coord}].loc,${direction},{}).kind`,context);
@@ -16,7 +16,7 @@ try{
   }
   const result=spawnSync(exe,[String(seed)],{input:commands.join('\n')+'\n',encoding:'utf8',maxBuffer:8*1024*1024});assert.equal(result.status,0,result.stderr);
   const [ready,...frames]=result.stdout.trim().split('\n').map(JSON.parse);assert(ready.ready);assert.equal(frames.length,commands.length);
-  frames.slice(12).forEach((f,j)=>{const {searchResult,inventory,searchIcon,status,beeperHz,beeperDurationInMs,...actual}=f;assert.equal(status,2);assert.deepEqual(actual,expected[j],`seed ${seed}, step ${j}`);checks++;});
+  frames.slice(13).forEach((f,j)=>{const {status}=f;const actual=Object.fromEntries(Object.keys(expected[j]).map(key=>[key,f[key]]));assert.equal(status,2);assert.deepEqual(actual,expected[j],`seed ${seed}, step ${j}`);checks++;});
  }
  assert(outcomes.every(n=>n>0));console.log(`PASS: ${checks} diagnostic walking steps match original room rendering and passage rules; no passage/open/locked/hidden: ${outcomes}. No claim of original input/animation equivalence.`);
 }finally{fs.rmSync(dir,{recursive:true,force:true});}

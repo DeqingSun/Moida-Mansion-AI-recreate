@@ -5,7 +5,7 @@
  el('screen').innerHTML=svg;
  const segments=ids.map(id=>document.getElementById('seg_'+id));
  segments.forEach(s=>s.style.display='none');
- let searched=false,session=null,timer=null,busy=false,paused=false,finished=false,frames=0,audio,pendingButtons=0,lastButtons=0,pendingSearch=false;
+ let searched=false,session=null,timer=null,busy=false,paused=false,finished=false,frames=0,cycle=0,audio,pendingButtons=0,lastButtons=0,pendingSearch=false;
  const controls=[...document.querySelectorAll('.game')];
  async function request(url,data){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data),signal:AbortSignal.timeout(5000)});const result=await r.json();if(!r.ok)throw Error(result.error);return result;}
  function cancel(){clearTimeout(timer);timer=null;}
@@ -19,10 +19,10 @@
    const f=await request('/api/tick',{session,buttons,direction,animate:true,searchNext,idleAnimation:true,spiders:true,ghosts:true,encounters:el('encounters').checked});
    segments.forEach((s,i)=>s.style.display=(f.words[i>>>5]>>>(i&31))&1?'':'none');
    if(el('sound').checked&&audio&&f.beeperHz>0){const oscillator=audio.createOscillator(),gain=audio.createGain();oscillator.type='square';oscillator.frequency.value=f.beeperHz;gain.gain.value=.025;oscillator.connect(gain).connect(audio.destination);oscillator.start();oscillator.stop(audio.currentTime+f.beeperDurationInMs/1000);}
+   if(f.cycle!==cycle){cycle=f.cycle;searched=false;finished=false;el('explore').hidden=true;el('walkStatus').textContent='';el('generation').textContent=`Seed ${el('seed').value.trim()} · mansion ${cycle+1} · entrance F${Math.floor(f.coord/4)} S${f.coord%4}`;}
    el('escape').hidden=!f.canEscape;
-   if(f.status===10||f.status===13){controls.forEach(b=>b.disabled=true);finished=true;el('explore').hidden=true;el('pause').disabled=true;el('status').textContent=(f.status===13?'Caught by the monster.':'Escaped!')+' Press Start / Reset for another mansion.';return;}
-   controls.forEach(b=>b.disabled=f.status===10||f.status===13);
-   if(f.status===15||f.status===16){el('explore').hidden=true;finished=false;}
+   controls.forEach(b=>b.disabled=false);
+   if(f.status===15||f.status===16||f.status===17){el('explore').hidden=true;finished=false;}
    if(f.status===14){el('explore').hidden=true;finished=false;}
    if(f.status===11||f.status===12){el('explore').hidden=f.status===11;finished=false;}
    if(f.status===9){el('explore').hidden=true;finished=false;}
@@ -36,13 +36,13 @@
    if(f.status===2){finished=false;el('explore').hidden=false;el('status').textContent=`Native C exploration · F${Math.floor(f.coord/4)} S${f.coord%4}. Ordinary key/code collection works. Door keys work. Fairies can be collected. Friends can be rescued, including code-locked friends. Rescue hints, gifts, and the crown-button puzzle work. Return to the entrance with all friends available to escape. Monster encounters are enabled by the checkbox. Follow ghosts to find hidden items.`;el('pause').disabled=false;
     document.querySelectorAll('[data-direction]').forEach(b=>{const kind=f.moves[Number(b.dataset.direction)];b.title=['No passage','Open passage','Locked passage','Hidden passage'][kind];});
     el('walkStatus').textContent=searched?({49:'The spider ran away! It will appear in your escape scene.',52:'Dot found. More friends need to help.',59:'A friend is staying here to help with Dot.',60:'Your friend is available again.',53:'Crown collected! Return to the entrance to leave the mansion.',100:'Friend rescued! Their face is now in the status area. Rescue dialogue finished.',42:'Nothing new found.',44:'Found a key! Added to inventory.',46:'Found a code! Added to inventory.',47:'Found a fairy code fragment! Added to inventory.',48:'Found a latch! Hidden passage opened.',45:'Locked. Find the matching code, then search this object again.',0:'This object needs a special outcome that is not implemented yet.'}[f.searchResult]+' Object restored.'):searchNext?(f.searchIcon?`Search target ${f.searchIcon} is temporarily hidden so you can locate it. Target selection only; nothing collected.`:'No searchable object in this room.'):direction===undefined?'Choose a direction to explore.':['No passage in that direction.','Moved to the next room.','Locked: you need to find and use its key.','Hidden passage: it must be discovered first.'][f.moveResult];return;}
-   frames++;el('status').textContent=`Native C ${f.status===16?'search tutorial':f.status===15?'friend rustling':f.status===14?'ghost encounter':f.status===12?'monster attack — move to escape':f.status===11?'monster nearby':f.status===9?'escaping':f.status===8?'unlocking search object':f.status===7?'unlocking door':f.status===6?'locked door':f.status===5?'search result':f.status===4?'searching':f.status===3?'moving':f.status===1?'room reveal':'intro'} · tick ${frames} · ${(frames/10).toFixed(1)} s · ${f.beeperHz?f.beeperHz+' Hz':'silent'}`;
+   frames++;el('status').textContent=`Native C ${f.status===17?'search follow-up':f.status===16?'search tutorial':f.status===15?'friend rustling':f.status===14?'ghost encounter':f.status===12?'monster attack — move to escape':f.status===11?'monster nearby':f.status===9?'escaping':f.status===8?'unlocking search object':f.status===7?'unlocking door':f.status===6?'locked door':f.status===5?'search result':f.status===4?'searching':f.status===3?'moving':f.status===1?'room reveal':'intro'} · tick ${frames} · ${(frames/10).toFixed(1)} s · ${f.beeperHz?f.beeperHz+' Hz':'silent'}`;
 
   }catch(e){fail(e);}finally{busy=false;if(pendingSearch||(!finished&&(pendingButtons||!paused)))timer=setTimeout(()=>tick(),pendingSearch||pendingButtons?1:Math.max(1,100-(performance.now()-start)));}
  }
  el('reset').onclick=async()=>{
   if(busy)return;cancel();busy=true;el('reset').disabled=true;
-  try{if(el('sound').checked){audio??=new AudioContext();await audio.resume();}const ready=await request('/api/start',{session,seed:el('seed').value.trim()});session=ready.session;el('generation').textContent=`Seed ${ready.seed} · entrance F${Math.floor(ready.entrance/4)} S${ready.entrance%4} · ${ready.attempts} generation attempt(s)`;el('explore').hidden=true;el('walkStatus').textContent='';searched=false;frames=0;lastButtons=0;pendingButtons=0;pendingSearch=false;paused=false;finished=false;controls.forEach(b=>b.disabled=false);el('pause').disabled=false;el('pause').textContent='Pause';}
+  try{if(el('sound').checked){audio??=new AudioContext();await audio.resume();}const ready=await request('/api/start',{session,seed:el('seed').value.trim()});session=ready.session;el('generation').textContent=`Seed ${ready.seed} · entrance F${Math.floor(ready.entrance/4)} S${ready.entrance%4} · ${ready.attempts} generation attempt(s)`;el('explore').hidden=true;el('walkStatus').textContent='';searched=false;frames=0;cycle=0;lastButtons=0;pendingButtons=0;pendingSearch=false;paused=false;finished=false;controls.forEach(b=>b.disabled=false);el('pause').disabled=false;el('pause').textContent='Pause';}
   catch(e){fail(e);}finally{busy=false;el('reset').disabled=false;}
   if(session&&!paused)tick();
  };
