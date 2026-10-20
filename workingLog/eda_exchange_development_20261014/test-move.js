@@ -1,1 +1,0 @@
-await eda.pcb_PrimitiveComponent.modify("4540f16b5d339161",{x:5548.549868766404,y:-3954.6456692913393});await eda.pcb_PrimitiveLine.modify("09bff186df7dc974",{lineWidth:4.724409448818897});await eda.pcb_Document.save();return {component:await eda.pcb_PrimitiveComponent.get("4540f16b5d339161"),pins:await eda.pcb_PrimitiveComponent.getAllPinsByPrimitiveId("4540f16b5d339161")};

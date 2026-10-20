@@ -4,7 +4,7 @@
 
 # Webpage ↔ 嘉立创EDA
 
-This replaces the previous refinement tool with a copy of the preliminary manual router plus PCB exchange. The default is `Moida-routing.moida-routing_finished.json`: a 150 × 108 mm active display, 780 final islands, 48 top nets and 16 bottom nets. Folder 1 is unchanged. The old refinement tool is backed up under `workingLog/2_refine_routing_backup_20261014_095120`.
+This replaces the previous refinement tool with a copy of the preliminary manual router plus PCB exchange. The default is `Moida-routing.moida-routing_finished.json`: a 150 × 108 mm active display, 780 final islands, 48 top nets and 16 bottom nets. Folder 1 is unchanged. The superseded refinement tool and EDA development prototypes were removed from the working tree; their archived versions remain available in Git history (commit `a5773fb`).
 
 ## Start
 

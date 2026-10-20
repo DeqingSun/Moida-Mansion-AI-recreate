@@ -1,3 +1,0 @@
-importScripts('vendor/clipper.js','project.js','geometry.js','shapes.js','slices.js','topology.js');
-let base,data,baseline,reference;
-onmessage=e=>{const m=e.data;try{if(m.type==='init'){base=m.base;data=m.data;baseline=m.project;reference=RefineTopology.snapshot(baseline,data);postMessage({type:'ready'});return}const p=RefineTopology.validateFrozen(m.project,baseline,base),result=RefineTopology.compare(reference,RefineTopology.snapshot(p,RouterProject.layoutData(base,p.cuts)));postMessage({type:'result',revision:m.revision,result})}catch(error){postMessage({type:'error',revision:m.revision,message:error.message})}};
