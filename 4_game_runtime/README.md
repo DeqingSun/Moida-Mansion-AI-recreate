@@ -1,5 +1,8 @@
 ## Portable core and hardware abstraction
 
+Target assessment: [CH32X035 flash, RAM, stack, and CPU evaluation](ch32x035/README.md).
+The current Arduino/USB build needs memory optimization before it fits safely.
+
 The simulator now runs through a C hardware abstraction layer. The game owns no console, clock, display driver, or audio device. See [HAL.md](HAL.md) for the interface, an integration example, and the future USB stepping model.
 
 Start the computer simulator from the repository root:

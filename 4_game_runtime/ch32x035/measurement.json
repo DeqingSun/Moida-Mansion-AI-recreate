@@ -1,0 +1,1049 @@
+{
+  "toolchain": "riscv-wch-elf-gcc (xPack GNU RISC-V Embedded GCC arm64) 12.2.0",
+  "limits": {
+    "flash_bytes": 63488,
+    "ram_bytes": 20480,
+    "cpu_hz": 48000000
+  },
+  "source_sha256": {
+    "rom_tables.inc": "bc23e227582da69852e9a01b7ce4460a180b4c2113e0d40b08023a493b813c3a",
+    "text_tables.inc": "ffe867da21f296881eb2bfb11cee65caeb5e51302d73b9a5d313c7e7831542eb",
+    "moida_layout.h": "e34f1dae5d3fbc0d4500dabb9b64fb4879c8400e8d689cba4fd60218a3651e3d",
+    "moida_house.h": "d5c58cf58310bb4b11001f6b8f68833572659247140284471c9c399d84a6005a",
+    "moida_core.c": "b01d55d0f1b1e5af6ad7b55dbac1904e0946f882abeb1e530fe06e6a4a8459e3",
+    "moida_puzzle.h": "6d02acaa3a096dbf636f911dec668130ccda776e88da29a6971737680d1bf738",
+    "moida_game.h": "4acd7f130ca55364e17ee7eea482f6971a85aa1c3bb6ab278c14e49fb25a21f6",
+    "decor_tables.inc": "5519a0f14a1ed50be6390e9aa075dec4ba8b971fff83513b58fddb78e162366a",
+    "moida_hal.c": "375773c15f387d847f782ff4fa8d8edfa16948d05746715d3dd4557a041976cc",
+    "moida_room.c": "0ddaa65d83341efeec21a28d46dea169139d3b3d0b3ded2a9e4eea105332a8cc",
+    "moida_text.c": "71fa70eb20e128e76d607700dde61153dd9f5517e2d955bca3f04eb7dad984eb",
+    "moida_layout.c": "1976735fc864c15f234badfdda94672b4e6c11cbbd3288f11188004a549e2307",
+    "room_io.h": "d54b437f8de56cba119ff1af98528d0d679e18d210a9ac7fa289482159aefe2d",
+    "moida_game.c": "86c002d4ec2d6493f59079f8bd8d4bdb0d80d7434cb527acc63aa31c0478d35d",
+    "moida_puzzle.c": "08db534f94b29c1797f3d5327eb915198e5c0ff5b9470daf0022caef2b68e1cd",
+    "moida_house.c": "25b553ef9500fcd5367929c1482270ea253276afbe78e122488abee93814e836",
+    "moida_core.h": "6f1ddf8112636898339d877371822aecb0ebebf695d03b9abe03e286a3d1a2f3",
+    "moida_room.h": "3043e1b136c452674a84b316b80741f021b98858c29f162d1ae2a51906d64428",
+    "moida_hal.h": "ba779cdba34128be94eca44740670f7362d85fe839c53d6f7265d691dd51e75a"
+  },
+  "target_type_bytes": {
+    "MoidaAmbient": 208,
+    "MoidaDecoratedRoom": 1056,
+    "MoidaFrame": 104,
+    "MoidaGame": 19272,
+    "MoidaHost": 19296,
+    "MoidaHouse": 14896,
+    "MoidaIntro": 656,
+    "MoidaLayout": 376,
+    "MoidaPuzzle": 1800,
+    "MoidaPuzzleEntity": 56,
+    "MoidaResult": 816,
+    "MoidaReveal": 280,
+    "MoidaRoom": 1048,
+    "MoidaRoomEntity": 56,
+    "MoidaRunner": 180,
+    "MoidaSearch": 440
+  },
+  "non_lto_function_stack_frames": [
+    {
+      "function": "moida_puzzle_place",
+      "bytes": 2064,
+      "qualifier": "static"
+    },
+    {
+      "function": "dress",
+      "bytes": 1456,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_ending_room",
+      "bytes": 1072,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_house_attempt",
+      "bytes": 640,
+      "qualifier": "static"
+    },
+    {
+      "function": "random_passage",
+      "bytes": 592,
+      "qualifier": "static"
+    },
+    {
+      "function": "locks",
+      "bytes": 416,
+      "qualifier": "static"
+    },
+    {
+      "function": "reachable",
+      "bytes": 320,
+      "qualifier": "static"
+    },
+    {
+      "function": "zone",
+      "bytes": 320,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_game_tick_diagnostic",
+      "bytes": 320,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_stat_text",
+      "bytes": 144,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_map_generate",
+      "bytes": 128,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_host_step_diagnostic",
+      "bytes": 128,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_host_step",
+      "bytes": 128,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_monster_peeps",
+      "bytes": 128,
+      "qualifier": "static"
+    },
+    {
+      "function": "monster_result",
+      "bytes": 112,
+      "qualifier": "static"
+    },
+    {
+      "function": "all_sprites",
+      "bytes": 112,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_erase_border",
+      "bytes": 96,
+      "qualifier": "static"
+    },
+    {
+      "function": "ghost",
+      "bytes": 96,
+      "qualifier": "static"
+    },
+    {
+      "function": "trunk.isra",
+      "bytes": 96,
+      "qualifier": "static"
+    },
+    {
+      "function": "result_step",
+      "bytes": 80,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_room_draw_initial",
+      "bytes": 80,
+      "qualifier": "static"
+    },
+    {
+      "function": "search_step",
+      "bytes": 80,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_layout_attempt",
+      "bytes": 80,
+      "qualifier": "static"
+    },
+    {
+      "function": "ambient_step",
+      "bytes": 64,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_room_draw",
+      "bytes": 64,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_text_center",
+      "bytes": 64,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_house_ambient",
+      "bytes": 64,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_ghost_update",
+      "bytes": 64,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_random_seed",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_erase_top",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_erase_direction",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_flicker_lights",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_icon_reveal",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_erase_ghost",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "result_text",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_room_move_frame",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_text_draw",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "intro_step",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "ancestor_oriented",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "visit",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "blocked.isra",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_host_init",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "game_draw",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "add_icon.constprop.isra",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_house_generate",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_search_next",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_search_collect",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_house_draw_inventory",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_house_apply_collected",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_rescue_followup",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_crown_search",
+      "bytes": 48,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_random_bounded.part.0",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_icon_set",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_icon_all",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_runner_tick",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_font_position",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_icon_clear_children",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_reveal_init",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_reveal_tick",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_search_init",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_search_tick",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_result_init",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_result_loop_tick",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_ambient_tick",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_result_tick",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "centered",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_opening_init",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_opening_tick",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_intro_tick",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "edge",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_layout_generate",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "add",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "neighbor_choice",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "block.isra",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "can_escape",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "crown_inventory",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_game_init",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "has_parent",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_friend_rescue",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_monster_occupy",
+      "bytes": 32,
+      "qualifier": "static"
+    },
+    {
+      "function": "has_current",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_random_bounded",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_probability",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_melody_set",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_runner_init",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_runner_start",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "result_input_clear",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "result_speak",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "reveal_step",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_ambient_init",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_search_fairy_init",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "opening_step",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_strand_length",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_intro_init",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_theme_melody",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "sample_mask",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "loc_depth",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_zone_build",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_host_poll",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "weighted",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "choose",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_game_tick",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_game_can_escape",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "searchable",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "random_b",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "put",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "add_entity.isra",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "special.isra",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_spider_after_move",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_search_next_with_spider",
+      "bytes": 16,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_random_next",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_display_fill",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_sprite_set",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_sprite_get",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_melody_clear",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_melody_pop",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_note_hz",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_just_pressed",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_runner_push",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_runner_queue",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_control_action",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "reveal_count",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "search_count",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "result_count",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "ambient_count",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_room_can_move",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "opening_steps",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "intro_steps",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_strand_length.part.0",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_text_clear",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_text_append",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "ancestor",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_neighbor",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "bits",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "has_ghost",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_game_waiting",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "ancestor",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "overlap",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "append",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "neighbor_has",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_search_entity",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_door_use_key",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_house_apply_used",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_fairy_reward_icon",
+      "bytes": 0,
+      "qualifier": "static"
+    },
+    {
+      "function": "moida_crown_init",
+      "bytes": 0,
+      "qualifier": "static"
+    }
+  ],
+  "date": "2026-10-20",
+  "arduino_package": "WCH:ch32v 26.1.1",
+  "usb_library": "SimpleUsbSerial 1.0.0",
+  "builds": {
+    "os": {
+      "flash_bytes": 75692,
+      "static_ram_bytes": 20044,
+      "flash_margin_bytes": -12204,
+      "ram_remaining_before_stack_heap_irq_bytes": 436,
+      "linker_stack_reservation_bytes": 2048,
+      "largest_input_sections": [
+        {
+          "name": ".bss._ZL4host",
+          "bytes": 19296
+        },
+        {
+          "name": ".rodata.icon_sprites",
+          "bytes": 7454
+        },
+        {
+          "name": ".rodata.sprites",
+          "bytes": 7454
+        },
+        {
+          "name": ".text.moida_game_tick_diagnostic",
+          "bytes": 7338
+        },
+        {
+          "name": ".text.result_step",
+          "bytes": 6018
+        },
+        {
+          "name": ".text._strtod_l",
+          "bytes": 3666
+        },
+        {
+          "name": ".text.moida_house_attempt",
+          "bytes": 3158
+        },
+        {
+          "name": ".rodata.sprite_center_y",
+          "bytes": 2524
+        },
+        {
+          "name": ".rodata.sprite_center_x",
+          "bytes": 2524
+        },
+        {
+          "name": ".rodata.sprite_bottom_y",
+          "bytes": 2524
+        },
+        {
+          "name": ".rodata.strand_codes",
+          "bytes": 2256
+        },
+        {
+          "name": ".text.__subdf3",
+          "bytes": 1854
+        },
+        {
+          "name": ".text.__adddf3",
+          "bytes": 1776
+        },
+        {
+          "name": ".text.__divdf3",
+          "bytes": 1470
+        },
+        {
+          "name": ".rodata.spots",
+          "bytes": 1408
+        },
+        {
+          "name": ".text.__muldf3",
+          "bytes": 1370
+        },
+        {
+          "name": ".text.__gethex",
+          "bytes": 1316
+        },
+        {
+          "name": ".text.search_step",
+          "bytes": 1002
+        },
+        {
+          "name": ".text.__udivdi3",
+          "bytes": 934
+        },
+        {
+          "name": ".text.__umoddi3",
+          "bytes": 912
+        }
+      ],
+      "build_exit_code": 1
+    },
+    "lto": {
+      "flash_bytes": 63168,
+      "static_ram_bytes": 19752,
+      "flash_margin_bytes": 320,
+      "ram_remaining_before_stack_heap_irq_bytes": 728,
+      "linker_stack_reservation_bytes": 2048,
+      "largest_input_sections": [
+        {
+          "name": ".bss._ZL4host",
+          "bytes": 19296
+        },
+        {
+          "name": ".text.startup.main",
+          "bytes": 8856
+        },
+        {
+          "name": ".rodata.icon_sprites",
+          "bytes": 7454
+        },
+        {
+          "name": ".text.result_step",
+          "bytes": 6340
+        },
+        {
+          "name": ".text.moida_house_attempt.constprop.0",
+          "bytes": 4414
+        },
+        {
+          "name": ".text._strtod_l",
+          "bytes": 3666
+        },
+        {
+          "name": ".rodata.sprite_bottom_y",
+          "bytes": 2524
+        },
+        {
+          "name": ".rodata.sprite_center_y",
+          "bytes": 2524
+        },
+        {
+          "name": ".rodata.sprite_center_x",
+          "bytes": 2524
+        },
+        {
+          "name": ".rodata.strand_codes",
+          "bytes": 2256
+        },
+        {
+          "name": ".text.__subdf3",
+          "bytes": 1854
+        },
+        {
+          "name": ".text.__adddf3",
+          "bytes": 1776
+        },
+        {
+          "name": ".text.__divdf3",
+          "bytes": 1470
+        },
+        {
+          "name": ".rodata.spots",
+          "bytes": 1408
+        },
+        {
+          "name": ".text.__muldf3",
+          "bytes": 1370
+        },
+        {
+          "name": ".text.pinmap_pinout",
+          "bytes": 1366
+        },
+        {
+          "name": ".text.__gethex",
+          "bytes": 1316
+        },
+        {
+          "name": ".text.uart_debug_write",
+          "bytes": 1030
+        },
+        {
+          "name": ".text.search_step",
+          "bytes": 992
+        },
+        {
+          "name": ".text.__umoddi3",
+          "bytes": 912
+        }
+      ],
+      "build_exit_code": 1
+    },
+    "usb-lto": {
+      "flash_bytes": 65828,
+      "static_ram_bytes": 19944,
+      "flash_margin_bytes": -2340,
+      "ram_remaining_before_stack_heap_irq_bytes": 536,
+      "linker_stack_reservation_bytes": 2048,
+      "largest_input_sections": [
+        {
+          "name": ".bss._ZL4host",
+          "bytes": 19296
+        },
+        {
+          "name": ".text.startup.main",
+          "bytes": 9120
+        },
+        {
+          "name": ".rodata.icon_sprites.lto_priv.0",
+          "bytes": 7454
+        },
+        {
+          "name": ".text.result_step",
+          "bytes": 6340
+        },
+        {
+          "name": ".text.moida_house_attempt.constprop.0",
+          "bytes": 4414
+        },
+        {
+          "name": ".text._strtod_l",
+          "bytes": 3666
+        },
+        {
+          "name": ".rodata.sprite_bottom_y",
+          "bytes": 2524
+        },
+        {
+          "name": ".rodata.sprite_center_y",
+          "bytes": 2524
+        },
+        {
+          "name": ".rodata.sprite_center_x",
+          "bytes": 2524
+        },
+        {
+          "name": ".rodata.strand_codes",
+          "bytes": 2256
+        },
+        {
+          "name": ".text.__subdf3",
+          "bytes": 1854
+        },
+        {
+          "name": ".text.__adddf3",
+          "bytes": 1776
+        },
+        {
+          "name": ".text.__divdf3",
+          "bytes": 1470
+        },
+        {
+          "name": ".rodata.spots",
+          "bytes": 1408
+        },
+        {
+          "name": ".text.__muldf3",
+          "bytes": 1370
+        },
+        {
+          "name": ".text.__gethex",
+          "bytes": 1316
+        },
+        {
+          "name": ".text.uart_debug_write",
+          "bytes": 1030
+        },
+        {
+          "name": ".text.pinmap_pinout",
+          "bytes": 1008
+        },
+        {
+          "name": ".text.search_step",
+          "bytes": 990
+        },
+        {
+          "name": ".text.__umoddi3",
+          "bytes": 912
+        }
+      ],
+      "build_exit_code": 1
+    }
+  }
+}
