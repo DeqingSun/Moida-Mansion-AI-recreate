@@ -23,9 +23,9 @@ def main():
     sessions = {}
     session_lock = threading.RLock()
     with tempfile.TemporaryDirectory(prefix='moida-native-') as directory:
-        executable = Path(directory) / 'intro'
+        executable = Path(directory) / 'simulator'
         subprocess.run([os.environ.get('CC', 'cc'), '-std=c11', '-O2', '-Wall', '-Wextra', '-Werror',
-                        *(str(HERE / 'native' / f) for f in ('moida_core.c', 'moida_text.c', 'moida_room.c', 'moida_layout.c', 'moida_puzzle.c', 'moida_house.c', 'house_game.c')),
+                        *(str(HERE / 'native' / f) for f in ('moida_core.c', 'moida_text.c', 'moida_room.c', 'moida_layout.c', 'moida_puzzle.c', 'moida_house.c', 'moida_game.c', 'moida_hal.c', 'house_game.c')),
                         '-o', str(executable)], check=True)
 
         layout_executable = Path(directory) / 'layout'

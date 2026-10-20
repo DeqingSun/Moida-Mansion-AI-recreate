@@ -1,3 +1,17 @@
+## Portable core and hardware abstraction
+
+The simulator now runs through a C hardware abstraction layer. The game owns no console, clock, display driver, or audio device. See [HAL.md](HAL.md) for the interface, an integration example, and the future USB stepping model.
+
+Start the computer simulator from the repository root:
+
+```sh
+python3 4_game_runtime/serve.py --port 8767
+```
+
+Open http://127.0.0.1:8767/4_game_runtime/live.html and press **Start / Reset**. Use the on-screen buttons or arrow keys and Enter. Enable Sound to hear the beeper.
+
+Validation after extraction: **49,699 exact original/C ticks across 17 sessions**, plus sanitizer checks for independent instances, reset, HAL stepping, timer rollover, and late polling. `node 4_game_runtime/test-hal.cjs` runs the HAL checks. Physical MCU drivers and a USB serial transport remain to be implemented.
+
 ## Full-session comparison and automatic restart
 
 The live C game now restarts after the original ending/retry dialogue is acknowledged. It generates a **new mansion using the continuing PRNG state**, clears inventory, friends, monsters, search state and statistics, and returns to the intro. Start / Reset still explicitly starts a new session from the seed field. The browser keeps ticking through automatic restarts and displays the mansion number.

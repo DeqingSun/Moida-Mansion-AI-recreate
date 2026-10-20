@@ -1,7 +1,7 @@
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),vm=require('node:vm'),assert=require('node:assert/strict');const {spawnSync}=require('node:child_process');const {loadOriginal}=require('./runtime.cjs');
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'moida-search-interrupt-'));
 try{
- const exe=path.join(dir,'game');const build=spawnSync('cc',['-std=c11','-Wall','-Wextra','-Werror','-fsanitize=address,undefined',...['moida_core.c','moida_text.c','moida_room.c','moida_layout.c','moida_puzzle.c','moida_house.c','house_game.c'].map(f=>path.join(__dirname,'native',f)),'-o',exe],{encoding:'utf8'});assert.equal(build.status,0,build.stderr);
+ const exe=path.join(dir,'game');const build=spawnSync('cc',['-std=c11','-Wall','-Wextra','-Werror','-fsanitize=address,undefined',...['moida_core.c','moida_text.c','moida_room.c','moida_layout.c','moida_puzzle.c','moida_house.c','moida_game.c','moida_hal.c','house_game.c'].map(f=>path.join(__dirname,'native',f)),'-o',exe],{encoding:'utf8'});assert.equal(build.status,0,build.stderr);
  let checks=0;
  for(let seedIndex=0;seedIndex<4;seedIndex++)for(const delay of [0,1,2,3,5,8,10,15,25,40,59,61,65]){
  const seed=1700000000000+seedIndex*1234567,{context}=loadOriginal({seedTime:seed});

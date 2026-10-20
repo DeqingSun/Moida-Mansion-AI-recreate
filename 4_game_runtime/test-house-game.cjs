@@ -1,7 +1,7 @@
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),vm=require('node:vm'),assert=require('node:assert/strict');const {spawnSync}=require('node:child_process');const {loadOriginal}=require('./runtime.cjs');
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'moida-house-game-'));
 try{
- const exe=path.join(dir,'game');const build=spawnSync(process.env.CC||'cc',['-std=c11','-Wall','-Wextra','-Werror','-fsanitize=address,undefined',...['moida_core.c','moida_text.c','moida_room.c','moida_layout.c','moida_puzzle.c','moida_house.c','house_game.c'].map(f=>path.join(__dirname,'native',f)),'-o',exe],{encoding:'utf8'});assert.equal(build.status,0,build.stderr);
+ const exe=path.join(dir,'game');const build=spawnSync(process.env.CC||'cc',['-std=c11','-Wall','-Wextra','-Werror','-fsanitize=address,undefined',...['moida_core.c','moida_text.c','moida_room.c','moida_layout.c','moida_puzzle.c','moida_house.c','moida_game.c','moida_hal.c','house_game.c'].map(f=>path.join(__dirname,'native',f)),'-o',exe],{encoding:'utf8'});assert.equal(build.status,0,build.stderr);
  for(let i=0;i<40;i++){
  const seed=1700000000000+i*1234567,at=[0,10,160,200][i%4],button=i%4;
  const buttons=[...Array(at).fill(0),1<<button,...Array(12).fill(0)];
