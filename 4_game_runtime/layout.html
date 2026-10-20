@@ -1,0 +1,14 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moida — native mansion layout generator</title>
+<style>
+body{font:16px system-ui;background:#17191b;color:#eee;max-width:880px;margin:28px auto;padding:0 20px}h1{font-size:26px}p{line-height:1.5;color:#bdc3c7}nav{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:18px 0}input,button{font:inherit;padding:9px;border-radius:5px}input{width:210px}button{cursor:pointer}svg{width:100%;background:#242b29;border-radius:12px}a{color:#9bd2ef}#status{min-height:3em}text{font-family:system-ui;pointer-events:none}#details{font:13px ui-monospace;white-space:pre-wrap;color:#bbc5cc}
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:7px;text-align:left;border-bottom:1px solid #43504b}h2{font-size:20px}
+</style>
+<h1>Native C mansion layout generator</h1>
+<p>Seeded generation in C: entrance, corridors, stairs, locks, friends, keys, fairies, ghosts, and crown buttons. This view shows the first puzzle-generation attempt. The live game preview now also generates room types and decorations; playable exploration is still pending.</p>
+<nav><label>Seed <input id="seed" value="1700000000000" inputmode="numeric"></label><button id="generate">Generate</button><button id="random">New seed</button></nav>
+<svg id="map" viewBox="0 0 800 420" role="img" aria-label="Generated mansion layout"></svg>
+<p>Yellow: entrance · pale lines: open connections · red: candidate locks. The top row is the highest floor.</p>
+<p id="status">Loading native generator…</p><div id="details"></div><h2>Puzzle entities</h2><div id="entities"></div>
+<p><a href="live.html">C game preview</a> — now generates decorated mansions in C with retry handling.</p>
+<script src="layout.js"></script></html>

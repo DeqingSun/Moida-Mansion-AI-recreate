@@ -1,0 +1,1399 @@
+{
+  "sourceSha256": "70e4f6a7113062c21254378efdd0d24c67f0e781119a157b41ab65850ec549b7",
+  "routines": [
+    {
+      "id": 1,
+      "name": "intro",
+      "stepCount": 11,
+      "steps": [
+        "stop_room_anim() ; stop_loop_anim() ; clear() ; show_all() ; wait(10)",
+        "clear() ; wait(2)",
+        "centered_text(VAR_SID_intro_welcome) ; wait(20) ; melody([C6, B5, C6, N0, N0, N0, N0, N0, N0, N0, As5])",
+        "melody(kMelodyTheme) ; icon_add(ICN_intro) ; icon_add(ICN_intro_monsta_0) ; centered_text(SID_intro_moida) ; wait(30)",
+        "centered_text(SID_intro_by) ; wait(10)",
+        "centered_text(SID_intro_author) ; wait(34)",
+        "centered_text(SID_intro_copy) ; wait(34)",
+        "centered_text(SID_version) ; wait(12)",
+        "clear_text()",
+        "speak(RT_Game_intro_idle, ICN_none, SID_intro_rescue)",
+        "play_once RT_Game_intro_end"
+      ],
+      "procedure": "Game_routine_intro_proc__game_u2167"
+    },
+    {
+      "id": 2,
+      "name": "intro_idle",
+      "stepCount": 43,
+      "steps": [
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1) ; icon_sub(ICN_intro_monsta_0)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1) ; icon_add(ICN_intro_monsta_1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1) ; icon_sub(ICN_intro_monsta_1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1) ; icon_add(ICN_intro_monsta_0)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "speak_text(VAR_SID_speech, ICN_ui_input_stairs_u) ; wait(1)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_intro_idle_proc__game_u2225"
+    },
+    {
+      "id": 3,
+      "name": "intro_end",
+      "stepCount": 5,
+      "steps": [
+        "stop_loop_anim() ; clear() ; reveal_top(25) ; beep(C4) ; wait(2)",
+        "reveal_top(50) ; beep(G4) ; wait(2)",
+        "reveal_top(75) ; beep(C5) ; wait(2)",
+        "draw_house() ; beep(G5) ; wait(2)",
+        "play_once RT_Game_main"
+      ],
+      "procedure": "Game_routine_intro_end_proc__game_u2228"
+    },
+    {
+      "id": 4,
+      "name": "main",
+      "stepCount": 1,
+      "steps": [
+        "draw_house() ; stop_loop_anim() ; start_room_anim()"
+      ],
+      "procedure": "Game_routine_main_proc__game_u2231"
+    },
+    {
+      "id": 5,
+      "name": "move_right",
+      "stepCount": 8,
+      "steps": [
+        "stop_loop_anim() ; erase_right(25) ; beep(G4) ; stop_room_anim() ; icon_subr(ICN_ui_input) ; icon_add(ICN_ui_input_arrow_r)",
+        "erase_right(50) ; icon_add(ICN_ui_input_arrow_r)",
+        "erase_right(75) ; icon_add(ICN_ui_input_arrow_r)",
+        "erase_right(100) ; icon_add(ICN_ui_input_arrow_r) ; beep(G4)",
+        "reveal_left(25) ; icon_subr(ICN_ui_input) ; icon_add(ICN_ui_input_arrow_r)",
+        "reveal_left(50) ; icon_subr(ICN_ui_input) ; icon_add(ICN_ui_input_arrow_r)",
+        "reveal_left(75) ; icon_subr(ICN_ui_input) ; beep(G4)",
+        "play_once RT_Game_post_move"
+      ],
+      "procedure": "Game_routine_move_right_proc__game_u2234"
+    },
+    {
+      "id": 6,
+      "name": "move_left",
+      "stepCount": 8,
+      "steps": [
+        "stop_loop_anim() ; erase_left(25) ; beep(G4) ; stop_room_anim() ; icon_subr(ICN_ui_input) ; icon_add(ICN_ui_input_arrow_l)",
+        "erase_left(50) ; icon_add(ICN_ui_input_arrow_l)",
+        "erase_left(75) ; icon_add(ICN_ui_input_arrow_l)",
+        "erase_left(100) ; icon_add(ICN_ui_input_arrow_l) ; beep(G4)",
+        "reveal_right(25) ; icon_subr(ICN_ui_input) ; icon_add(ICN_ui_input_arrow_l)",
+        "reveal_right(50) ; icon_subr(ICN_ui_input) ; icon_add(ICN_ui_input_arrow_l)",
+        "reveal_right(75) ; icon_subr(ICN_ui_input) ; beep(G4)",
+        "play_once RT_Game_post_move"
+      ],
+      "procedure": "Game_routine_move_left_proc__game_u2237"
+    },
+    {
+      "id": 7,
+      "name": "move_up",
+      "stepCount": 8,
+      "steps": [
+        "stop_loop_anim() ; erase_top(25) ; beep(G4) ; stop_room_anim() ; icon_subr(ICN_ui_input) ; icon_add(ICN_ui_input_stairs_u)",
+        "erase_top(50) ; icon_add(ICN_ui_input_stairs_u)",
+        "erase_top(75) ; icon_add(ICN_ui_input_stairs_u)",
+        "erase_top(100) ; icon_add(ICN_ui_input_stairs_u) ; beep(C5)",
+        "reveal_bottom(25) ; icon_subr(ICN_ui_input) ; icon_add(ICN_ui_input_stairs_u)",
+        "reveal_bottom(50) ; icon_subr(ICN_ui_input) ; icon_add(ICN_ui_input_stairs_u)",
+        "reveal_bottom(75) ; icon_subr(ICN_ui_input) ; beep(G5)",
+        "play_once RT_Game_post_move"
+      ],
+      "procedure": "Game_routine_move_up_proc__game_u2240"
+    },
+    {
+      "id": 8,
+      "name": "move_down",
+      "stepCount": 8,
+      "steps": [
+        "stop_loop_anim() ; erase_bottom(25) ; beep(G5) ; stop_room_anim() ; icon_subr(ICN_ui_input) ; icon_add(ICN_ui_input_stairs_d)",
+        "erase_bottom(50) ; icon_add(ICN_ui_input_stairs_d)",
+        "erase_bottom(75) ; icon_add(ICN_ui_input_stairs_d)",
+        "erase_bottom(100) ; icon_add(ICN_ui_input_stairs_d) ; beep(C5)",
+        "reveal_top(25) ; icon_subr(ICN_ui_input) ; icon_add(ICN_ui_input_stairs_d)",
+        "reveal_top(50) ; icon_subr(ICN_ui_input) ; icon_add(ICN_ui_input_stairs_d)",
+        "reveal_top(75) ; icon_subr(ICN_ui_input) ; beep(G4)",
+        "play_once RT_Game_post_move"
+      ],
+      "procedure": "Game_routine_move_down_proc__game_u2243"
+    },
+    {
+      "id": 9,
+      "name": "post_move",
+      "stepCount": 1,
+      "steps": [
+        "draw_house() ; update_after_move()"
+      ],
+      "procedure": "Game_routine_post_move_proc__game_u2246"
+    },
+    {
+      "id": 10,
+      "name": "room_fairy",
+      "stepCount": 5,
+      "steps": [
+        "icon_sub(VAR_ICN_fairy)",
+        "icon_add(VAR_ICN_fairy)",
+        "icon_sub(VAR_ICN_fairy)",
+        "icon_add(VAR_ICN_fairy) ; wait(10)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_room_fairy_proc__game_u2249"
+    },
+    {
+      "id": 11,
+      "name": "room_flicker_lights",
+      "stepCount": 5,
+      "steps": [
+        "flicker_lights(true)",
+        "wait(2)",
+        "flicker_lights(false)",
+        "wait(2)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_room_flicker_lights_proc__game_u2252"
+    },
+    {
+      "id": 12,
+      "name": "room_rustle",
+      "stepCount": 9,
+      "steps": [
+        "wait(20)",
+        "icon_add(VAR_ICN_rustle) ; beep(C4)",
+        "icon_sub(VAR_ICN_rustle) ; beep(B3)",
+        "wait(10)",
+        "icon_add(VAR_ICN_rustle) ; beep(C4)",
+        "icon_sub(VAR_ICN_rustle) ; beep(B3)",
+        "icon_add(VAR_ICN_rustle) ; beep(C4)",
+        "icon_sub(VAR_ICN_rustle) ; beep(B3)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_room_rustle_proc__game_u2255"
+    },
+    {
+      "id": 13,
+      "name": "rustle_move_beginning",
+      "stepCount": 2,
+      "steps": [
+        "icon_add(VAR_ICN_rustle) ; beep(C4)",
+        "icon_sub(VAR_ICN_rustle) ; beep(B3)"
+      ],
+      "procedure": "Game_routine_rustle_move_beginning_proc__game_u2258"
+    },
+    {
+      "id": 14,
+      "name": "rustle_move_up",
+      "stepCount": 2,
+      "steps": [
+        "play_once RT_Game_rustle_move_beginning",
+        "play_once RT_Game_move_up"
+      ],
+      "procedure": "Game_routine_rustle_move_up_proc__game_u2261"
+    },
+    {
+      "id": 15,
+      "name": "rustle_move_down",
+      "stepCount": 2,
+      "steps": [
+        "play_once RT_Game_rustle_move_beginning",
+        "play_once RT_Game_move_down"
+      ],
+      "procedure": "Game_routine_rustle_move_down_proc__game_u2264"
+    },
+    {
+      "id": 16,
+      "name": "rustle_move_left",
+      "stepCount": 2,
+      "steps": [
+        "play_once RT_Game_rustle_move_beginning",
+        "play_once RT_Game_move_left"
+      ],
+      "procedure": "Game_routine_rustle_move_left_proc__game_u2267"
+    },
+    {
+      "id": 17,
+      "name": "rustle_move_right",
+      "stepCount": 2,
+      "steps": [
+        "play_once RT_Game_rustle_move_beginning",
+        "play_once RT_Game_move_right"
+      ],
+      "procedure": "Game_routine_rustle_move_right_proc__game_u2270"
+    },
+    {
+      "id": 18,
+      "name": "room_escape",
+      "stepCount": 6,
+      "steps": [
+        "wait(10)",
+        "clear_text() ; icon_sub(ICN_ui_input_stairs_d) ; beep(C5)",
+        "centered_text(SID_escape) ; icon_add(ICN_ui_input_stairs_d) ; beep(E5)",
+        "clear_text() ; icon_sub(ICN_ui_input_stairs_d) ; beep(C5)",
+        "centered_text(SID_escape) ; icon_add(ICN_ui_input_stairs_d) ; beep(E5)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_room_escape_proc__game_u2273"
+    },
+    {
+      "id": 19,
+      "name": "search_beginning_immediate",
+      "stepCount": 6,
+      "steps": [
+        "draw_house() ; icon_sub(VAR_ICN_search_item) ; text(SID_searching_01) ; wait(1) ; beep(D5)",
+        "draw_house() ; text(SID_searching_01) ; wait(1) ; beep(E5)",
+        "draw_house() ; icon_sub(VAR_ICN_search_item) ; text(SID_searching_02) ; wait(1) ; beep(D5)",
+        "draw_house() ; text(SID_searching_02) ; wait(1) ; beep(E5)",
+        "draw_house() ; icon_sub(VAR_ICN_search_item) ; text(SID_searching_03) ; wait(1) ; beep(D5)",
+        "draw_house() ; text(SID_searching_03) ; wait(1) ; beep(E5)"
+      ],
+      "procedure": "Game_routine_search_beginning_immediate_proc__game_u2276"
+    },
+    {
+      "id": 20,
+      "name": "search_beginning",
+      "stepCount": 5,
+      "steps": [
+        "draw_house() ; stop_room_anim() ; icon_sub(VAR_ICN_search_item) ; icon_sub(ICN_ui_input_search) ; text(SID_searching_00) ; beep(C6)",
+        "beep(C6) ; wait(1)",
+        "draw_house() ; text(SID_searching_00) ; wait(3)",
+        "draw_house() ; text(SID_searching_00) ; wait(1) ; beep(E5)",
+        "play_once RT_Game_search_beginning_immediate"
+      ],
+      "procedure": "Game_routine_search_beginning_proc__game_u2279"
+    },
+    {
+      "id": 21,
+      "name": "search_ending",
+      "stepCount": 21,
+      "steps": [
+        "draw_house() ; icon_sub(VAR_ICN_search_item) ; text(SID_searching_04) ; wait(1) ; beep(D5) ; inc_stat(Searches)",
+        "draw_house() ; text(SID_searching_04) ; wait(1) ; beep(E5)",
+        "draw_house() ; icon_sub(VAR_ICN_search_item) ; text(SID_searching_05) ; wait(1) ; beep(D5)",
+        "draw_house() ; text(SID_searching_05) ; wait(1) ; beep(E5)",
+        "draw_house() ; icon_sub(VAR_ICN_search_item) ; text(SID_searching_06) ; wait(1) ; beep(D5)",
+        "draw_house() ; text(SID_searching_06) ; wait(1) ; beep(E5)",
+        "draw_house() ; icon_sub(VAR_ICN_search_item) ; text(SID_searching_07) ; wait(1) ; beep(D5)",
+        "draw_house() ; text(SID_searching_07) ; wait(1) ; beep(E5)",
+        "draw_house() ; icon_sub(VAR_ICN_search_item) ; text(SID_searching_08) ; wait(1) ; beep(D5)",
+        "draw_house() ; text(SID_searching_08) ; wait(1) ; beep(E5)",
+        "draw_house() ; icon_sub(VAR_ICN_search_item) ; text(SID_searching_09) ; wait(1) ; beep(D5)",
+        "draw_house() ; text(SID_searching_09) ; wait(1) ; beep(E5)",
+        "draw_house() ; icon_sub(VAR_ICN_search_item) ; text(SID_searching_10) ; wait(1) ; beep(D5)",
+        "draw_house() ; text(SID_searching_10) ; wait(1) ; beep(E5)",
+        "draw_house() ; icon_sub(VAR_ICN_search_item) ; text(SID_searching_11) ; wait(1) ; beep(D5)",
+        "draw_house() ; text(SID_searching_11) ; wait(1) ; beep(E5)",
+        "draw_house() ; icon_sub(VAR_ICN_search_item) ; text(SID_searching_12) ; wait(1) ; beep(D5)",
+        "draw_house() ; text(SID_searching_12) ; wait(1) ; beep(E5)",
+        "draw_house() ; icon_sub(VAR_ICN_search_item) ; text(SID_searching_13) ; wait(1) ; beep(D5)",
+        "draw_house() ; text(SID_searching_13) ; wait(1) ; beep(E5)",
+        "apply_search_found()"
+      ],
+      "procedure": "Game_routine_search_ending_proc__game_u2282"
+    },
+    {
+      "id": 22,
+      "name": "search",
+      "stepCount": 2,
+      "steps": [
+        "play_once(RT_Game_search_beginning)",
+        "play_once(RT_Game_search_ending)"
+      ],
+      "procedure": "Game_routine_search_proc__game_u2285"
+    },
+    {
+      "id": 23,
+      "name": "search_immediate",
+      "stepCount": 2,
+      "steps": [
+        "play_once(RT_Game_search_beginning_immediate)",
+        "play_once(RT_Game_search_ending)"
+      ],
+      "procedure": "Game_routine_search_immediate_proc__game_u2288"
+    },
+    {
+      "id": 24,
+      "name": "search_fairy_beginning",
+      "stepCount": 7,
+      "steps": [
+        "draw_house() ; clear_text() ; icon_add(VAR_ICN_fairy) ; beep(F5)",
+        "icon_sub(VAR_ICN_fairy) ; beep(As5)",
+        "icon_add(VAR_ICN_fairy) ; beep(C6)",
+        "icon_sub(VAR_ICN_fairy) ; beep(F5)",
+        "icon_add(VAR_ICN_fairy) ; beep(As5)",
+        "icon_sub(VAR_ICN_fairy) ; beep(C6)",
+        "icon_add(VAR_ICN_fairy) ; beep(F5)"
+      ],
+      "procedure": "Game_routine_search_fairy_beginning_proc__game_u2291"
+    },
+    {
+      "id": 25,
+      "name": "search_fairy",
+      "stepCount": 11,
+      "steps": [
+        "play_once RT_Game_search_fairy_beginning ; inc_stat(Searches)",
+        "icon_sub(VAR_ICN_fairy) ; beep(As5)",
+        "icon_add(VAR_ICN_fairy) ; beep(C6)",
+        "icon_sub(VAR_ICN_fairy) ; beep(F5)",
+        "icon_sub(VAR_ICN_fairy) ; beep(As5)",
+        "icon_add(VAR_ICN_fairy) ; beep(C6)",
+        "icon_sub(VAR_ICN_fairy) ; beep(F5)",
+        "icon_sub(VAR_ICN_fairy) ; beep(As5)",
+        "icon_add(VAR_ICN_fairy) ; beep(C6)",
+        "icon_sub(VAR_ICN_fairy) ; beep(F5)",
+        "apply_search_found()"
+      ],
+      "procedure": "Game_routine_search_fairy_proc__game_u2294"
+    },
+    {
+      "id": 26,
+      "name": "search_fairy_attacked",
+      "stepCount": 2,
+      "steps": [
+        "play_once RT_Game_search_fairy_beginning",
+        "monsta_go_attack()"
+      ],
+      "procedure": "Game_routine_search_fairy_attacked_proc__game_u2297"
+    },
+    {
+      "id": 27,
+      "name": "search_unlocked",
+      "stepCount": 17,
+      "steps": [
+        "draw_house() ; stop_room_anim() ; icon_sub(VAR_ICN_search_item) ; icon_sub(VAR_ICN_lock) ; icon_sub(ICN_ui_input_search) ; text(SID_searching_00) ; beep(C5)",
+        "beep(C5) ; wait(1)",
+        "draw_house() ; centered_text(SID_unlocking) ; icon_add(VAR_ICN_lock) ; wait(3)",
+        "icon_sub(VAR_ICN_lock) ; icon_add(VAR_ICN_key) ; beep(F3)",
+        "icon_add(VAR_ICN_lock) ; icon_sub(VAR_ICN_key) ; wait(3)",
+        "icon_sub(VAR_ICN_lock) ; icon_add(VAR_ICN_key) ; beep(D3)",
+        "icon_add(VAR_ICN_lock) ; icon_sub(VAR_ICN_key) ; wait(3)",
+        "icon_sub(VAR_ICN_lock) ; icon_add(VAR_ICN_key) ; beep(A3)",
+        "icon_add(VAR_ICN_lock) ; icon_sub(VAR_ICN_key) ; wait(3)",
+        "icon_add(VAR_ICN_lock) ; icon_sub(VAR_ICN_key) ; wait(1) ; melody([C4, Ds4, Fs4, A4, C5])",
+        "icon_sub(VAR_ICN_lock)",
+        "icon_add(VAR_ICN_lock)",
+        "icon_sub(VAR_ICN_lock)",
+        "icon_add(VAR_ICN_lock)",
+        "icon_sub(VAR_ICN_lock)",
+        "wait(5)",
+        "play_once RT_Game_search_immediate"
+      ],
+      "procedure": "Game_routine_search_unlocked_proc__game_u2300"
+    },
+    {
+      "id": 28,
+      "name": "search_attacked",
+      "stepCount": 2,
+      "steps": [
+        "play_once RT_Game_search_beginning",
+        "monsta_go_attack()"
+      ],
+      "procedure": "Game_routine_search_attacked_proc__game_u2323"
+    },
+    {
+      "id": 29,
+      "name": "search_locked",
+      "stepCount": 10,
+      "steps": [
+        "play_once(RT_Game_search_beginning)",
+        "centered_text(VAR_SID_locked) ; wait(1) ; icon_add(VAR_ICN_lock) ; beep(D3) ; inc_stat(Searches)",
+        "clear_text() ; wait(1) ; icon_sub(VAR_ICN_lock) ; beep(Cs3)",
+        "centered_text(VAR_SID_locked) ; wait(1) ; icon_add(VAR_ICN_lock) ; beep(D3)",
+        "clear_text() ; wait(1) ; icon_sub(VAR_ICN_lock)",
+        "centered_text(VAR_SID_locked) ; wait(1) ; icon_add(VAR_ICN_lock) ; beep(D3)",
+        "clear_text() ; wait(1) ; icon_sub(VAR_ICN_lock)",
+        "centered_text(VAR_SID_locked) ; wait(1) ; icon_add(VAR_ICN_lock) ; beep(D3)",
+        "clear_text() ; wait(1) ; icon_sub(VAR_ICN_lock)",
+        "play_once RT_Game_post_found"
+      ],
+      "procedure": "Game_routine_search_locked_proc__game_u2326"
+    },
+    {
+      "id": 30,
+      "name": "attack",
+      "stepCount": 4,
+      "steps": [
+        "play_loop_anim(RT_Game_loop_attack_0, 8)",
+        "play_loop_anim(RT_Game_loop_attack_1, 20)",
+        "play_loop_anim(RT_Game_loop_attack_2, 20)",
+        "monsta_go_moida()"
+      ],
+      "procedure": "Game_routine_attack_proc__game_u2329"
+    },
+    {
+      "id": 31,
+      "name": "attack_quick",
+      "stepCount": 2,
+      "steps": [
+        "play_loop_anim(RT_Game_loop_attack_2, 20)",
+        "monsta_go_moida()"
+      ],
+      "procedure": "Game_routine_attack_quick_proc__game_u2332"
+    },
+    {
+      "id": 32,
+      "name": "loop_attack_0",
+      "stepCount": 3,
+      "steps": [
+        "melody([As4, A4]) ; icon_sub(VAR_ICN_monsta) ; wait(1)",
+        "melody([As4, A4]) ; icon_add(VAR_ICN_monsta) ; wait(1)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_loop_attack_0_proc__game_u2335"
+    },
+    {
+      "id": 33,
+      "name": "loop_attack_1",
+      "stepCount": 3,
+      "steps": [
+        "centered_text(SID_monsta) ; beep(As4) ; icon_sub(VAR_ICN_monsta)",
+        "clear_text() ; beep(As4) ; icon_add(VAR_ICN_monsta)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_loop_attack_1_proc__game_u2362"
+    },
+    {
+      "id": 34,
+      "name": "loop_attack_2",
+      "stepCount": 3,
+      "steps": [
+        "centered_text(SID_run) ; beep(As5) ; icon_sub(VAR_ICN_monsta)",
+        "clear_text() ; beep(As5) ; icon_add(VAR_ICN_monsta)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_loop_attack_2_proc__game_u2365"
+    },
+    {
+      "id": 35,
+      "name": "moidad",
+      "stepCount": 9,
+      "steps": [
+        "clear() ; stop_room_anim() ; icon_add(ICN_walls) ; icon_add(VAR_ICN_monsta_spot) ; icon_add(VAR_ICN_monsta) ; play_loop_anim(RT_Game_loop_monsta_rip_0, 20)",
+        "clear() ; icon_add(ICN_monsta_hand) ; icon_add(ICN_monsta_blood) ; play_loop_anim(RT_Game_loop_monsta_rip_1, 20) ; melody([B3, B5, As3, As5, A3, A5, Gs3, Gs5, G3, G5, Fs3, Fs5, F3, F5, E3, E5, ;         Ds3, Ds5, D3, D5, Cs3, Cs5])",
+        "clear() ; wait(10) ; icon_add(ICN_monsta_hand) ; icon_add(ICN_monsta_blood)",
+        "centered_text(SID_moida_0) ; melody([C4, C3]) ; wait(10)",
+        "centered_text(SID_moida_1) ; melody([E4, E3]) ; wait(10)",
+        "centered_text(SID_moida_2) ; beep(F4)",
+        "melody(kMelodyTheme) ; play_loop_anim(RT_Game_loop_monsta_rip_3, 120)",
+        "speak(RT_Game_speak_loop, ICN_none, SID_try_again)",
+        "que_restart()"
+      ],
+      "procedure": "Game_routine_moidad_proc__game_u2368"
+    },
+    {
+      "id": 36,
+      "name": "loop_monsta_rip_0",
+      "stepCount": 5,
+      "steps": [
+        "icon_add(VAR_ICN_monsta) ; icon_add(ICN_monsta_hand) ; melody([C6, Fs5, E5, C5])",
+        "icon_sub(VAR_ICN_monsta) ; icon_sub(ICN_monsta_hand)",
+        "icon_add(VAR_ICN_monsta) ; icon_add(ICN_monsta_hand)",
+        "icon_sub(VAR_ICN_monsta) ; icon_sub(ICN_monsta_hand)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_loop_monsta_rip_0_proc__game_u2403"
+    },
+    {
+      "id": 37,
+      "name": "loop_monsta_rip_1",
+      "stepCount": 3,
+      "steps": [
+        "icon_add(ICN_monsta_blood) ; icon_add(ICN_monsta_hand)",
+        "icon_sub(ICN_monsta_blood) ; icon_sub(ICN_monsta_hand)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_loop_monsta_rip_1_proc__game_u2410"
+    },
+    {
+      "id": 38,
+      "name": "loop_monsta_rip_2",
+      "stepCount": 11,
+      "steps": [
+        "icon_add(ICN_monsta_blood) ; wait(1)",
+        "icon_sub(ICN_monsta_blood) ; wait(1)",
+        "icon_add(ICN_monsta_blood) ; wait(1)",
+        "icon_sub(ICN_monsta_blood) ; icon_sub(ICN_monsta_hand)",
+        "icon_add(ICN_monsta_blood) ; icon_add(ICN_monsta_hand) ; wait(1)",
+        "icon_add(ICN_monsta_blood) ; wait(1)",
+        "icon_sub(ICN_monsta_blood) ; wait(1)",
+        "icon_add(ICN_monsta_blood) ; wait(1)",
+        "icon_sub(ICN_monsta_blood) ; icon_sub(ICN_monsta_hand)",
+        "icon_add(ICN_monsta_blood) ; icon_add(ICN_monsta_hand) ; wait(1)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_loop_monsta_rip_2_proc__game_u2413"
+    },
+    {
+      "id": 39,
+      "name": "loop_monsta_rip_3",
+      "stepCount": 9,
+      "steps": [
+        "clear_text() ; wait(1)",
+        "centered_text(SID_moida_2) ; wait(3)",
+        "clear_text() ; wait(1)",
+        "centered_text(SID_moida_2) ; wait(3)",
+        "clear_text() ; wait(1)",
+        "centered_text(SID_moida_2) ; wait(3)",
+        "clear_text() ; wait(1)",
+        "centered_text(SID_moida_2) ; wait(3)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_loop_monsta_rip_3_proc__game_u2416"
+    },
+    {
+      "id": 40,
+      "name": "show_locked",
+      "stepCount": 7,
+      "steps": [
+        "centered_text(VAR_SID_locked) ; wait(1) ; icon_add(VAR_ICN_lock) ; beep(D3)",
+        "clear_text() ; wait(1) ; icon_sub(VAR_ICN_lock) ; beep(Cs3)",
+        "centered_text(VAR_SID_locked) ; wait(1) ; icon_add(VAR_ICN_lock) ; beep(D3)",
+        "clear_text() ; wait(1) ; icon_sub(VAR_ICN_lock)",
+        "centered_text(VAR_SID_locked) ; wait(1) ; icon_add(VAR_ICN_lock) ; beep(D3)",
+        "clear_text() ; wait(1) ; icon_sub(VAR_ICN_lock)",
+        "draw_house()"
+      ],
+      "procedure": "Game_routine_show_locked_proc__game_u2419"
+    },
+    {
+      "id": 41,
+      "name": "show_unlock",
+      "stepCount": 8,
+      "steps": [
+        "icon_sub(VAR_ICN_lock) ; icon_sub(VAR_ICN_key) ; wait(1) ; melody([C4, Ds4, Fs4, A4, C5])",
+        "icon_add(VAR_ICN_lock) ; icon_add(VAR_ICN_key) ; wait(1)",
+        "icon_sub(VAR_ICN_lock) ; icon_sub(VAR_ICN_key) ; wait(1)",
+        "icon_add(VAR_ICN_lock) ; icon_add(VAR_ICN_key) ; wait(1)",
+        "icon_sub(VAR_ICN_lock) ; icon_sub(VAR_ICN_key) ; wait(1)",
+        "icon_add(VAR_ICN_lock) ; icon_add(VAR_ICN_key) ; wait(1)",
+        "icon_sub(VAR_ICN_lock) ; icon_sub(VAR_ICN_key) ; wait(1)",
+        "play_once RT_Game_main"
+      ],
+      "procedure": "Game_routine_show_unlock_proc__game_u2422"
+    },
+    {
+      "id": 42,
+      "name": "found_nothing",
+      "stepCount": 2,
+      "steps": [
+        "draw_house() ; centered_text(SID_nothing) ; melody([Fs5, Fs4, Fs3]) ; wait(20)",
+        "check_want_search_tip(yes = RT_Game_found_nothing_search_tip, ;                       no = RT_Game_post_found)"
+      ],
+      "procedure": "Game_routine_found_nothing_proc__game_u2429"
+    },
+    {
+      "id": 43,
+      "name": "found_nothing_search_tip",
+      "stepCount": 5,
+      "steps": [
+        "stop_room_anim() ; stop_loop_anim() ; clear() ; melody([F4, A5, C6]) ; icon_add(ICN_walls) ; wait(20)",
+        "speak(RT_Game_hint_loop, ICN_none, SID_search_tip_0)",
+        "speak(RT_Game_hint_loop, ICN_search_tip, SID_search_tip_1)",
+        "melody([C6, A5, F4])",
+        "play_once RT_Game_post_found"
+      ],
+      "procedure": "Game_routine_found_nothing_search_tip_proc__game_u2452"
+    },
+    {
+      "id": 44,
+      "name": "found_key",
+      "stepCount": 12,
+      "steps": [
+        "draw_house() ; centered_text(SID_hidden_key) ; melody([Fs5, Ds5, C5, A4, C5, Ds5, Fs5, A5]) ; icon_add(ICN_ui_key)",
+        "icon_sub(ICN_ui_key) ; wait(1)",
+        "icon_add(ICN_ui_key) ; wait(1)",
+        "icon_sub(ICN_ui_key) ; wait(1)",
+        "icon_add(ICN_ui_key) ; wait(1)",
+        "icon_sub(ICN_ui_key) ; wait(1)",
+        "icon_add(ICN_ui_key) ; wait(1)",
+        "icon_sub(ICN_ui_key) ; wait(1)",
+        "icon_add(ICN_ui_key) ; wait(1)",
+        "icon_sub(ICN_ui_key) ; wait(1)",
+        "icon_add(ICN_ui_key) ; wait(10)",
+        "play_once RT_Game_post_found"
+      ],
+      "procedure": "Game_routine_found_key_proc__game_u2463"
+    },
+    {
+      "id": 45,
+      "name": "found_lock",
+      "stepCount": 2,
+      "steps": [
+        "draw_house() ; centered_text(VAR_SID_locked)",
+        "play_once RT_Game_post_found"
+      ],
+      "procedure": "Game_routine_found_lock_proc__game_u2486"
+    },
+    {
+      "id": 46,
+      "name": "found_code",
+      "stepCount": 12,
+      "steps": [
+        "centered_text(SID_hidden_code) ; melody([Fs5, Ds5, C5, A4, C5, Ds5, Fs5, A5])",
+        "icon_sub(VAR_ICN_key) ; wait(1)",
+        "icon_add(VAR_ICN_key) ; wait(1)",
+        "icon_sub(VAR_ICN_key) ; wait(1)",
+        "icon_add(VAR_ICN_key) ; wait(1)",
+        "icon_sub(VAR_ICN_key) ; wait(1)",
+        "icon_add(VAR_ICN_key) ; wait(1)",
+        "icon_sub(VAR_ICN_key) ; wait(1)",
+        "icon_add(VAR_ICN_key) ; wait(1)",
+        "icon_sub(VAR_ICN_key) ; wait(1)",
+        "icon_add(VAR_ICN_key) ; wait(10)",
+        "play_once RT_Game_post_found"
+      ],
+      "procedure": "Game_routine_found_code_proc__game_u2489"
+    },
+    {
+      "id": 47,
+      "name": "found_code_part",
+      "stepCount": 12,
+      "steps": [
+        "centered_text(SID_code_part) ; melody([As4, C5, Ds5, F5, As5])",
+        "icon_sub(VAR_ICN_key) ; wait(1)",
+        "icon_add(VAR_ICN_key) ; wait(1)",
+        "icon_sub(VAR_ICN_key) ; wait(1)",
+        "icon_add(VAR_ICN_key) ; wait(1)",
+        "icon_sub(VAR_ICN_key) ; wait(1)",
+        "icon_add(VAR_ICN_key) ; wait(1)",
+        "icon_sub(VAR_ICN_key) ; wait(1)",
+        "icon_add(VAR_ICN_key) ; wait(1)",
+        "icon_sub(VAR_ICN_key) ; wait(1)",
+        "icon_add(VAR_ICN_key) ; wait(10)",
+        "play_once RT_Game_post_found"
+      ],
+      "procedure": "Game_routine_found_code_part_proc__game_u2496"
+    },
+    {
+      "id": 48,
+      "name": "found_latch",
+      "stepCount": 28,
+      "steps": [
+        "draw_house() ; centered_text(SID_hidden_latch) ; melody([Fs5, Ds5, C5, A4, C5, Ds5, Fs5, A5]) ; erase_ui_input()",
+        "icon_sub(VAR_ICN_search_item)",
+        "icon_add(VAR_ICN_search_item)",
+        "icon_sub(VAR_ICN_search_item)",
+        "icon_add(VAR_ICN_search_item)",
+        "icon_sub(VAR_ICN_search_item)",
+        "icon_add(VAR_ICN_search_item)",
+        "icon_sub(VAR_ICN_search_item)",
+        "icon_add(VAR_ICN_search_item)",
+        "icon_sub(VAR_ICN_search_item)",
+        "icon_add(VAR_ICN_search_item) ; wait(5)",
+        "icon_sub(VAR_ICN_search_item) ; melody([A3, A4])",
+        "icon_add(VAR_ICN_search_item) ; wait(10)",
+        "icon_reveal(VAR_ICN_hidden_passage, 20) ; melody([C4, Ds4, Fs4, A4, C5])",
+        "icon_reveal(VAR_ICN_hidden_passage, 30)",
+        "icon_reveal(VAR_ICN_hidden_passage, 40)",
+        "icon_reveal(VAR_ICN_hidden_passage, 50)",
+        "icon_reveal(VAR_ICN_hidden_passage, 60)",
+        "icon_reveal(VAR_ICN_hidden_passage, 70)",
+        "icon_reveal(VAR_ICN_hidden_passage, 80)",
+        "icon_reveal(VAR_ICN_hidden_passage, 90)",
+        "icon_reveal(VAR_ICN_hidden_passage, 100) ; use_found_latch_key()",
+        "centered_text(SID_passage) ; wait(2) ; beep(C4)",
+        "centered_text(SID_passage) ; wait(2) ; beep(Ds4)",
+        "centered_text(SID_passage) ; wait(2) ; beep(Fs4)",
+        "centered_text(SID_passage) ; wait(2) ; beep(A4)",
+        "centered_text(SID_passage) ; wait(10) ; beep(C5)",
+        "play_once RT_Game_post_found"
+      ],
+      "procedure": "Game_routine_found_latch_proc__game_u2503"
+    },
+    {
+      "id": 49,
+      "name": "found_spider",
+      "stepCount": 2,
+      "steps": [
+        "draw_house() ; centered_text(SID_spider_ran) ; melody([As3, As4, As5]) ; wait(30)",
+        "play_once RT_Game_post_found"
+      ],
+      "procedure": "Game_routine_found_spider_proc__game_u2518"
+    },
+    {
+      "id": 50,
+      "name": "found_crown_button_beginning_0",
+      "stepCount": 3,
+      "steps": [
+        "erase_ui_input() ; icon_add(VAR_ICN_search_item) ; centered_text(SID_crown_button) ; melody([E5, F5]) ; wait(20)",
+        "icon_sub(VAR_ICN_search_item) ; melody([A3, A4])",
+        "icon_add(VAR_ICN_search_item) ; wait(10)"
+      ],
+      "procedure": "Game_routine_found_crown_button_beginning_0_proc__game_u2525"
+    },
+    {
+      "id": 51,
+      "name": "found_crown_button_beginning_1",
+      "stepCount": 1,
+      "steps": [
+        "centered_text(SID_nothing_q) ; melody([Fs5, Fs4, Fs3]) ; wait(20)"
+      ],
+      "procedure": "Game_routine_found_crown_button_beginning_1_proc__game_u2536"
+    },
+    {
+      "id": 52,
+      "name": "found_crown_button",
+      "stepCount": 7,
+      "steps": [
+        "play_once RT_Game_found_crown_button_beginning_0",
+        "melody_crown_button(0, false) ; wait(5) ; clear_text()",
+        "melody_crown_button(1, false) ; wait(5)",
+        "melody_crown_button(2, false) ; wait(5)",
+        "melody_crown_button(3, false) ; wait(20)",
+        "play_once RT_Game_found_crown_button_beginning_1",
+        "play_once RT_Game_post_found"
+      ],
+      "procedure": "Game_routine_found_crown_button_proc__game_u2543"
+    },
+    {
+      "id": 53,
+      "name": "found_crown_button_pushing_all",
+      "stepCount": 35,
+      "steps": [
+        "stop_room_anim() ; erase_ui_input()",
+        "centered_text(SID_crown_button) ; melody([E5, F5]) ; wait(20)",
+        "icon_sub(VAR_ICN_search_item) ; melody([A3, A4])",
+        "icon_add(VAR_ICN_search_item) ; wait(10)",
+        "melody_crown_button(0, true) ; wait(10) ; clear_text()",
+        "melody_crown_button(1, true) ; wait(10)",
+        "melody_crown_button(2, true) ; wait(10)",
+        "melody_crown_button(3, true) ; wait(20)",
+        "erase_border(20, ICN_walls) ; melody([C3, C4, C5, C6])",
+        "erase_border(40, ICN_walls) ; icon_add(ICN_crown_button) ; icon_add(ICN_ui_friend_face_all)",
+        "erase_border(60, ICN_walls) ; icon_add(ICN_crown_button) ; icon_add(ICN_ui_friend_face_all)",
+        "erase_border(80, ICN_walls) ; icon_add(ICN_crown_button) ; icon_add(ICN_ui_friend_face_all)",
+        "clear() ; icon_add(ICN_walls) ; icon_add(ICN_crown_button) ; icon_add(ICN_ui_friend_face_all)",
+        "wait(20)",
+        "play_loop_anim(RT_Game_loop_crown_warp_0, 12)",
+        "play_loop_anim(RT_Game_loop_crown_warp_1, 12)",
+        "play_loop_anim(RT_Game_loop_crown_warp_2, 12)",
+        "icon_add(ICN_walls) ; melody([C4, C3]) ; wait(20)",
+        "icon_add(ICN_crown) ; melody([D4, F4, G4, As4, D5, G5, F5, G5, D5, F5, G5, As5])",
+        "play_loop_anim(RT_Game_loop_crown_flash_0, 40)",
+        "centered_text(SID_got_crown) ; play_loop_anim(RT_Game_loop_crown_flash_1, 40) ; melody([Ds4, Ds4, A4]) ; icon_sub(ICN_crown_button)",
+        "clear() ; icon_add(ICN_walls) ; icon_add(ICN_ui_friend_face_all)",
+        "apply_got_crown()",
+        "draw_house() ; clear_text() ; icon_sub(ICN_ui_crown) ; wait(1) ; melody([A3, A4, A5])",
+        "icon_add(ICN_ui_crown) ; wait(1)",
+        "icon_sub(ICN_ui_crown) ; wait(1)",
+        "icon_add(ICN_ui_crown) ; wait(1) ; beep(A5)",
+        "icon_sub(ICN_ui_crown) ; wait(1)",
+        "icon_add(ICN_ui_crown) ; wait(1) ; beep(A5)",
+        "icon_sub(ICN_ui_crown) ; wait(1)",
+        "icon_add(ICN_ui_crown) ; wait(1) ; beep(A5)",
+        "icon_sub(ICN_ui_crown) ; wait(1)",
+        "icon_add(ICN_ui_crown) ; wait(1) ; beep(A5)",
+        "melody([Ds4, Ds4, A4]) ; speak(RT_Game_speak_loop, ICN_ui_friend_talk_all, SID_lets_escape)",
+        "play_once RT_Game_post_found"
+      ],
+      "procedure": "Game_routine_found_crown_button_pushing_all_proc__game_u2546"
+    },
+    {
+      "id": 54,
+      "name": "loop_crown_warp_0",
+      "stepCount": 7,
+      "steps": [
+        "clear() ; icon_add(ICN_hyper) ; icon_add(ICN_ui_friend_face_all) ; melody([As3, As4, As5, As3, As4, As5])",
+        "icon_sub(ICN_hyper)",
+        "icon_add(ICN_hyper)",
+        "icon_sub(ICN_hyper)",
+        "icon_add(ICN_hyper)",
+        "icon_sub(ICN_hyper)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_loop_crown_warp_0_proc__game_u2597"
+    },
+    {
+      "id": 55,
+      "name": "loop_crown_warp_1",
+      "stepCount": 7,
+      "steps": [
+        "clear() ; icon_add(ICN_hyper) ; icon_add(ICN_ui_friend_face_all) ; melody([B3, B4, B5, B3, B4, B5])",
+        "icon_sub(ICN_hyper)",
+        "icon_add(ICN_hyper)",
+        "icon_sub(ICN_hyper)",
+        "icon_add(ICN_hyper)",
+        "icon_sub(ICN_hyper)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_loop_crown_warp_1_proc__game_u2620"
+    },
+    {
+      "id": 56,
+      "name": "loop_crown_warp_2",
+      "stepCount": 7,
+      "steps": [
+        "clear() ; icon_add(ICN_hyper) ; icon_add(ICN_ui_friend_face_all) ; melody([C4, C5, C6, C4, C5, C6])",
+        "icon_sub(ICN_hyper)",
+        "icon_add(ICN_hyper)",
+        "icon_sub(ICN_hyper)",
+        "icon_add(ICN_hyper)",
+        "icon_sub(ICN_hyper)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_loop_crown_warp_2_proc__game_u2627"
+    },
+    {
+      "id": 57,
+      "name": "loop_crown_flash_0",
+      "stepCount": 3,
+      "steps": [
+        "icon_add(ICN_crown_sparkle) ; wait(1)",
+        "icon_sub(ICN_crown_sparkle) ; wait(1)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_loop_crown_flash_0_proc__game_u2634"
+    },
+    {
+      "id": 58,
+      "name": "loop_crown_flash_1",
+      "stepCount": 3,
+      "steps": [
+        "icon_add(ICN_ui_friend_talk_all) ; icon_add(ICN_crown_sparkle) ; wait(1)",
+        "icon_sub(ICN_ui_friend_talk_all) ; icon_sub(ICN_crown_sparkle) ; wait(1)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_loop_crown_flash_1_proc__game_u2637"
+    },
+    {
+      "id": 59,
+      "name": "friend_crown_button_push",
+      "stepCount": 9,
+      "steps": [
+        "play_once RT_Game_found_crown_button_beginning_0",
+        "melody_crown_button(1, false) ; wait(5) ; clear_text()",
+        "melody_crown_button(2, false) ; wait(5)",
+        "melody_crown_button(3, false) ; wait(5)",
+        "melody_crown_button(4, false) ; wait(20)",
+        "play_once RT_Game_found_crown_button_beginning_1",
+        "melody([Ds4, Ds4, A4]) ; icon_add(VAR_ICN_friend_talk) ; wait(2)",
+        "speak(RT_Game_speak_loop, VAR_ICN_friend_talk, SID_button_hold)",
+        "play_once RT_Game_post_found"
+      ],
+      "procedure": "Game_routine_friend_crown_button_push_proc__game_u2640"
+    },
+    {
+      "id": 60,
+      "name": "friend_crown_button_release",
+      "stepCount": 6,
+      "steps": [
+        "draw_house() ; melody([Ds4, Ds4, A4]) ; icon_add(VAR_ICN_friend_talk) ; wait(2)",
+        "icon_add(VAR_ICN_crown_friend) ; speak(RT_Game_speak_loop, VAR_ICN_friend_talk, SID_button_release)",
+        "clear_text() ; icon_sub(VAR_ICN_friend_talk) ; icon_sub(VAR_ICN_search_item) ; melody([A3, A4])",
+        "icon_add(VAR_ICN_search_item) ; wait(10)",
+        "melody([Fs5, Fs4, Fs3]) ; wait(20)",
+        "play_once RT_Game_post_found"
+      ],
+      "procedure": "Game_routine_friend_crown_button_release_proc__game_u2647"
+    },
+    {
+      "id": 61,
+      "name": "room_friend_crown_button",
+      "stepCount": 3,
+      "steps": [
+        "icon_add(VAR_ICN_crown_friend) ; icon_add(ICN_crown_button) ; wait(5)",
+        "icon_sub(VAR_ICN_crown_friend) ; icon_sub(ICN_crown_button) ; wait(1)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_room_friend_crown_button_proc__game_u2662"
+    },
+    {
+      "id": 62,
+      "name": "post_found",
+      "stepCount": 2,
+      "steps": [
+        "draw_house() ; wait(2)",
+        "monsta_go_peep() ; play_once RT_Game_monsta_peep"
+      ],
+      "procedure": "Game_routine_post_found_proc__game_u2665"
+    },
+    {
+      "id": 63,
+      "name": "monsta_peep",
+      "stepCount": 4,
+      "steps": [
+        "melody([As4, A4, As4])",
+        "icon_sub(VAR_ICN_monsta)",
+        "icon_add(VAR_ICN_monsta)",
+        "update_after_monsta()"
+      ],
+      "procedure": "Game_routine_monsta_peep_proc__game_u2668"
+    },
+    {
+      "id": 64,
+      "name": "monsta_hide",
+      "stepCount": 2,
+      "steps": [
+        "melody([As4, A4, Fs4]) ; monsta_go_hide()",
+        "update_after_monsta()"
+      ],
+      "procedure": "Game_routine_monsta_hide_proc__game_u2675"
+    },
+    {
+      "id": 65,
+      "name": "ghost_start",
+      "stepCount": 1,
+      "steps": [
+        "draw_house() ; icon_add(ICN_ghost_cs_0) ; melody([A3, Gs3, N0, G3]) ; wait(10)"
+      ],
+      "procedure": "Game_routine_ghost_start_proc__game_u2682"
+    },
+    {
+      "id": 66,
+      "name": "ghost_start_CR",
+      "stepCount": 2,
+      "steps": [
+        "play_once RT_Game_ghost_start",
+        "play_once RT_Game_ghost_CR"
+      ],
+      "procedure": "Game_routine_ghost_start_CR_proc__game_u2689"
+    },
+    {
+      "id": 67,
+      "name": "ghost_start_CL",
+      "stepCount": 2,
+      "steps": [
+        "play_once RT_Game_ghost_start",
+        "play_once RT_Game_ghost_CL"
+      ],
+      "procedure": "Game_routine_ghost_start_CL_proc__game_u2692"
+    },
+    {
+      "id": 68,
+      "name": "ghost_start_CS",
+      "stepCount": 2,
+      "steps": [
+        "play_once RT_Game_ghost_start",
+        "play_once RT_Game_ghost_CS"
+      ],
+      "procedure": "Game_routine_ghost_start_CS_proc__game_u2695"
+    },
+    {
+      "id": 69,
+      "name": "ghost_LC",
+      "stepCount": 4,
+      "steps": [
+        "draw_house() ; icon_add(ICN_ghost_lc_0) ; wait(2) ; beep(Fs3)",
+        "draw_house() ; icon_add(ICN_ghost_lc_1) ; wait(2) ; beep(Fs3)",
+        "draw_house() ; icon_add(ICN_ghost_lc_2) ; wait(2) ; beep(Fs3)",
+        "draw_house() ; icon_add(ICN_ghost_lc_3) ; wait(2) ; beep(Fs3)"
+      ],
+      "procedure": "Game_routine_ghost_LC_proc__game_u2698"
+    },
+    {
+      "id": 70,
+      "name": "ghost_RC",
+      "stepCount": 4,
+      "steps": [
+        "draw_house() ; icon_add(ICN_ghost_rc_0) ; wait(2) ; beep(Fs3)",
+        "draw_house() ; icon_add(ICN_ghost_rc_1) ; wait(2) ; beep(Fs3)",
+        "draw_house() ; icon_add(ICN_ghost_rc_2) ; wait(2) ; beep(Fs3)",
+        "draw_house() ; icon_add(ICN_ghost_rc_3) ; wait(2) ; beep(Fs3)"
+      ],
+      "procedure": "Game_routine_ghost_RC_proc__game_u2701"
+    },
+    {
+      "id": 71,
+      "name": "ghost_CL",
+      "stepCount": 5,
+      "steps": [
+        "draw_house() ; icon_add(ICN_ghost_lc_3) ; wait(2) ; beep(Fs3)",
+        "draw_house() ; icon_add(ICN_ghost_lc_2) ; wait(2) ; beep(Fs3)",
+        "draw_house() ; icon_add(ICN_ghost_lc_1) ; wait(2) ; beep(Fs3)",
+        "draw_house() ; icon_add(ICN_ghost_lc_0) ; wait(2) ; beep(Fs3)",
+        "draw_house() ; wait(2) ; beep(Fs3)"
+      ],
+      "procedure": "Game_routine_ghost_CL_proc__game_u2704"
+    },
+    {
+      "id": 72,
+      "name": "ghost_CR",
+      "stepCount": 5,
+      "steps": [
+        "draw_house() ; icon_add(ICN_ghost_rc_3) ; wait(2) ; beep(Fs3)",
+        "draw_house() ; icon_add(ICN_ghost_rc_2) ; wait(2) ; beep(Fs3)",
+        "draw_house() ; icon_add(ICN_ghost_rc_1) ; wait(2) ; beep(Fs3)",
+        "draw_house() ; icon_add(ICN_ghost_rc_0) ; wait(2) ; beep(Fs3)",
+        "draw_house() ; wait(2) ; beep(Fs3)"
+      ],
+      "procedure": "Game_routine_ghost_CR_proc__game_u2707"
+    },
+    {
+      "id": 73,
+      "name": "ghost_CS",
+      "stepCount": 4,
+      "steps": [
+        "draw_house() ; icon_add(ICN_ghost_cs_0) ; wait(2) ; beep(Fs3)",
+        "draw_house() ; icon_add(ICN_ghost_cs_1) ; wait(2) ; beep(Fs3)",
+        "draw_house() ; icon_add(ICN_ghost_cs_2) ; wait(2) ; beep(Fs3)",
+        "draw_house() ; wait(2) ; beep(Fs3)"
+      ],
+      "procedure": "Game_routine_ghost_CS_proc__game_u2710"
+    },
+    {
+      "id": 74,
+      "name": "ghost_SC",
+      "stepCount": 3,
+      "steps": [
+        "draw_house() ; icon_add(ICN_ghost_cs_2) ; wait(2) ; beep(Fs3)",
+        "draw_house() ; icon_add(ICN_ghost_cs_1) ; wait(2) ; beep(Fs3)",
+        "draw_house() ; icon_add(ICN_ghost_cs_0) ; wait(2) ; beep(Fs3)"
+      ],
+      "procedure": "Game_routine_ghost_SC_proc__game_u2713"
+    },
+    {
+      "id": 75,
+      "name": "ghost_LR",
+      "stepCount": 2,
+      "steps": [
+        "play_once RT_Game_ghost_LC",
+        "play_once RT_Game_ghost_CR"
+      ],
+      "procedure": "Game_routine_ghost_LR_proc__game_u2716"
+    },
+    {
+      "id": 76,
+      "name": "ghost_LS",
+      "stepCount": 2,
+      "steps": [
+        "play_once RT_Game_ghost_LC",
+        "play_once RT_Game_ghost_CS"
+      ],
+      "procedure": "Game_routine_ghost_LS_proc__game_u2719"
+    },
+    {
+      "id": 77,
+      "name": "ghost_RL",
+      "stepCount": 2,
+      "steps": [
+        "play_once RT_Game_ghost_RC",
+        "play_once RT_Game_ghost_CL"
+      ],
+      "procedure": "Game_routine_ghost_RL_proc__game_u2722"
+    },
+    {
+      "id": 78,
+      "name": "ghost_RS",
+      "stepCount": 2,
+      "steps": [
+        "play_once RT_Game_ghost_RC",
+        "play_once RT_Game_ghost_CS"
+      ],
+      "procedure": "Game_routine_ghost_RS_proc__game_u2725"
+    },
+    {
+      "id": 79,
+      "name": "ghost_SL",
+      "stepCount": 2,
+      "steps": [
+        "play_once RT_Game_ghost_SC",
+        "play_once RT_Game_ghost_CL"
+      ],
+      "procedure": "Game_routine_ghost_SL_proc__game_u2728"
+    },
+    {
+      "id": 80,
+      "name": "ghost_SR",
+      "stepCount": 2,
+      "steps": [
+        "play_once RT_Game_ghost_SC",
+        "play_once RT_Game_ghost_CR"
+      ],
+      "procedure": "Game_routine_ghost_SR_proc__game_u2731"
+    },
+    {
+      "id": 81,
+      "name": "ghost_end_LC",
+      "stepCount": 2,
+      "steps": [
+        "play_once RT_Game_ghost_LC",
+        "play_once RT_Game_ghost_end"
+      ],
+      "procedure": "Game_routine_ghost_end_LC_proc__game_u2734"
+    },
+    {
+      "id": 82,
+      "name": "ghost_end_RC",
+      "stepCount": 2,
+      "steps": [
+        "play_once RT_Game_ghost_RC",
+        "play_once RT_Game_ghost_end"
+      ],
+      "procedure": "Game_routine_ghost_end_RC_proc__game_u2737"
+    },
+    {
+      "id": 83,
+      "name": "ghost_end_SC",
+      "stepCount": 2,
+      "steps": [
+        "play_once RT_Game_ghost_SC",
+        "play_once RT_Game_ghost_end"
+      ],
+      "procedure": "Game_routine_ghost_end_SC_proc__game_u2740"
+    },
+    {
+      "id": 84,
+      "name": "ghost_end",
+      "stepCount": 13,
+      "steps": [
+        "icon_add(ICN_ghost_cs_0) ; wait(10)",
+        "play_loop_anim(RT_Game_loop_ghost_wild, 40)",
+        "draw_house() ; melody([A5, Gs5, N0, G5, N0, A4, Gs4, N0, G4, N0, A3, Gs3, N0, G3])",
+        "icon_add(VAR_ICN_ghost_item) ; wait(1)",
+        "icon_sub(VAR_ICN_ghost_item) ; wait(1)",
+        "icon_add(VAR_ICN_ghost_item) ; wait(1)",
+        "icon_sub(VAR_ICN_ghost_item) ; wait(1)",
+        "icon_add(VAR_ICN_ghost_item) ; wait(1)",
+        "icon_sub(VAR_ICN_ghost_item) ; wait(1)",
+        "icon_add(VAR_ICN_ghost_item) ; wait(1)",
+        "icon_sub(VAR_ICN_ghost_item) ; wait(1)",
+        "icon_add(VAR_ICN_ghost_item) ; wait(1)",
+        "playonce RT_Game_main"
+      ],
+      "procedure": "Game_routine_ghost_end_proc__game_u2743"
+    },
+    {
+      "id": 85,
+      "name": "loop_ghost_wild",
+      "stepCount": 4,
+      "steps": [
+        "draw_house() ; erase_ghost() ; beep(A5)",
+        "draw_house() ; erase_ghost() ; beep(Gs5)",
+        "draw_house() ; erase_ghost() ; beep(G5)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_loop_ghost_wild_proc__game_u2766"
+    },
+    {
+      "id": 86,
+      "name": "rescue_beginning",
+      "stepCount": 32,
+      "steps": [
+        "icon_subr(ICN_ui_input) ; melody([D4, F4, G4, As4, D5, G5, F5, G5, D5, F5, G5, As5])",
+        "stop_room_anim()",
+        "erase_border(10, VAR_ICN_search_item)",
+        "erase_border(20, VAR_ICN_search_item)",
+        "erase_border(30, VAR_ICN_search_item)",
+        "erase_border(40, VAR_ICN_search_item)",
+        "erase_border(50, VAR_ICN_search_item)",
+        "erase_border(60, VAR_ICN_search_item)",
+        "erase_border(70, VAR_ICN_search_item)",
+        "erase_border(80, VAR_ICN_search_item)",
+        "erase_border(90, VAR_ICN_search_item)",
+        "erase_border(100, VAR_ICN_search_item)",
+        "wait(10)",
+        "centered_text(VAR_SID_rescued) ; icon_sub(VAR_ICN_search_item) ; icon_add(VAR_ICN_friend_face) ; melody([F5, A5, C6, N0, A5, N0, C6])",
+        "icon_sub(VAR_ICN_friend_face) ; icon_sub(VAR_ICN_search_item)",
+        "icon_add(VAR_ICN_friend_face)",
+        "icon_sub(VAR_ICN_friend_face) ; icon_add(VAR_ICN_search_item)",
+        "icon_add(VAR_ICN_friend_face)",
+        "icon_sub(VAR_ICN_friend_face) ; icon_sub(VAR_ICN_search_item)",
+        "icon_add(VAR_ICN_friend_face)",
+        "icon_sub(VAR_ICN_friend_face) ; icon_add(VAR_ICN_search_item)",
+        "icon_add(VAR_ICN_friend_face)",
+        "icon_sub(VAR_ICN_friend_face) ; icon_sub(VAR_ICN_search_item)",
+        "icon_add(VAR_ICN_friend_face)",
+        "icon_sub(VAR_ICN_friend_face) ; icon_add(VAR_ICN_search_item)",
+        "icon_add(VAR_ICN_friend_face)",
+        "icon_sub(VAR_ICN_friend_face) ; icon_sub(VAR_ICN_search_item)",
+        "icon_add(VAR_ICN_friend_face)",
+        "icon_sub(VAR_ICN_friend_face) ; icon_add(VAR_ICN_search_item)",
+        "icon_add(VAR_ICN_friend_face) ; wait(4)",
+        "speak(RT_Game_speak_loop, VAR_ICN_friend_talk, SID_thank_you)",
+        "beep(C6)"
+      ],
+      "procedure": "Game_routine_rescue_beginning_proc__game_u2769"
+    },
+    {
+      "id": 87,
+      "name": "rescue_then_hint",
+      "stepCount": 6,
+      "steps": [
+        "play_once RT_Game_rescue_beginning",
+        "speak(RT_Game_speak_loop, VAR_ICN_friend_talk, VAR_SID_rescued_help_next)",
+        "clear() ; melody([F4, A5, C6]) ; icon_add(ICN_walls) ; icon_add(VAR_ICN_friend_face) ; wait(20)",
+        "speak(RT_Game_hint_loop, VAR_ICN_friend_talk, VAR_SID_rescued_hint)",
+        "melody([C6, A5, F4])",
+        "play_once RT_Game_post_found"
+      ],
+      "procedure": "Game_routine_rescue_then_hint_proc__game_u2796"
+    },
+    {
+      "id": 88,
+      "name": "rescue_then_gift",
+      "stepCount": 15,
+      "steps": [
+        "play_once RT_Game_rescue_beginning",
+        "speak(RT_Game_speak_loop, VAR_ICN_friend_talk, VAR_SID_rescued_help_next)",
+        "icon_add(VAR_ICN_friend_face) ; icon_add(VAR_ICN_hint_item) ; give_next_gift() ; melody([Fs5, Ds5, C5, A4, C5, Ds5, Fs5, A5])",
+        "icon_sub(VAR_ICN_hint_item)",
+        "icon_add(VAR_ICN_hint_item)",
+        "icon_sub(VAR_ICN_hint_item)",
+        "icon_add(VAR_ICN_hint_item)",
+        "icon_sub(VAR_ICN_hint_item)",
+        "icon_add(VAR_ICN_hint_item)",
+        "icon_sub(VAR_ICN_hint_item)",
+        "icon_add(VAR_ICN_hint_item)",
+        "icon_sub(VAR_ICN_hint_item)",
+        "icon_add(VAR_ICN_hint_item)",
+        "speak(RT_Game_hint_loop, VAR_ICN_friend_talk, VAR_SID_rescued_hint)",
+        "play_once RT_Game_post_found"
+      ],
+      "procedure": "Game_routine_rescue_then_gift_proc__game_u2807"
+    },
+    {
+      "id": 89,
+      "name": "rescue_then_leave",
+      "stepCount": 4,
+      "steps": [
+        "play_once RT_Game_rescue_beginning",
+        "speak(RT_Game_speak_loop, VAR_ICN_friend_talk, SID_lets_escape)",
+        "melody([C6, A5, F4])",
+        "play_once RT_Game_post_found"
+      ],
+      "procedure": "Game_routine_rescue_then_leave_proc__game_u2814"
+    },
+    {
+      "id": 90,
+      "name": "escape",
+      "stepCount": 29,
+      "steps": [
+        "stop_loop_anim() ; stop_room_anim() ; clear() ; icon_add(ICN_intro) ; icon_add(VAR_ICN_escape_spider) ; icon_add(ICN_intro_monsta_0) ; melody([C3, Ds3, F3, C4, Ds4, F4, C5, Ds5, F5, C6]) ; wait(20)",
+        "melody([C3, D3, Ds3, D3, C3, D3, Ds3, D3, C3, D3, Ds3, D3, C3, D3, Ds3, D3]) ; wait(15) ; centered_text(SID_escaped)",
+        "melody([D3, Ds3, F3, Ds3, D3, Ds3, F3, Ds3, D3, Ds3, F3, Ds3, D3, Ds3, F3, Ds3]) ; wait(15)",
+        "melody([G3, A3, As3, A3, G3, A3, As3, A3, G3, A3, As3, A3, G3, A3, As3, A3]) ; wait(15)",
+        "melody([C4, N0, N0, A3, N0, N0, As3, N0, N0, C4, N0, N0, As3])",
+        "wait(20)",
+        "melody(kMelodyTheme)",
+        "prep_stats() ; stat_text(Rescues) ; icon_add(VAR_ICN_friends_rescued_0) ; icon_add(VAR_ICN_friends_rescued_1) ; wait(1)",
+        "icon_sub(VAR_ICN_friends_rescued_0) ; icon_sub(VAR_ICN_friends_rescued_1) ; wait(1)",
+        "icon_add(VAR_ICN_friends_rescued_0) ; icon_add(VAR_ICN_friends_rescued_1) ; wait(1)",
+        "icon_sub(VAR_ICN_friends_rescued_0) ; icon_sub(VAR_ICN_friends_rescued_1) ; wait(1)",
+        "icon_add(VAR_ICN_friends_rescued_0) ; icon_add(VAR_ICN_friends_rescued_1) ; wait(1)",
+        "icon_sub(VAR_ICN_friends_rescued_0) ; icon_sub(VAR_ICN_friends_rescued_1) ; wait(1)",
+        "icon_add(VAR_ICN_friends_rescued_0) ; icon_add(VAR_ICN_friends_rescued_1) ; wait(1)",
+        "icon_sub(VAR_ICN_friends_rescued_0) ; icon_sub(VAR_ICN_friends_rescued_1) ; wait(1)",
+        "icon_add(VAR_ICN_friends_rescued_0) ; icon_add(VAR_ICN_friends_rescued_1) ; wait(1)",
+        "icon_sub(VAR_ICN_friends_rescued_0) ; icon_sub(VAR_ICN_friends_rescued_1) ; wait(1)",
+        "icon_add(VAR_ICN_friends_rescued_0) ; icon_add(VAR_ICN_friends_rescued_1) ; wait(1)",
+        "icon_sub(VAR_ICN_friends_rescued_0) ; icon_sub(VAR_ICN_friends_rescued_1) ; wait(1)",
+        "icon_add(VAR_ICN_friends_rescued_0) ; icon_add(VAR_ICN_friends_rescued_1) ; wait(1)",
+        "icon_sub(VAR_ICN_friends_rescued_0) ; icon_sub(VAR_ICN_friends_rescued_1) ; wait(1)",
+        "icon_add(VAR_ICN_friends_rescued_0) ; icon_add(VAR_ICN_friends_rescued_1) ; wait(1)",
+        "icon_sub(VAR_ICN_friends_rescued_0) ; icon_sub(VAR_ICN_friends_rescued_1) ; wait(1)",
+        "icon_add(VAR_ICN_friends_rescued_0) ; icon_add(VAR_ICN_friends_rescued_1) ; wait(1)",
+        "stat_text(Moves) ; wait(30)",
+        "stat_text(Searches) ; wait(30)",
+        "stat_text(Attacks) ; wait(30)",
+        "speak(RT_Game_gameover_good_loop, ICN_none, SID_congrats)",
+        "que_restart()"
+      ],
+      "procedure": "Game_routine_escape_proc__game_u2821"
+    },
+    {
+      "id": 91,
+      "name": "gameover_good_loop",
+      "stepCount": 22,
+      "steps": [
+        "clear() ; draw_next_escape_room() ; icon_add(VAR_ICN_speaker_talk) ; speak_text(VAR_SID_speech) ; wait(1)",
+        "speak_text(VAR_SID_speech) ; wait(1)",
+        "speak_text(VAR_SID_speech) ; wait(1)",
+        "speak_text(VAR_SID_speech) ; wait(1)",
+        "speak_text(VAR_SID_speech) ; wait(1)",
+        "speak_text(VAR_SID_speech) ; wait(1)",
+        "speak_text(VAR_SID_speech) ; wait(1)",
+        "speak_text(VAR_SID_speech) ; wait(1)",
+        "speak_text(VAR_SID_speech) ; wait(1)",
+        "speak_text(VAR_SID_speech) ; wait(1)",
+        "speak_text(VAR_SID_speech) ; wait(1)",
+        "speak_text(VAR_SID_speech) ; wait(1)",
+        "speak_text(VAR_SID_speech) ; wait(1)",
+        "speak_text(VAR_SID_speech) ; wait(1)",
+        "speak_text(VAR_SID_speech) ; wait(1)",
+        "speak_text(VAR_SID_speech) ; wait(1)",
+        "speak_text(VAR_SID_speech) ; wait(1)",
+        "speak_text(VAR_SID_speech) ; wait(1)",
+        "speak_text(VAR_SID_speech) ; wait(1)",
+        "speak_text(VAR_SID_speech) ; wait(1)",
+        "speak_text(VAR_SID_speech) ; wait(1)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_gameover_good_loop_proc__game_u2896"
+    },
+    {
+      "id": 92,
+      "name": "speak_loop",
+      "stepCount": 3,
+      "steps": [
+        "icon_add(VAR_ICN_speaker_talk) ; speak_text(VAR_SID_speech) ; wait(1)",
+        "icon_sub(VAR_ICN_speaker_talk) ; speak_text(VAR_SID_speech) ; wait(1)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_speak_loop_proc__game_u2899"
+    },
+    {
+      "id": 93,
+      "name": "hint_loop",
+      "stepCount": 9,
+      "steps": [
+        "icon_add(VAR_ICN_speaker_talk) ; speak_text(VAR_SID_speech) ; wait(1) ; icon_add(VAR_ICN_hint_item)",
+        "icon_sub(VAR_ICN_speaker_talk) ; speak_text(VAR_SID_speech) ; wait(1)",
+        "icon_add(VAR_ICN_speaker_talk) ; speak_text(VAR_SID_speech) ; wait(1) ; icon_sub(VAR_ICN_hint_item)",
+        "icon_sub(VAR_ICN_speaker_talk) ; speak_text(VAR_SID_speech) ; wait(1)",
+        "icon_add(VAR_ICN_speaker_talk) ; speak_text(VAR_SID_speech) ; wait(1) ; icon_add(VAR_ICN_hint_item)",
+        "icon_sub(VAR_ICN_speaker_talk) ; speak_text(VAR_SID_speech) ; wait(1)",
+        "icon_add(VAR_ICN_speaker_talk) ; speak_text(VAR_SID_speech) ; wait(1) ; icon_sub(VAR_ICN_hint_item)",
+        "icon_sub(VAR_ICN_speaker_talk) ; speak_text(VAR_SID_speech) ; wait(1)",
+        "loop()"
+      ],
+      "procedure": "Game_routine_hint_loop_proc__game_u2902"
+    },
+    {
+      "id": 94,
+      "name": "util_stop_loop_anim",
+      "stepCount": 1,
+      "steps": [
+        "stop_loop_anim()"
+      ],
+      "procedure": "Game_routine_util_stop_loop_anim_proc__game_u2905"
+    }
+  ]
+}
