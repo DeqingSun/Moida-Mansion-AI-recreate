@@ -50,11 +50,17 @@ The failure is expected. So let's go one step back and just make a tool to manua
 
 And after about 30 hours of routing, it is proven to be possible with 16x48 matrix!
 
-Some tricks in routing. Since the topology of LCD matrix is a grid, we need to assign the segment in a grid way to avoid trace crossing. The grid in matrix area might be simple and easy to understand (yellow), but the grid can also be distorted to fit the segments (green).
+Some tricks in routing. Since the topology of LCD matrix is a grid, we need to assign the segment in a grid way to avoid trace crossing. The grid in matrix area might be simple and easy to understand (yellow), but the grid can also be distorted to fit the segments (green). Also, the traces are colored with lighter and darker color alternatively, making reading easier.
 
 ![grid topology](workingLog/06_grid.png)
 
-Also to make the routing possible, 
+Also to make the routing possible, I need to change some of the segment. For example, the house map ceiling is blocking me from routing traces up, so I have to make an opening in the ceiling. Also I made the traces cross there to save COM lines. It will cause some black dots in some cases, but that location should be fine.
+
+![cross above ceiling](workingLog/07_some_cross.png)
+
+And for some segments, I sliced them to be more sub segment to allow multiple wires to travel through them.
+
+![slicing segment](workingLog/08_slice_segment.png)
 
 
 
