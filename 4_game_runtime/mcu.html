@@ -1,0 +1,14 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moida Mansion — CH32 USB player</title>
+<style>
+body{background:#181a19;color:#eee;font:16px system-ui;margin:24px auto;padding:0 20px;max-width:950px}h1{font-size:24px}p{line-height:1.5;color:#c7cbc7}button{padding:10px 16px;margin:4px 6px 4px 0;font:inherit;cursor:pointer}button:disabled{opacity:.45;cursor:default}#screen{background:#919c76;border:10px solid #333b2d;border-radius:8px;margin:20px 0}#screen svg{display:block;width:100%;height:auto}svg{fill:#172419}svg [id^=shad_],svg [id^=unwired_]{display:none}#status{min-height:24px}.badge{color:#b5df9f}#error{color:#ffb0a6}
+</style>
+<h1>Moida Mansion — CH32 USB player</h1>
+<p class="badge">Game logic runs on your CH32 board. This browser displays its LCD output.</p>
+<p>Fixed seed: 1700000000000 · Sound unavailable with the current diagnostic firmware.</p>
+<button id="start">Start / Reset</button><button id="pause" disabled>Pause</button>
+<div id="screen" aria-label="Game LCD"></div>
+<div><button data-button="left" disabled>← Left</button><button data-button="stairs" disabled>↑ Stairs / Exit</button><button data-button="search" disabled>Search</button><button data-button="right" disabled>Right →</button></div>
+<p>Use ← / →, ↑ or Space, and Enter to search. Any game button advances the intro/dialogue. One browser controls the board; keep other serial monitors closed.</p>
+<div id="status">Loading LCD artwork…</div><p id="error" role="alert"></p>
+<script src="mcu.js"></script></html>
