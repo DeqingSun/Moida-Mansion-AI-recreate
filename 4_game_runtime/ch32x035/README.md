@@ -1,4 +1,9 @@
-# CH32X035 compile-time assessment — 2026-10-20
+# CH32X035
+
+See [optimized build](#optimized-usb-test-build--2026-10-21) for the current result.
+The assessment below is the historical pre-optimization baseline.
+
+## Original compile-time assessment — 2026-10-20
 
 **Conclusion: likely adequate CPU, but the current port does not fit safely in
 memory. CH32X035 remains a plausible target after memory optimization.**
@@ -154,3 +159,80 @@ Before hardware testing: compact RAM and ROM, rerun full original/C equivalence,
 obtain a successful target link with explicit stack reserve, and implement the
 USB adapter. Hardware tests should then measure generation latency, maximum tick
 time, USB stability, and stack high-water usage.
+
+## Optimized USB test build — 2026-10-21
+
+**The complete diagnostic sketch now links within CH32X035 limits. It is a tight,
+plausible fit, not yet a hardware-validated fit.** The game core is unchanged from
+the lossless optimization validated against 49,699 original-game session ticks.
+
+| Build | Flash | Static RAM | RAM before stack/heap |
+|---|---:|---:|---:|
+| Optimized assessment, LTO, no USB | 59,392 B | 15,144 B | 5,336 B |
+| Optimized assessment, LTO + USB | 62,044 B | 15,336 B | 5,144 B |
+| New interactive USB test sketch | **60,780 B** | **15,316 B** | **5,164 B** |
+| Hardware capacity | 63,488 B | 20,480 B | |
+
+The interactive sketch reserves **4,096 B of stack**, leaving **1,068 B** outside
+static allocations and that reserve. Flash margin is **2,708 B**. Flash includes
+USB `.highcode`, vectors, tables and the data load image; Arduino's summary omits
+some of these. Captured maps, source hashes and comparison results are recorded
+in `measurement-optimized.json`; the older `measurement.json` remains historical.
+
+`moida_test/moida_test.ino` supports the same commands as the V307 test firmware:
+`t` runs 1,000 deterministic ticks (expected `98D3E4E`), `r` resets/runs, `p` pauses,
+`i` reports statistics, `d` returns display words, and `a/f/w/s` supplies buttons.
+Every response flushes USB. Use the existing V307 Python serial server and MCU
+webpage with the X035 device path to test once hardware is available. The sketch
+uses the **internal 48 MHz oscillator**, matching the installed X035 board package,
+and includes no physical LCD or sound driver.
+
+Build without uploading:
+
+```sh
+python3 4_game_runtime/ch32x035/build.py
+```
+
+The script copies the canonical core into ignored sketch `src/`, generates the
+checksum with a sanitizer-enabled desktop run, and writes ELF/HEX/BIN/map files
+under `build/usb-hsi/`. It uses a local linker script and leaves the installed
+Arduino package unchanged. `memory.json` captures actual linked memory usage.
+
+To fit the diagnostic features, this build uses a small integer-only output
+formatter and links only referenced Arduino archive members. Whole-archive
+linking pulled in unused `WString` number-parsing dependencies; the initial direct
+V307 port exceeded flash by 704 bytes. Selective linking also exposed competing
+weak SysTick handlers: the sketch supplies a strong timer handler that advances
+Arduino's millisecond counter, calls its OS hook and clears the interrupt flag.
+Disassembly was checked, and the build verifies strong timer and USB handlers.
+
+**Remaining qualification:** no X035 was flashed. The 4 KiB stack reservation is
+not a proven high-water bound. Non-LTO analysis still shows a 2,064-byte puzzle
+placer frame, 1,456-byte decoration frame and recursive traversal; these frames
+are not all concurrent, but callers, library routines and USB interrupts add
+usage. Test stack watermarks across generation/restart seeds and gameplay before
+committing to this part. The V307's 8 KiB reservation does not fit here. CPU speed
+is likely sufficient for 10 Hz play, but X035 lacks the same floating-point
+configuration and needs its own timing test. Flash headroom for real LCD/audio
+drivers and further protocol features is limited.
+
+## Constant-table follow-up
+
+Byte-sized text codes (0..51), strand indexes (0..100) and strand counts (0..1)
+replace 16-bit entries. Recovery validates integer bounds before generating them.
+No runtime decompression or additional RAM is needed.
+
+| Target | Previous flash | New flash | Saved | Static RAM |
+|---|---:|---:|---:|---:|
+| CH32X035 USB diagnostic | 60,780 B | 59,452 B | 1,328 B | 15,316 B |
+| CH32V307 USB diagnostic | 66,016 B | 64,688 B | 1,328 B | 17,036 B |
+
+X035 now has 4,036 bytes of flash headroom. RAM and stack budgets are unchanged.
+An experiment sharing identical/contained sprite lists reduced 3,727 entries to
+3,436, but needed extra per-icon end indexes. That build used 59,564 bytes on
+X035, 112 bytes more than text compaction alone, so list sharing was discarded.
+The original sprite-list representation remains.
+
+Final text-only change passed 19,320 native/original output comparisons and
+49,699 exact ticks across 17 full sessions with sanitizers. Both target builds
+succeeded and retain expected checksum `98D3E4E`; neither was uploaded.

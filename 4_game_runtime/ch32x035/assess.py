@@ -122,7 +122,7 @@ def main():
         stack, key=lambda row: row["bytes"], reverse=True)
     (out / "report.json").write_text(json.dumps(report, indent=2) + "\n")
     print("Logs, maps, stack frames and report:", out)
-    print("Failed size links are expected for the current port. No upload performed.")
+    print("Build outcomes are recorded in report.json. No upload performed.")
 
 
 if __name__ == "__main__":

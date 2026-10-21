@@ -122,3 +122,36 @@ Use one browser tab. Closing the page stops polling but does not pause the MCU;
 press Pause first if desired. After unplug/replug or a board reset, press Start / Reset. It closes the stale
 USB handle and opens a fresh connection, starting a new game. The server can also
 start with the board unplugged; reconnect it before pressing Start / Reset. This is an initial interactive hardware test, not the final USB protocol.
+
+## Lossless storage optimization (2026-10-21)
+
+Measured using the same external-crystal USB build before and after these changes:
+
+| Storage | Before | After | Saved |
+|---|---:|---:|---:|
+| Flash load image (`.bin`, including `.data`) | 69,800 B | 66,016 B | 3,784 B (5.4%) |
+| Static RAM, including alignment | 21,644 B | 17,036 B | 4,608 B (21.3%) |
+| Static RAM + reserved 8 KiB stack | 29,836 B | 25,228 B | 4,608 B |
+
+The immediate baseline differs slightly from the earlier compile snapshot above
+because of intervening sketch changes. Neither measurement is the ELF file size.
+
+Changes: store the three 631-entry integer sprite-coordinate tables as `int16_t`
+instead of `int32_t` (with generation-time range validation); reorder and narrow
+`MoidaRoomEntity` fields from 56 to 32 bytes. Across 12 rooms with capacity for
+16 entities each, that removes 4,608 bytes. Entity IDs, enums, icons, counts and
+exits fit their smaller types; 64-bit key masks are unchanged. No capacity,
+coordinate precision, game rule, timing or random-number behavior was removed.
+The coordinate payload saves 3,786 bytes; final linking/alignment makes the image
+saving 3,784 bytes.
+
+Validation passed: 19,320 native/original output comparisons; 1,536 room rendering
+cases and 6,144 exit/lock checks; 400 mansion-generation cases including final
+PRNG state; 49,699 exact ticks across 17 full sessions; HAL instance/reset/timing
+tests. Sanitizers were enabled in the native comparisons. The rebuilt firmware
+retains the desktop-generated 1,000-tick expected checksum `98D3E4E`.
+
+This build was not uploaded. Stack reservation is unchanged and is not a measured
+worst-case stack usage. Reflash and repeat the hardware checksum/timing test before
+relying on the new firmware. A 32 KiB device would have 7,540 bytes beyond these
+static allocations and reserved stack, but still needs its own target validation.

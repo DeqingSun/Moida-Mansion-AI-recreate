@@ -5,11 +5,13 @@
 #define MOIDA_ROOM_ENTITIES 16
 /* Bounds checked by fixture exporter/reader; original IDs must fit 0..63. */
 typedef struct {
-  unsigned id, kind, gate_kind, searchable, rustle;
+  /* IDs 0..63, kinds 0..4, gates 0..3, icons 0..351,
+     exit -1..3, before/after counts 0..2. Keep masks full-width. */
   uint64_t gate_keys;
-  int exit;
-  unsigned before_count, after_count;
-  uint16_t before[2], after[2];
+  uint16_t searchable, rustle, before[2], after[2];
+  uint8_t id, kind, gate_kind;
+  int8_t exit;
+  uint8_t before_count, after_count;
 } MoidaRoomEntity;
 typedef struct {
   bool spider;
