@@ -1,7 +1,7 @@
 'use strict';
 (async()=>{
  const el=id=>document.getElementById(id), buttons=[...document.querySelectorAll('[data-button]')];
- const [svg,ids]=await Promise.all([fetch('../1_preliminary_routing/source/panel.svg').then(r=>r.text()),fetch('recovered/segment-ids.json').then(r=>r.json())]);
+ const [svg,ids]=await Promise.all([fetch('recovered/routed-panel.svg').then(r=>r.text()),fetch('recovered/segment-ids.json').then(r=>r.json())]);
  el('screen').innerHTML=svg;
  const segments=ids.map(id=>document.getElementById('seg_'+id));
  segments.forEach(s=>s.style.display='none');

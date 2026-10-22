@@ -438,3 +438,23 @@ The long-term acceptance test is identical original segment bits and audio event
 The host now handles connections concurrently so an idle browser preconnect cannot block page loads or game ticks. Successful per-tick access logging is suppressed to avoid filling captured process-output pipes. Browser API requests time out after five seconds; native replies have a two-second timeout. Session operations are serialized to keep native stdin/stdout requests paired.
 
 Run `python3 4_game_runtime/test-server.py` to exercise an idle connection plus 1,500 ticks with undrained server logs, button handling, and reset. This test binds an ephemeral localhost port.
+
+### Routed display artwork
+
+`live.html` and `mcu.html` render `recovered/routed-panel.svg`, generated from the
+saved routing project named and hashed in `recovered/routed-panel.json`.
+The snapshot has 780 routed islands mapped to all 631 original game bits, with
+12 slices and 148 local geometry overrides. Moves, vertex edits, cuts and holes
+use the routing editor's own `layoutData` pipeline. All pieces of a game segment
+switch together; this is the edited segment artwork, not a simulation of stray
+trace intersections or physical LCD drive waveforms.
+
+To update from another saved routing JSON:
+
+```sh
+node 4_game_runtime/build-routed-panel.cjs /path/to/project.json
+```
+
+Reload the simulator afterward. The generator does not modify the routing project
+or firmware. EDA geometry is ignored, matching the current editor's traces-only
+EDA import policy. Original artwork remains in the preliminary-routing folder.
