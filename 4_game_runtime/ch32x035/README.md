@@ -329,3 +329,47 @@ Validation passed: 2,004 layout seeds, 3,004 puzzle attempts, 400 mansion cases,
 49,699 exact original/C ticks across 17 full sessions (sanitizers enabled), and
 HAL instance/reset/timing checks. Both MCU builds succeeded with expected checksum
 `98D3E4E`. No firmware was uploaded.
+
+## Ten-bit sprite IDs — 2026-10-22
+
+All 3,727 sprite IDs (range 0..630) are now packed into 4,659 bytes instead of
+7,454 bytes. Four IDs occupy five bytes, least-significant bits first. A lookup
+uses two byte loads, a shift and a mask, without allocating a decode buffer.
+The generator validates every ID and round-trips every packed entry. Original
+list offsets, order and duplicates are preserved.
+
+The renderer and decorator explicitly share one packed pool. The first trial
+used two static pools; unlike the previous 16-bit arrays, LTO did not merge these
+byte arrays, increasing flash. Explicit sharing resolves that dependency on
+compiler constant merging.
+
+| Target | Flash before | Flash after | Saved | Static RAM |
+|---|---:|---:|---:|---:|
+| CH32X035 | 59,612 B | 56,772 B | 2,840 B | 14,076 B |
+| CH32V307 | 64,424 B | 61,600 B | 2,824 B | 15,796 B |
+
+X035 flash headroom is now 6,716 bytes; RAM and stack reservations are unchanged.
+The final linked saving includes compiler changes as well as the 2,795-byte data
+reduction. Decoding adds work per lookup; hardware timing has not been measured.
+
+Final validation passed 19,320 original/native outputs, 400 house-generation
+cases, and 49,699 exact ticks across 17 full sessions with sanitizers enabled.
+Both firmware builds retain expected checksum `98D3E4E`; nothing was flashed.
+
+## Compact decoration tables — 2026-10-22
+
+Decoration spot masks now use 16 bits (maximum 8,193). Room-plan kind/name,
+floor weights and exits use 8 bits. Box definitions use a 16-bit box icon and
+8-bit lock/rustle IDs; monster peep spot/exit fields use 8 bits. The recovery
+script validates every narrowed value before writing the tables. Ordering,
+weights, masks and icon IDs remain exact, with no runtime decompression.
+
+| Target | Flash before | Flash after | Saved | Static RAM |
+|---|---:|---:|---:|---:|
+| CH32X035 | 56,772 B | 55,660 B | 1,112 B | 14,076 B |
+| CH32V307 | 61,600 B | 60,488 B | 1,112 B | 15,796 B |
+
+X035 now has 7,828 bytes of flash headroom. RAM and stack reservations are
+unchanged. Both target builds retain expected checksum `98D3E4E`.
+Validation passed 400 mansion-generation cases and 49,699 exact original/C ticks
+across 17 full sessions with sanitizers enabled. No firmware was uploaded.

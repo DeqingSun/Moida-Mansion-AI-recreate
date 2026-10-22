@@ -1,3 +1,4 @@
+#include "packed_sprite.h"
 #include "moida_house.h"
 #include <string.h>
 #include "decor_tables.inc"
@@ -9,7 +10,7 @@ static bool overlap(const MoidaRoom *room,unsigned icon){for(unsigned i=0;i<room
 static bool has_parent(const MoidaRoom *room,unsigned parent){for(unsigned i=0;i<room->icon_count;i++)if(ancestor(room->icons[i],parent))return true;return false;}
 static bool all_sprites(const MoidaRoom *room,unsigned icon){
  MoidaDisplay d={0};for(unsigned i=0;i<room->icon_count;i++)moida_icon_set(&d,room->icons[i],true);
- for(unsigned i=sprite_offsets[icon];i<sprite_offsets[icon+1];i++)if(!moida_sprite_get(&d,sprites[i]))return false;return true;
+ for(unsigned i=sprite_offsets[icon];i<sprite_offsets[icon+1];i++)if(!moida_sprite_get(&d,moida_packed_sprite(sprites,i)))return false;return true;
 }
 static bool append(Builder *b,unsigned icon){if(*b->pool_count>=288||b->room->icon_count>=MOIDA_ROOM_ICONS)return false;b->room->icons[b->room->icon_count++]=(uint16_t)icon;(*b->pool_count)++;return true;}
 static bool add_icon(Builder *b,unsigned icon,unsigned probability){
