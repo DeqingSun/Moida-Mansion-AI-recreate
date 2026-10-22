@@ -2,7 +2,8 @@
 #define MOIDA_LAYOUT_H
 #include "moida_core.h"
 typedef struct { uint8_t exits[12]; } MoidaMap;
-typedef struct { int parent, depth, children[4]; } MoidaNode;
+/* Twelve rooms: coordinates and maximum tree depth are 0..11; -1 is absent. */
+typedef struct { int8_t parent, depth, children[4]; } MoidaNode;
 typedef struct { MoidaMap map; MoidaNode nodes[12]; unsigned root; } MoidaZone;
 typedef struct { bool valid; unsigned coord, direction; } MoidaPassage;
 typedef struct { bool valid; unsigned order; MoidaPassage a,b; } MoidaLocks;

@@ -298,3 +298,34 @@ Then run `r` and play through the serial server:
 ```sh
 python3 4_game_runtime/ch32v307/serial_server.py --device /dev/cu.usbmodemCH32X0351
 ```
+
+## Narrow-field follow-up — 2026-10-22
+
+Puzzle entity enums, coordinates and four path entries now use `uint8_t`;
+optional entity IDs and exits use `int8_t` to preserve -1. The generator has
+32 entity slots, 12 room coordinates, kinds/contents 0..5 and gates 0..3.
+The 64-bit key mask is unchanged. Each puzzle entity shrinks from 56 to 24 B,
+saving 1,024 B across 32 slots.
+
+Room-tree parent, depth and four child coordinates now use `int8_t`: the tree
+contains 12 rooms, so values are -1..11. Each node shrinks from 24 to 6 B,
+saving 216 B across 12 nodes. No capacities, PRNG operations or game rules change.
+
+| Target | Flash before → after | Static RAM before → after |
+|---|---:|---:|
+| CH32X035 | 59,452 → 59,612 B (+160) | 15,316 → 14,076 B (-1,240) |
+| CH32V307 | 64,688 → 64,424 B (-264) | 17,036 → 15,796 B (-1,240) |
+
+X035 has 3,876 B of flash headroom and 2,308 B RAM beyond static allocations
+and the unchanged 4,096 B stack reservation. Narrow loads/stores and compiler
+choices explain why flash savings differ between targets.
+
+The non-LTO `-Os` RISC-V compiler reports a 768 B individual frame for
+`moida_puzzle_place`, previously 2,064 B: its temporary room trees shrink too.
+This is not a whole-program or LTO stack high-water measurement; stack reserves
+remain unchanged and hardware watermark testing is still required.
+
+Validation passed: 2,004 layout seeds, 3,004 puzzle attempts, 400 mansion cases,
+49,699 exact original/C ticks across 17 full sessions (sanitizers enabled), and
+HAL instance/reset/timing checks. Both MCU builds succeeded with expected checksum
+`98D3E4E`. No firmware was uploaded.
