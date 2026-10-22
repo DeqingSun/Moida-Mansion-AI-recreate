@@ -1,0 +1,26 @@
+{
+  "ch32x035": {
+    "flash_bytes": {
+      "before": 55660,
+      "after": 57508,
+      "delta": 1848
+    },
+    "static_ram_bytes": {
+      "before": 14076,
+      "after": 14188,
+      "delta": 112
+    }
+  },
+  "ch32v307": {
+    "flash_bytes": {
+      "before": 60488,
+      "after": 62376,
+      "delta": 1888
+    },
+    "static_ram_bytes": {
+      "before": 15796,
+      "after": 15892,
+      "delta": 96
+    }
+  }
+}

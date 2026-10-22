@@ -10,6 +10,10 @@ extern "C" {
 #include "src/moida_hal.h"
 }
 #include "src/expected.h"
+#include "src/moida_lcd_lut.h"
+static uint8_t lcdCells[16][6];
+static uint32_t lcdMaxUs, lcdLastUs, lcdHash;
+static uint32_t measurementMicros();
 static MoidaHost host;
 static MoidaFrame latest;
 static uint32_t digest, ticks, maxTickUs, initUs, lastTick;
@@ -17,6 +21,15 @@ static bool ready, running;
 static uint8_t nextButtons;
 static void present(void*, const MoidaFrame *f) {
   latest = *f;
+  uint32_t mapStart=measurementMicros();
+  moida_lcd_map(f->display.data,lcdCells);
+  lcdLastUs=measurementMicros()-mapStart;
+  if(lcdLastUs>lcdMaxUs)lcdMaxUs=lcdLastUs;
+  // Consume every mapped byte so LTO must retain the actual conversion.
+  // Hashing is outside the measured mapping interval.
+  for(unsigned c=0;c<16;c++)for(unsigned b=0;b<6;b++){
+    lcdHash^=lcdCells[c][b];lcdHash*=16777619u;
+  }
   // Canonical byte order; no struct padding or floating-point representation.
   for (unsigned i=0;i<20;i++) for (unsigned b=0;b<4;b++) {
     digest ^= (f->display.data[i] >> (8*b)) & 255;
@@ -42,7 +55,7 @@ static void resetGame() {
   uint32_t start = measurementMicros();
   ready = moida_host_init(&host,1700000000000LL,&hal);
   initUs = measurementMicros()-start;
-  digest=2166136261u; ticks=0; maxTickUs=0; nextButtons=0;
+  digest=2166136261u; lcdHash=2166136261u; lcdLastUs=lcdMaxUs=0; ticks=0; maxTickUs=0; nextButtons=0;
   latest={}; lastTick=millis();
 }
 static bool step(uint8_t buttons) {
@@ -60,6 +73,9 @@ static void status() {
   PORT.print(" init_us="); PORT.print(initUs);
   PORT.print(" ticks="); PORT.print(ticks);
   PORT.print(" max_tick_us="); PORT.print(maxTickUs);
+  PORT.print(" lut_last_us="); PORT.print(lcdLastUs);
+  PORT.print(" lut_max_us="); PORT.print(lcdMaxUs);
+  PORT.print(" lut_hash="); PORT.print(lcdHash,HEX);
   PORT.print(" frame_hash="); PORT.println(digest,HEX);
   PORT.flush(); // Submit the final partial USB packet, including self-test output.
 }
@@ -69,7 +85,7 @@ static void selfTest() {
     uint8_t b=(i%23==0)?(1u<<((i/23)%4)):0;
     if(!step(b)) break;
   }
-  PORT.print(ready && ticks==1000 && digest==MOIDA_EXPECTED_HASH ? "PASS " : "FAIL ");
+  PORT.print(ready && ticks==1000 && digest==MOIDA_EXPECTED_HASH && lcdHash==MOIDA_EXPECTED_LCD_HASH ? "PASS " : "FAIL ");
   PORT.print("expected="); PORT.println(MOIDA_EXPECTED_HASH,HEX);
   status(); // Test leaves its final state paused. 'r' starts a fresh game.
 }

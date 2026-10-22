@@ -15,26 +15,30 @@ for f in CORE.iterdir():
   content=f.read_text()
   if f.suffix=='.c': content=content.replace('_tables.inc', '_tables.h')
   (src/name).write_text(content)
+(src/'moida_lcd_lut.h').write_text((HERE.parent/'lcd/moida_lcd_lut.h').read_text())
 mode='usb-hsi'
 build=HERE/'build'/mode; build.mkdir(parents=True,exist_ok=True)
 oracle=build/'oracle.c'
 oracle.write_text('''#include "moida_game.h"
+#include "moida_lcd_lut.h"
 #include <stdio.h>
 #include <inttypes.h>
 static MoidaGame g;
-int main(void){MoidaFrame f; uint32_t hash=2166136261u;
+int main(void){MoidaFrame f; uint32_t hash=2166136261u, lcdHash=2166136261u; uint8_t cells[16][6];
  if(!moida_game_init(&g,1700000000000LL))return 1;
  for(unsigned i=0;i<1000;i++){
  unsigned buttons=i%23==0?1u<<((i/23)%4):0;
  if(!moida_game_tick(&g,buttons,&f))return 2;
+ moida_lcd_map(f.display.data,cells);
+ for(unsigned c=0;c<16;c++)for(unsigned b=0;b<6;b++){lcdHash^=cells[c][b];lcdHash*=16777619u;}
  for(unsigned j=0;j<20;j++)for(unsigned b=0;b<4;b++){
  hash^=(f.display.data[j]>>(8*b))&255;hash*=16777619u;}}
- printf("%" PRIu32,hash);return 0;}
+ printf("%" PRIu32 " %" PRIu32,hash,lcdHash);return 0;}
 ''')
 exe=build/'oracle'
-subprocess.run(['cc','-std=c11','-fsanitize=address,undefined','-I'+str(CORE),str(oracle),*[str(CORE/(s+'.c')) for s in sources],'-o',str(exe)],check=True)
-expected=int(subprocess.check_output([str(exe)],text=True))
-(src/'expected.h').write_text(f'#define MOIDA_EXPECTED_HASH UINT32_C({expected})\n')
+subprocess.run(['cc','-std=c11','-fsanitize=address,undefined','-I'+str(CORE),'-I'+str(src),str(oracle),*[str(CORE/(s+'.c')) for s in sources],'-o',str(exe)],check=True)
+expected,expected_lcd=map(int,subprocess.check_output([str(exe)],text=True).split())
+(src/'expected.h').write_text(f'#define MOIDA_EXPECTED_HASH UINT32_C({expected})\n#define MOIDA_EXPECTED_LCD_HASH UINT32_C({expected_lcd})\n')
 # Use a local linker copy: default 2 KiB is too small for generation.
 ld=(package/'system/CH32X035/SRC/Ld/Link.ld').read_text()
 ld,n=re.subn(r'__stack_size\s*=\s*\d+\s*;', '__stack_size = 4096;',ld)
@@ -50,7 +54,7 @@ clock='48MHz_HSI'
 fqbn=f'WCH:ch32v:CH32X035_EVT:pnum=CH32X035G8U,clock={clock},opt=oslto'
 cmd=[a.cli,'compile','--fqbn',fqbn,'--build-path',str(build),
  '--build-property','recipe.c.combine.pattern='+recipe,str(sketch)]
-print('Expected 1000-tick display hash:',hex(expected),flush=True)
+print('Expected 1000-tick display hash:',hex(expected),'LCD hash:',hex(expected_lcd),flush=True)
 subprocess.run(cmd,check=True)
 (build/'settings.json').write_text(json.dumps({'fqbn':fqbn,'expected_hash':expected,'stack_bytes':4096,'compile_command':cmd},indent=2)+'\n')
 from assess import map_metrics
