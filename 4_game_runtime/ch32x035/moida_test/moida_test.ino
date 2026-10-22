@@ -7,6 +7,7 @@
 #endif
 extern "C" {
 #include "src/moida_hal.h"
+#include "piezo.h"
 }
 #include "src/expected.h"
 // Small integer-only reporting avoids Arduino Print's general number formatter.
@@ -25,15 +26,16 @@ extern "C" {
 extern volatile uint64_t msTick;
 void osSystickHandler(void);
 void SysTick_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-void SysTick_Handler(void) { ++msTick; osSystickHandler(); SysTick->SR=0; }
+void SysTick_Handler(void) { ++msTick; osSystickHandler(); piezo_tick_1ms(); SysTick->SR=0; }
 }
 static MoidaHost host;
 static MoidaFrame latest;
 static uint32_t digest, ticks, maxTickUs, initUs, lastTick;
-static bool ready, running;
+static bool ready, running, soundOn=true;
 static uint8_t nextButtons;
 static void present(void*, const MoidaFrame *f) {
   latest = *f;
+  if(soundOn && f->beeper_duration_ms) piezo_play(f->beeper_hz, f->beeper_duration_ms);
   // Canonical byte order; no struct padding or floating-point representation.
   for (unsigned i=0;i<20;i++) for (unsigned b=0;b<4;b++) {
     digest ^= (f->display.data[i] >> (8*b)) & 255;
@@ -81,21 +83,23 @@ static void status() {
   PORT.flush(); // Submit the final partial USB packet, including self-test output.
 }
 static void selfTest() {
-  running=false; resetGame();
+  running=false; piezo_stop(); soundOn=false; resetGame();
   for(unsigned i=0;i<1000 && ready;i++) {
     uint8_t b=(i%23==0)?(1u<<((i/23)%4)):0;
     if(!step(b)) break;
   }
+  soundOn=true;
   emit(ready && ticks==1000 && digest==MOIDA_EXPECTED_HASH ? "PASS " : "FAIL ");
   emit("expected="); line(MOIDA_EXPECTED_HASH,HEX);
   status(); // Test leaves its final state paused. 'r' starts a fresh game.
 }
 static void help() {
   line("Moida C test: t=self-test, r=reset/run, p=pause/resume, i=stats, d=display");
-  line("a=left, f=right, w=stairs, s=search; h=help");
+  line("a=left, f=right, w=stairs, s=search; b=piezo test tone; h=help");
   PORT.flush();
 }
 void setup() {
+  piezo_init();
   PORT.begin(115200);
   resetGame(); running=false;
   // No wait-for-terminal: send h/i/t after opening it.
@@ -108,8 +112,9 @@ void loop() {
     case 'h': help(); break;
     case 'i': status(); break;
     case 't': selfTest(); break;
-    case 'r': resetGame(); running=ready; status(); break;
-    case 'p': running=ready&&!running; lastTick=millis(); status(); break;
+    case 'r': piezo_stop(); resetGame(); running=ready; status(); break;
+    case 'p': piezo_stop(); running=ready&&!running; lastTick=millis(); status(); break;
+    case 'b': piezo_play(440,500); break;
     case 'a': nextButtons=MOIDA_BUTTON_LEFT; break;
     case 'f': nextButtons=MOIDA_BUTTON_RIGHT; break;
     case 'w': nextButtons=MOIDA_BUTTON_STAIRS; break;

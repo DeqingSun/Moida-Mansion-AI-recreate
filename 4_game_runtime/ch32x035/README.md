@@ -185,7 +185,8 @@ in `measurement-optimized.json`; the older `measurement.json` remains historical
 Every response flushes USB. Use the existing V307 Python serial server and MCU
 webpage with the X035 device path to test once hardware is available. The sketch
 uses the **internal 48 MHz oscillator**, matching the installed X035 board package,
-and includes no physical LCD or sound driver.
+and includes no physical LCD driver. A bridged piezo driver was added later; see
+[Piezo sound](#piezo-sound--2026-10-22).
 
 Build without uploading:
 
@@ -236,3 +237,64 @@ The original sprite-list representation remains.
 Final text-only change passed 19,320 native/original output comparisons and
 49,699 exact ticks across 17 full sessions with sanitizers. Both target builds
 succeeded and retain expected checksum `98D3E4E`; neither was uploaded.
+
+## Piezo sound — 2026-10-22
+
+The diagnostic sketch now plays the game's beeper events on a **passive piezo
+driven in bridge mode**: TIM1 channel 1 and its complementary output CH1N drive
+opposite ends of the element. The piezo sees +VDD then −VDD, twice the swing of a
+single pin, roughly 6 dB louder. Target package: **CH32X035G8R6 (QSOP28)**.
+
+| Signal | Pin | QSOP28 pin |
+|---|---|---:|
+| TIM1_CH1 | PB9 | 24 |
+| TIM1_CH1N | PB6 | 21 |
+
+Wiring: PB9 → series resistor → piezo → PB6. Use about 150–220 Ω at 5 V or about
+100 Ω at 3.3 V, keeping pin current within the datasheet's 30 mA source / 40 mA
+sink absolute maximum. Use a bare passive piezo only. Do not bridge a magnetic or
+self-oscillating "active" buzzer. For volume, prefer a disc resonating near the
+game's 131–1568 Hz notes.
+
+Why these pins: only TIM1 and TIM2 have complementary outputs with dead time.
+TIM1's default mapping needs no AFIO remap. Channels 2 and 3 would take PB10/PB11,
+the Arduino `Serial` USART1 pins. Remap 001 moves CH1N to PA7 (SPI MOSI, likely
+needed by an LCD driver). Remap 011 uses PC0–PC5, absent on QSOP28. TIM2's
+complementary pins on this package fall on PC3 (reset), bonded pin pairs, or
+USB/SWD. Keep TIM1 break disabled: its default BKIN pin PB5 is bonded to PB1.
+
+Driver (`moida_test/piezo.c`, beside the sketch; `src/` remains generated):
+
+- 4 MHz timer clock (`PSC=11`), 50% PWM. Periods span 30,579–2,551 ticks.
+- About 5.3 µs dead time (`DTG=0xC0`). Both pins are low between edges, so each
+  edge charges the piezo by one VDD step instead of two, halving peak current.
+- Silence clears `MOE` with `OSSI=1` and idle levels low. Both pins are actively
+  held low, so the element has no DC bias and never floats.
+- `present()` follows the HAL beeper rules. A nonzero duration starts a note,
+  replacing any current one; zero frequency silences. A zero duration leaves the
+  current note playing. The existing SysTick handler counts note length, so notes
+  end on time even while house generation blocks the main loop.
+- `beeper_hz` is converted to fixed point from its IEEE-754 bits, then divided as
+  an integer. Ordinary `double` division linked about 4 KB of soft-float routines
+  and overflowed flash by 300 bytes. Worst pitch error across the game's notes is
+  0.017%.
+- Self-test `t` is silent. `r` and `p` stop sound. New command `b` plays 440 Hz for
+  500 ms for bring-up.
+
+| Build | Flash | Static RAM | Flash margin |
+|---|---:|---:|---:|
+| Before piezo | 59,452 B | 15,316 B | 4,036 B |
+| With piezo | **59,876 B** | **15,316 B** | **3,612 B** |
+
+The checksum remains `98D3E4E`, and no Arduino `HardwareTimer`/`tone` code links.
+Disassembly confirms SysTick writes TIM1 `BDTR` (`0x40012C44`) to silence. The
+Arduino board package only lists G8U. G8R6 is the same die and memory, and PB6/PB9
+exist on both packages, so the build keeps `pnum=CH32X035G8U`.
+
+**Not yet hardware-tested.** Bring-up: send `b` and check on a scope that PB9 and
+PB6 are inverted 440 Hz square waves with a dead-time gap, both low afterwards.
+Then run `r` and play through the serial server:
+
+```sh
+python3 4_game_runtime/ch32v307/serial_server.py --device /dev/cu.usbmodemCH32X0351
+```
