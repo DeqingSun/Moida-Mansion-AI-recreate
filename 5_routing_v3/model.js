@@ -1,0 +1,149 @@
+'use strict';
+(function(root){
+const clone=x=>JSON.parse(JSON.stringify(x));
+function artwork(data){return data.segments.flatMap(s=>s.islands.map((is,i)=>({id:`${s.id}_${i}`,parentId:s.id,bit:s.bit,rings:is.rings,bounds:is.bounds,point:is.point})));}
+function dimensions(cols,rows,widthMm){if(!Number.isInteger(cols)||cols<1||cols>128||!Number.isInteger(rows)||rows<1||rows>64||cols*rows>8192)throw Error('Use 1–128 SEG nets and 1–64 COM nets (at most 8,192 pairs).');if(!Number.isFinite(widthMm)||widthMm<10||widthMm>2000)throw Error('Screen width must be 10–2,000 mm.');}
+const key=(t,b)=>`${t}:${b}`;
+function regular(t,b,cols,rows){return [3000*t/(cols+1),2160*b/(rows+1)];}
+function create(data,cols=60,rows=16,widthMm=75){dimensions(cols,rows,widthMm);return {format:'moida-mesh-v3',version:2,sourceHash:data.sourceHash,widthMm,cols,rows,nodes:{},bends:{},assignments:{}};}
+function position(p,t,b){return p.nodes[key(t,b)]||regular(t,b,p.cols,p.rows);}
+const edgeKey=(t,b,u,v)=>`${t}:${b}>${u}:${v}`;
+function edgePath(p,t,b,u,v){return [position(p,t,b),...(p.bends?.[edgeKey(t,b,u,v)]||[]),position(p,u,v)];}
+function meshEdges(p){const result=[];for(let t=1;t<=p.cols;t++)for(let b=1;b<=p.rows;b++){
+ for(const [u,v]of [[t+1,b],[t,b+1]])if(u<=p.cols&&v<=p.rows)result.push({key:edgeKey(t,b,u,v),ids:[key(t,b),key(u,v)],points:edgePath(p,t,b,u,v)});
+ }return result;}
+function cellRing(p,t,b){return [edgePath(p,t,b,t+1,b),edgePath(p,t+1,b,t+1,b+1),edgePath(p,t,b+1,t+1,b+1).reverse(),edgePath(p,t,b,t,b+1).reverse()].flatMap(path=>path.slice(0,-1));}
+function pair(p,t,b){if(!Number.isInteger(t)||t<1||t>p.cols||!Number.isInteger(b)||b<1||b>p.rows)throw Error('Pair is outside the current mesh.');}
+function assign(p,items,ids,t,b,transfer=false){pair(p,t,b);const byId=new Map(items.map(i=>[i.id,i]));if(!ids.length||ids.some(id=>!byId.has(id)))throw Error('Select an artwork island first.');const parents=new Set(ids.map(id=>byId.get(id).parentId));if(parents.size!==1)throw Error('One electrical pair can belong to only one original segment.');for(const [id,a]of Object.entries(p.assignments))if(a.t===t&&a.b===b&&!parents.has(byId.get(id).parentId)){if(transfer)delete p.assignments[id];else throw Error(`SEG ${t} / COM ${b} already belongs to ${byId.get(id).parentId}.`);}for(const id of ids)p.assignments[id]={t,b};return p;}
+function resize(p,cols,rows,widthMm){dimensions(cols,rows,widthMm);if(Object.values(p.assignments).some(a=>a.t>cols||a.b>rows))throw Error('This mesh size would remove assigned nets. Clear or reassign those islands first.');const next=clone(p);next.cols=cols;next.rows=rows;next.widthMm=widthMm;for(const k of Object.keys(next.nodes)){const [t,b]=k.split(':').map(Number);if(t>cols||b>rows)delete next.nodes[k];}const validEdges=new Set(meshEdges(next).map(e=>e.key));for(const k of Object.keys(next.bends||{}))if(!validEdges.has(k))delete next.bends[k];return next;}
+function validate(raw,data){if(!raw||raw.format!=='moida-mesh-v3'||![1,2].includes(raw.version)||raw.sourceHash!==data.sourceHash)throw Error('Load a v3 mesh project made from this original artwork.');dimensions(raw.cols,raw.rows,raw.widthMm);const p=create(data,raw.cols,raw.rows,raw.widthMm),items=artwork(data);if(!raw.nodes||typeof raw.nodes!=='object'||Array.isArray(raw.nodes)||!raw.assignments||typeof raw.assignments!=='object'||Array.isArray(raw.assignments))throw Error('Invalid mesh project.');for(const [k,v]of Object.entries(raw.nodes)){const [t,b]=k.split(':').map(Number);pair(p,t,b);if(k!==key(t,b)||!Array.isArray(v)||v.length!==2||v.some(n=>!Number.isFinite(n))||v[0]<0||v[0]>3000||v[1]<0||v[1]>2160)throw Error('Invalid mesh point.');p.nodes[k]=[...v];}if(raw.bends!==undefined){if(!raw.bends||typeof raw.bends!=='object'||Array.isArray(raw.bends))throw Error('Invalid mesh bends.');const allowed=new Set(meshEdges(p).map(e=>e.key));let total=0;for(const [k,points]of Object.entries(raw.bends)){if(!allowed.has(k)||!Array.isArray(points)||points.length>2048||(total+=points.length)>30000||points.some(v=>!Array.isArray(v)||v.length!==2||v.some(n=>!Number.isFinite(n))||v[0]<0||v[0]>3000||v[1]<0||v[1]>2160))throw Error('Invalid mesh bends.');if(points.length)p.bends[k]=clone(points);}}
+ for(const [id,a]of Object.entries(raw.assignments)){if(!a)throw Error('Invalid assignment.');assign(p,items,[id],a.t,a.b);}return p;}
+// Mesh edges may meet only at their shared logical endpoint. Other touches,
+// crossings and collinear overlaps are invalid, including same-layer crossings.
+function topology(p){
+ const edges=[],eps=1e-7;
+ for(const edge of meshEdges(p)){const points=edge.points;for(let i=1;i<points.length;i++)edges.push({ids:[i===1?edge.ids[0]:edge.key+'@'+(i-1),i===points.length-1?edge.ids[1]:edge.key+'@'+i],points:[points[i-1],points[i]]});}
+ const cross=(a,b,c)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);
+ const on=(a,b,c)=>Math.abs(cross(a,b,c))<eps&&c[0]>=Math.min(a[0],b[0])-eps&&c[0]<=Math.max(a[0],b[0])+eps&&c[1]>=Math.min(a[1],b[1])-eps&&c[1]<=Math.max(a[1],b[1])+eps;
+ const fail=(reason,es)=>({ok:false,reason,edges:es.map(e=>e.points)});
+ const buckets=new Map(),size=Math.max(30,Math.min(3000/(p.cols+1),2160/(p.rows+1))*2);
+ for(let n=0;n<edges.length;n++){
+  const e=edges[n],[a,b]=e.points;if(Math.hypot(a[0]-b[0],a[1]-b[1])<eps)return fail('Two neighboring mesh points coincide.',[e]);
+  const cells=[],seen=new Set();
+  for(let x=Math.floor(Math.min(a[0],b[0])/size);x<=Math.floor(Math.max(a[0],b[0])/size);x++)for(let y=Math.floor(Math.min(a[1],b[1])/size);y<=Math.floor(Math.max(a[1],b[1])/size);y++){
+   const k=x+','+y;cells.push(k);for(const j of buckets.get(k)||[])seen.add(j);
+  }
+  for(const j of seen){const f=edges[j],[c,d]=f.points,shared=e.ids.find(id=>f.ids.includes(id));
+   if(shared){const v=e.points[e.ids.indexOf(shared)],u=e.points[1-e.ids.indexOf(shared)],w=f.points[1-f.ids.indexOf(shared)];if(Math.abs(cross(v,u,w))<eps&&(u[0]-v[0])*(w[0]-v[0])+(u[1]-v[1])*(w[1]-v[1])>eps)return fail('Neighboring mesh edges overlap.',[e,f]);continue;}
+   const c1=cross(a,b,c),c2=cross(a,b,d),c3=cross(c,d,a),c4=cross(c,d,b);
+   if(((c1>eps&&c2< -eps||c1< -eps&&c2>eps)&&(c3>eps&&c4< -eps||c3< -eps&&c4>eps))||on(a,b,c)||on(a,b,d)||on(c,d,a)||on(c,d,b))return fail('Mesh edges cross or touch away from their shared intersection.',[e,f]);
+  }
+  for(const k of cells){if(!buckets.has(k))buckets.set(k,[]);buckets.get(k).push(n);}
+ }
+ // Retain the original orientation; a whole cell must not turn inside out.
+ for(let t=1;t<p.cols;t++)for(let b=1;b<p.rows;b++){const ring=cellRing(p,t,b);let area=0;ring.forEach((v,i)=>{const w=ring[(i+1)%ring.length];area+=v[0]*w[1]-w[0]*v[1];});if(area<=eps)return {ok:false,reason:'A mesh cell is folded or collapsed.',edges:ring.map((v,i)=>[v,ring[(i+1)%ring.length]])};}
+ return {ok:true,edges:[]};
+}
+// Optimize the complete network to a fixed point. Each accepted shortcut
+// removes stored vertices; all checks see the complete proposed mesh.
+function simplify(p){
+ if(!Object.keys(p.bends||{}).length||!topology(p).ok)return p;
+ let result={...p,bends:{...p.bends}},changed=true;
+ const accept=bends=>{const candidate={...result,bends};if(!topology(candidate).ok)return false;result=candidate;changed=true;return true;};
+ while(changed){
+  changed=false;
+  const ids=Object.keys(result.bends).filter(id=>result.bends[id].length);
+  if(!ids.length)break;
+  // Joint straightening handles mutually blocking curves in one transaction.
+  if(accept({}))break;
+  for(const id of ids){const bends={...result.bends};delete bends[id];accept(bends);}
+  const remaining=Object.keys(result.bends);
+  // Adjacent connections may need to straighten together, even when each
+  // individual shortcut intersects the other's old curve.
+  for(let i=0;i<remaining.length;i++)for(let j=i+1;j<remaining.length;j++){
+   const a=remaining[i],b=remaining[j];if(!result.bends[a]||!result.bends[b]||!a.split('>').some(n=>b.split('>').includes(n)))continue;
+   const bends={...result.bends};delete bends[a];delete bends[b];accept(bends);
+  }
+  // A necessary detour can still contain many redundant samples. Try long
+  // shortcuts first, down to individual vertices, preserving endpoints.
+  for(const id of Object.keys(result.bends)){
+   const [a,b]=id.split('>').map(k=>k.split(':').map(Number));
+   let path=edgePath(result,...a,...b);
+   for(let span=Math.max(2,Math.floor(path.length/2));span>=2;span=span===2?1:Math.max(2,Math.floor(span/2))){
+    for(let i=0;i+span<path.length;i++){
+     const shortcut=[...path.slice(0,i+1),...path.slice(i+span)];
+     const bends={...result.bends};if(shortcut.length===2)delete bends[id];else bends[id]=shortcut.slice(1,-1);
+     if(accept(bends)){path=shortcut;i=Math.max(-1,i-span);}
+    }
+   }
+  }
+ }
+ return result;
+}
+function finishProposal(project,adjusted=0){return {project,check:topology(project),adjusted,bent:Object.keys(project.bends||{}).length};}
+// Advect edge geometry through a local smooth displacement field. All other
+// intersections stay fixed. Short steps and adaptive subdivisions let edges
+// bend while the final exact polyline check remains the acceptance authority.
+function bendDrag(p,t,b,target){
+ if(!topology(p).ok)return null;
+ const start=position(p,t,b),distance=Math.hypot(target[0]-start[0],target[1]-start[1]);
+ if(distance<1e-8||distance>500)return null;
+ const fixed=[];for(let x=1;x<=p.cols;x++)for(let y=1;y<=p.rows;y++)if(x!==t||y!==b)fixed.push(position(p,x,y));
+ if(fixed.some(q=>Math.hypot(q[0]-target[0],q[1]-target[1])<1e-5))return null;
+ for(const resolution of [5,10]){
+  let center=[...start],edges=meshEdges(p).map(e=>({...e,points:e.points.map(q=>[...q])})),complete=false;
+  for(let step=0;step<240;step++){
+   const remaining=Math.hypot(target[0]-center[0],target[1]-center[1]);if(remaining<1e-7){complete=true;break;}
+   let radius=Math.min(center[0],3000-center[0],center[1],2160-center[1],300);
+   for(const q of fixed)radius=Math.min(radius,Math.hypot(q[0]-center[0],q[1]-center[1]));radius*=.75;
+   if(radius<.01)break;
+   const travel=Math.min(remaining,radius*.1),delta=[(target[0]-center[0])*travel/remaining,(target[1]-center[1])*travel/remaining];
+   const warp=q=>{const d=Math.hypot(q[0]-center[0],q[1]-center[1])/radius,f=d>=1?0:(1-d*d)**3;return [q[0]+delta[0]*f,q[1]+delta[1]*f];};
+   let total=0,overflow=false;
+   for(const edge of edges){const expanded=[warp(edge.points[0])];for(let i=1;i<edge.points.length;i++){
+    const a=edge.points[i-1],b=edge.points[i];
+    const near=Math.max(a[0],b[0])>=center[0]-radius&&Math.min(a[0],b[0])<=center[0]+radius&&Math.max(a[1],b[1])>=center[1]-radius&&Math.min(a[1],b[1])<=center[1]+radius;
+    const pieces=near?Math.max(1,Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])/(radius/resolution))):1;
+    if(pieces>2048){overflow=true;break;}for(let j=1;j<=pieces;j++)expanded.push(warp([a[0]+(b[0]-a[0])*j/pieces,a[1]+(b[1]-a[1])*j/pieces]));
+   }edge.points=expanded;total+=expanded.length-2;if(expanded.length>2050||total>30000||overflow){overflow=true;break;}}
+   if(overflow)break;center=[center[0]+delta[0],center[1]+delta[1]];
+   if(travel===remaining){center=[...target];complete=true;break;}
+  }
+  if(!complete)continue;
+  const candidate={...p,version:2,nodes:{...p.nodes,[key(t,b)]:target},bends:{}};
+  let bent=0;
+  for(const edge of edges){
+   // Remove exactly redundant collinear samples; keep actual curves intact.
+   const clean=[];for(const q of edge.points){while(clean.length>=2){const a=clean[clean.length-2],b=clean[clean.length-1],cross=(b[0]-a[0])*(q[1]-b[1])-(b[1]-a[1])*(q[0]-b[0]);if(Math.abs(cross)>1e-9||(b[0]-a[0])*(q[0]-b[0])+(b[1]-a[1])*(q[1]-b[1])<0)break;clean.pop();}clean.push(q);}
+   if(clean.length>2){candidate.bends[edge.key]=clean.slice(1,-1);bent++;}
+  }
+  const check=topology(candidate);if(check.ok)return finishProposal(candidate);
+ }
+ return null;
+}
+function deformRaw(p,t,b,target){
+ pair(p,t,b);const origin=position(p,t,b),dx=target[0]-origin[0],dy=target[1]-origin[1],k=key(t,b);
+ const direct={...p,nodes:{...p.nodes,[k]:target}},initial=topology(direct);
+ if(initial.ok)return finishProposal(direct);
+ const curved=bendDrag(p,t,b,target);if(curved)return curved;
+ // Assigned pairs are anchors. Never move them automatically while repairing a drag.
+ const pinned=new Set(Object.values(p.assignments).map(a=>key(a.t,a.b)));
+ const step=Math.max(3000/(p.cols+1),2160/(p.rows+1));
+ for(const radius of [2,4,8,16,32,64,Infinity]){
+  const nodes={...p.nodes};let adjusted=0;
+  for(let x=1;x<=p.cols;x++)for(let y=1;y<=p.rows;y++){
+   const id=key(x,y),v=position(p,x,y);if(id===k){nodes[id]=target;continue;}if(pinned.has(id))continue;
+   const distance=Math.hypot(v[0]-origin[0],v[1]-origin[1])/(radius*step);if(distance>=1)continue;
+   const weight=(1-distance*distance)**3;
+   // Taper displacement to the screen boundary rather than collapsing points onto it.
+   const taper=(value,start,end)=>value<=start?value/Math.max(start,1e-9):(end-value)/Math.max(end-start,1e-9);
+   const q=[v[0]+dx*weight*taper(v[0],origin[0],3000),v[1]+dy*weight*taper(v[1],origin[1],2160)];
+   if(Math.hypot(q[0]-v[0],q[1]-v[1])>1e-7){nodes[id]=q;adjusted++;}
+  }
+  const candidate={...p,nodes},check=topology(candidate);if(check.ok)return finishProposal(candidate,adjusted);
+ }
+ return {project:direct,check:initial,adjusted:0};
+}
+function deform(p,t,b,target,optimize=true){const result=deformRaw(p,t,b,target);if(result.check.ok&&optimize)return finishProposal(simplify(result.project),result.adjusted);return result;}
+const api={clone,artwork,key,create,position,assign,resize,validate,topology,deform,edgePath,meshEdges,simplify};root.MeshModel=api;if(typeof module!=='undefined')module.exports=api;
+})(globalThis);
