@@ -26,17 +26,31 @@ The local bend search is bounded (500 native units per proposal, 240 integration
 
 The active row and column are highlighted. Assigned artwork is green; selected artwork is gold. Dashed guides show the active pair’s island anchors. Wheel zooms, Space-drag or middle-drag pans, and **Fit screen** restores the overview. Escape cancels an in-progress mesh drag.
 
+## Move a group of mesh points
+
+Choose **Box select mesh**, then drag a rectangle in either direction. Selected points turn cyan. Drag any highlighted point to translate the group; Shift-drag a new box to add points. **Clear selection** clears the group. Escape cancels an active move or box.
+
+Group movement preserves relative point positions; on drop, moved points update their island placements and automatic slices. Unselected intersections stay fixed. Existing bends follow their endpoints; successful moves optimize connections and save as one Undo step. Group drops now assign the moved points to artwork underneath them and split islands when multiple points land on one island. Crossings show a warning and are cancelled on release. Mesh points and bends may extend outside the screen for temporary staging; this does not enlarge the physical LCD. **Fit mesh** shows all parked points and the screen together, while **Fit screen** focuses on the artwork. Off-screen positions survive save/load. Unlike individual-point dragging, group moves currently do not automatically deform neighboring intersections to make space.
+
+## Automatic slices
+
+When two or more deliberately placed mesh points occupy the same original island, the editor divides the artwork into regions nearest each point, separated by a **0.10 mm gap**. Each resulting piece gets that point’s SEG/COM pair and retains the original game bit. The original artwork is never overwritten. Concave artwork may create additional disconnected pieces sharing a pair.
+
+Moving points within the island updates its slices. Moving a point away, or clearing its assignment, removes that anchor and recomputes the pieces. One remaining point restores the entire original island with that pair; zero restores it unassigned. Adding points again creates fresh slices, rather than stacking cuts on top of older cuts. Points merely present in the initial regular grid do not count as intentional placements. Legacy assigned points physically on an island are adopted when editing placements.
+
+Single-point drops and box-group drops use the same rules. If the gap would erase a contact area or the points are too close, the entire drop is rejected and the prior geometry is preserved. Slices, assignments, and mesh movement are one Undo/Redo transaction and survive save/load. This is geometric segmentation, not proof of conductive routing or manufacturability.
+
 ## Change dimensions and save
 
 **Apply size & mesh** changes counts and width. Explicitly dragged points and assignments are preserved; untouched points redistribute across the regular grid. Reducing counts is blocked if it would delete an assigned net. **Reset mesh positions** restores a regular grid without clearing assignments. Width and scale relative to 150 mm are linked; default scale is 0.5.
 
-Edits, resizing, reset, new project, and imports support Undo/Redo. Save JSON for a portable checkpoint; local autosave uses the separate `moida-mesh-v3-v1` key. Autosave is browser- and origin-specific, so keep the same port or load your JSON when changing browsers/ports. The older routing tools’ projects are deliberately not imported. Earlier v3 mesh files (schema 1) migrate to schema 2, which stores edge bends; mesh dimensions and assignments are preserved.
+Edits, resizing, reset, new project, and imports support Undo/Redo. Save JSON for a portable checkpoint; local autosave uses the separate `moida-mesh-v3-v1` key. Autosave is browser- and origin-specific, so keep the same port or load your JSON when changing browsers/ports. The older routing tools’ projects are deliberately not imported. Earlier v3 mesh files (schemas 1 and 2) migrate to schema 3, which also stores automatic-slice anchors and the slice gap; existing dimensions, assignments, and bends are preserved.
 
 ## Current scope
 
 Implemented: configurable mesh, individual intersection deformation, island/whole-segment pair assignments, pair uniqueness, search, pan/zoom, size setup, save/load, autosave, and undo/redo.
 
-Not yet implemented: slicing into new sub-islands, manual row/region deformation controls, general topology repair, physical contacts, conductive traces, clearance-aware routing, segment push, or selective autorouting. New mesh drags are checked for crossings and folds, but mesh lines are still not fabrication geometry. Assignment statistics do not imply connectivity. No EDA integration is required.
+Not yet implemented: manual slice drawing, manual row/region deformation controls, general topology repair, physical contacts, conductive traces, clearance-aware routing, segment push, or selective autorouting. New mesh drags are checked for crossings and folds, but mesh lines are still not fabrication geometry. Assignment statistics do not imply connectivity. No EDA integration is required.
 
 See [research and proposed specification](ROUTING_V3_RESEARCH.md) for the next phases. Fresh project defaults here supersede the older 48 × 16 and 150 mm working reference.
 
@@ -45,6 +59,9 @@ See [research and proposed specification](ROUTING_V3_RESEARCH.md) for the next p
 ```sh
 node 5_routing_v3/model.test.cjs
 node 5_routing_v3/bends.test.cjs
+node 5_routing_v3/group.test.cjs
+node 5_routing_v3/slices.test.cjs
+node 5_routing_v3/slice-browser.test.cjs
 node 5_routing_v3/browser.test.cjs
 ```
 

@@ -1,11 +1,12 @@
 'use strict';
 (function(root){
+const S=typeof module!=='undefined'?require('./auto-slice.js'):root.AutoSlice;
 const clone=x=>JSON.parse(JSON.stringify(x));
-function artwork(data){return data.segments.flatMap(s=>s.islands.map((is,i)=>({id:`${s.id}_${i}`,parentId:s.id,bit:s.bit,rings:is.rings,bounds:is.bounds,point:is.point})));}
+function artwork(data,p){const base=data.segments.flatMap(s=>s.islands.map((is,i)=>({id:`${s.id}_${i}`,parentId:s.id,bit:s.bit,rings:is.rings,bounds:is.bounds,point:is.point,sourceId:`${s.id}_${i}`})));return p?S.layout(base,p):base;}
 function dimensions(cols,rows,widthMm){if(!Number.isInteger(cols)||cols<1||cols>128||!Number.isInteger(rows)||rows<1||rows>64||cols*rows>8192)throw Error('Use 1–128 SEG nets and 1–64 COM nets (at most 8,192 pairs).');if(!Number.isFinite(widthMm)||widthMm<10||widthMm>2000)throw Error('Screen width must be 10–2,000 mm.');}
 const key=(t,b)=>`${t}:${b}`;
 function regular(t,b,cols,rows){return [3000*t/(cols+1),2160*b/(rows+1)];}
-function create(data,cols=60,rows=16,widthMm=75){dimensions(cols,rows,widthMm);return {format:'moida-mesh-v3',version:2,sourceHash:data.sourceHash,widthMm,cols,rows,nodes:{},bends:{},assignments:{}};}
+function create(data,cols=60,rows=16,widthMm=75){dimensions(cols,rows,widthMm);return {format:'moida-mesh-v3',version:3,sourceHash:data.sourceHash,widthMm,cols,rows,nodes:{},bends:{},assignments:{},meshAnchors:{},sliceGapMm:.1};}
 function position(p,t,b){return p.nodes[key(t,b)]||regular(t,b,p.cols,p.rows);}
 const edgeKey=(t,b,u,v)=>`${t}:${b}>${u}:${v}`;
 function edgePath(p,t,b,u,v){return [position(p,t,b),...(p.bends?.[edgeKey(t,b,u,v)]||[]),position(p,u,v)];}
@@ -16,17 +17,22 @@ function cellRing(p,t,b){return [edgePath(p,t,b,t+1,b),edgePath(p,t+1,b,t+1,b+1)
 function pair(p,t,b){if(!Number.isInteger(t)||t<1||t>p.cols||!Number.isInteger(b)||b<1||b>p.rows)throw Error('Pair is outside the current mesh.');}
 function assign(p,items,ids,t,b,transfer=false){pair(p,t,b);const byId=new Map(items.map(i=>[i.id,i]));if(!ids.length||ids.some(id=>!byId.has(id)))throw Error('Select an artwork island first.');const parents=new Set(ids.map(id=>byId.get(id).parentId));if(parents.size!==1)throw Error('One electrical pair can belong to only one original segment.');for(const [id,a]of Object.entries(p.assignments))if(a.t===t&&a.b===b&&!parents.has(byId.get(id).parentId)){if(transfer)delete p.assignments[id];else throw Error(`SEG ${t} / COM ${b} already belongs to ${byId.get(id).parentId}.`);}for(const id of ids)p.assignments[id]={t,b};return p;}
 function resize(p,cols,rows,widthMm){dimensions(cols,rows,widthMm);if(Object.values(p.assignments).some(a=>a.t>cols||a.b>rows))throw Error('This mesh size would remove assigned nets. Clear or reassign those islands first.');const next=clone(p);next.cols=cols;next.rows=rows;next.widthMm=widthMm;for(const k of Object.keys(next.nodes)){const [t,b]=k.split(':').map(Number);if(t>cols||b>rows)delete next.nodes[k];}const validEdges=new Set(meshEdges(next).map(e=>e.key));for(const k of Object.keys(next.bends||{}))if(!validEdges.has(k))delete next.bends[k];return next;}
-function validate(raw,data){if(!raw||raw.format!=='moida-mesh-v3'||![1,2].includes(raw.version)||raw.sourceHash!==data.sourceHash)throw Error('Load a v3 mesh project made from this original artwork.');dimensions(raw.cols,raw.rows,raw.widthMm);const p=create(data,raw.cols,raw.rows,raw.widthMm),items=artwork(data);if(!raw.nodes||typeof raw.nodes!=='object'||Array.isArray(raw.nodes)||!raw.assignments||typeof raw.assignments!=='object'||Array.isArray(raw.assignments))throw Error('Invalid mesh project.');for(const [k,v]of Object.entries(raw.nodes)){const [t,b]=k.split(':').map(Number);pair(p,t,b);if(k!==key(t,b)||!Array.isArray(v)||v.length!==2||v.some(n=>!Number.isFinite(n))||v[0]<0||v[0]>3000||v[1]<0||v[1]>2160)throw Error('Invalid mesh point.');p.nodes[k]=[...v];}if(raw.bends!==undefined){if(!raw.bends||typeof raw.bends!=='object'||Array.isArray(raw.bends))throw Error('Invalid mesh bends.');const allowed=new Set(meshEdges(p).map(e=>e.key));let total=0;for(const [k,points]of Object.entries(raw.bends)){if(!allowed.has(k)||!Array.isArray(points)||points.length>2048||(total+=points.length)>30000||points.some(v=>!Array.isArray(v)||v.length!==2||v.some(n=>!Number.isFinite(n))||v[0]<0||v[0]>3000||v[1]<0||v[1]>2160))throw Error('Invalid mesh bends.');if(points.length)p.bends[k]=clone(points);}}
+function validate(raw,data){if(!raw||raw.format!=='moida-mesh-v3'||![1,2,3].includes(raw.version)||raw.sourceHash!==data.sourceHash)throw Error('Load a v3 mesh project made from this original artwork.');dimensions(raw.cols,raw.rows,raw.widthMm);const p=create(data,raw.cols,raw.rows,raw.widthMm);if(!raw.nodes||typeof raw.nodes!=='object'||Array.isArray(raw.nodes)||!raw.assignments||typeof raw.assignments!=='object'||Array.isArray(raw.assignments))throw Error('Invalid mesh project.');for(const [k,v]of Object.entries(raw.nodes)){const [t,b]=k.split(':').map(Number);pair(p,t,b);if(k!==key(t,b)||!Array.isArray(v)||v.length!==2||v.some(n=>!Number.isFinite(n))||v.some(n=>Math.abs(n)>100000))throw Error('Invalid mesh point.');p.nodes[k]=[...v];}if(raw.bends!==undefined){if(!raw.bends||typeof raw.bends!=='object'||Array.isArray(raw.bends))throw Error('Invalid mesh bends.');const allowed=new Set(meshEdges(p).map(e=>e.key));let total=0;for(const [k,points]of Object.entries(raw.bends)){if(!allowed.has(k)||!Array.isArray(points)||points.length>2048||(total+=points.length)>30000||points.some(v=>!Array.isArray(v)||v.length!==2||v.some(n=>!Number.isFinite(n))||v.some(n=>Math.abs(n)>100000)))throw Error('Invalid mesh bends.');if(points.length)p.bends[k]=clone(points);}}
+ if(raw.sliceGapMm!==undefined){if(!Number.isFinite(raw.sliceGapMm)||raw.sliceGapMm<.01||raw.sliceGapMm>2)throw Error('Invalid automatic slice gap.');p.sliceGapMm=raw.sliceGapMm;}
+ if(raw.meshAnchors!==undefined){if(!raw.meshAnchors||Array.isArray(raw.meshAnchors)||typeof raw.meshAnchors!=='object')throw Error('Invalid slice anchors.');const base=new Map(artwork(data).map(i=>[i.id,i])),used=new Set();for(const [id,sites]of Object.entries(raw.meshAnchors)){if(!base.has(id)||!Array.isArray(sites)||sites.length>128)throw Error('Invalid slice anchors.');p.meshAnchors[id]=sites.map(a=>{pair(p,a.t,a.b);const k=key(a.t,a.b);if(used.has(k)||!S.contains(base.get(id),position(p,a.t,a.b)))throw Error('Invalid or duplicate slice anchor.');used.add(k);return {t:a.t,b:a.b};});}}
+ const items=artwork(data,p);
  for(const [id,a]of Object.entries(raw.assignments)){if(!a)throw Error('Invalid assignment.');assign(p,items,[id],a.t,a.b);}return p;}
 // Mesh edges may meet only at their shared logical endpoint. Other touches,
 // crossings and collinear overlaps are invalid, including same-layer crossings.
 function topology(p){
  const edges=[],eps=1e-7;
+ const points=[...Object.values(p.nodes),...Object.values(p.bends||{}).flat()];if(points.some(q=>q.some(n=>!Number.isFinite(n)||Math.abs(n)>100000)))return {ok:false,reason:'Mesh coordinates exceed the supported workspace range.',edges:[]};
  for(const edge of meshEdges(p)){const points=edge.points;for(let i=1;i<points.length;i++)edges.push({ids:[i===1?edge.ids[0]:edge.key+'@'+(i-1),i===points.length-1?edge.ids[1]:edge.key+'@'+i],points:[points[i-1],points[i]]});}
  const cross=(a,b,c)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);
  const on=(a,b,c)=>Math.abs(cross(a,b,c))<eps&&c[0]>=Math.min(a[0],b[0])-eps&&c[0]<=Math.max(a[0],b[0])+eps&&c[1]>=Math.min(a[1],b[1])-eps&&c[1]<=Math.max(a[1],b[1])+eps;
  const fail=(reason,es)=>({ok:false,reason,edges:es.map(e=>e.points)});
- const buckets=new Map(),size=Math.max(30,Math.min(3000/(p.cols+1),2160/(p.rows+1))*2);
+ const extent=edges.reduce((n,e)=>Math.max(n,...e.points.flat().map(Math.abs)),3000);
+ const buckets=new Map(),size=Math.max(30,extent/64,Math.min(3000/(p.cols+1),2160/(p.rows+1))*2);
  for(let n=0;n<edges.length;n++){
   const e=edges[n],[a,b]=e.points;if(Math.hypot(a[0]-b[0],a[1]-b[1])<eps)return fail('Two neighboring mesh points coincide.',[e]);
   const cells=[],seen=new Set();
@@ -94,7 +100,7 @@ function bendDrag(p,t,b,target){
   let center=[...start],edges=meshEdges(p).map(e=>({...e,points:e.points.map(q=>[...q])})),complete=false;
   for(let step=0;step<240;step++){
    const remaining=Math.hypot(target[0]-center[0],target[1]-center[1]);if(remaining<1e-7){complete=true;break;}
-   let radius=Math.min(center[0],3000-center[0],center[1],2160-center[1],300);
+   let radius=300;
    for(const q of fixed)radius=Math.min(radius,Math.hypot(q[0]-center[0],q[1]-center[1]));radius*=.75;
    if(radius<.01)break;
    const travel=Math.min(remaining,radius*.1),delta=[(target[0]-center[0])*travel/remaining,(target[1]-center[1])*travel/remaining];
@@ -110,7 +116,7 @@ function bendDrag(p,t,b,target){
    if(travel===remaining){center=[...target];complete=true;break;}
   }
   if(!complete)continue;
-  const candidate={...p,version:2,nodes:{...p.nodes,[key(t,b)]:target},bends:{}};
+  const candidate={...p,version:3,nodes:{...p.nodes,[key(t,b)]:target},bends:{}};
   let bent=0;
   for(const edge of edges){
    // Remove exactly redundant collinear samples; keep actual curves intact.
@@ -135,9 +141,7 @@ function deformRaw(p,t,b,target){
    const id=key(x,y),v=position(p,x,y);if(id===k){nodes[id]=target;continue;}if(pinned.has(id))continue;
    const distance=Math.hypot(v[0]-origin[0],v[1]-origin[1])/(radius*step);if(distance>=1)continue;
    const weight=(1-distance*distance)**3;
-   // Taper displacement to the screen boundary rather than collapsing points onto it.
-   const taper=(value,start,end)=>value<=start?value/Math.max(start,1e-9):(end-value)/Math.max(end-start,1e-9);
-   const q=[v[0]+dx*weight*taper(v[0],origin[0],3000),v[1]+dy*weight*taper(v[1],origin[1],2160)];
+   const q=[v[0]+dx*weight,v[1]+dy*weight];
    if(Math.hypot(q[0]-v[0],q[1]-v[1])>1e-7){nodes[id]=q;adjusted++;}
   }
   const candidate={...p,nodes},check=topology(candidate);if(check.ok)return finishProposal(candidate,adjusted);
@@ -145,5 +149,33 @@ function deformRaw(p,t,b,target){
  return {project:direct,check:initial,adjusted:0};
 }
 function deform(p,t,b,target,optimize=true){const result=deformRaw(p,t,b,target);if(result.check.ok&&optimize)return finishProposal(simplify(result.project),result.adjusted);return result;}
-const api={clone,artwork,key,create,position,assign,resize,validate,topology,deform,edgePath,meshEdges,simplify};root.MeshModel=api;if(typeof module!=='undefined')module.exports=api;
+function boxPoints(p,a,b){const ids=[];for(let t=1;t<=p.cols;t++)for(let c=1;c<=p.rows;c++){const q=position(p,t,c);if(q[0]>=Math.min(a[0],b[0])&&q[0]<=Math.max(a[0],b[0])&&q[1]>=Math.min(a[1],b[1])&&q[1]<=Math.max(a[1],b[1]))ids.push(key(t,c));}return ids;}
+function moveGroup(p,ids,delta){
+ if(!Array.isArray(delta)||delta.length!==2||delta.some(v=>!Number.isFinite(v)))throw Error('Invalid group displacement.');
+ const selected=new Set(ids),candidate={...p,nodes:{...p.nodes},bends:clone(p.bends||{})};
+ for(const id of selected){const [t,b]=id.split(':').map(Number);pair(p,t,b);const q=position(p,t,b);candidate.nodes[id]=[q[0]+delta[0],q[1]+delta[1]];}
+ for(const e of meshEdges(p)){if(!candidate.bends[e.key])continue;const start=selected.has(e.ids[0])?1:0,end=selected.has(e.ids[1])?1:0;if(!start&&!end)continue;
+ const lengths=[0];for(let i=1;i<e.points.length;i++)lengths.push(lengths[i-1]+Math.hypot(e.points[i][0]-e.points[i-1][0],e.points[i][1]-e.points[i-1][1]));
+ candidate.bends[e.key]=e.points.slice(1,-1).map((q,i)=>{const f=lengths[i+1]/(lengths.at(-1)||1),weight=start*(1-f)+end*f;return [q[0]+delta[0]*weight,q[1]+delta[1]*weight];});
+ }
+ return {project:candidate,check:topology(candidate)};
+}
+// Track intentional mesh placements; geometry is rebuilt from original artwork
+// every time, so removing an anchor restores area instead of accumulating cuts.
+function placePoints(p,data,moved,previous=p,detachOnly=false){
+ const base=artwork(data);p.meshAnchors=clone(p.meshAnchors||{});
+ // Adopt older single-island assignments whose mesh points are on the artwork.
+ for(const item of base){if(p.meshAnchors[item.id]?.length)continue;const a=p.assignments[item.id];if(a&&S.contains(item,position(previous,a.t,a.b)))p.meshAnchors[item.id]=[{...a}];}
+ const changed=new Set();
+ for(const id of moved){const [t,b]=id.split(':').map(Number);pair(p,t,b);
+  for(const [source,sites]of Object.entries(p.meshAnchors)){if(sites.some(a=>a.t===t&&a.b===b)){p.meshAnchors[source]=sites.filter(a=>a.t!==t||a.b!==b);changed.add(source);}}
+  const target=detachOnly?null:base.find(i=>S.contains(i,position(p,t,b)));if(target){(p.meshAnchors[target.id]??=[]).push({t,b});changed.add(target.id);}
+ }
+ for(const source of Object.keys(p.meshAnchors))if(!p.meshAnchors[source].length)delete p.meshAnchors[source];
+ const current=artwork(data,p);
+ for(const source of changed)for(const id of Object.keys(p.assignments))if(id===source||id.startsWith(source+'_sub'))delete p.assignments[id];
+ for(const item of current){if(!changed.has(item.sourceId))continue;const a=item.autoPair||p.meshAnchors[item.sourceId]?.[0];if(a)assign(p,current,[item.id],a.t,a.b,true);}
+ return p;
+}
+const api={clone,artwork,key,create,position,assign,resize,validate,topology,deform,edgePath,meshEdges,simplify,boxPoints,moveGroup,placePoints};root.MeshModel=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);

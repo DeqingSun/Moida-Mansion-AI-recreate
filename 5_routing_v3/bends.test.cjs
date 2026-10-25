@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict'),M=require('./model.js');
 require('../2_refine_routing/segments-data.js');const D=globalThis.ROUTER_DATA;
 const legacy=require('./tests/s3-c16-before-bends.json'),p=M.validate(legacy,D),before=M.clone(p),start=M.position(p,3,16);
-assert.equal(p.version,2);assert.deepEqual(p.assignments,legacy.assignments);assert(M.topology(p).ok);
+assert.equal(p.version,3);assert.deepEqual(p.assignments,legacy.assignments);assert(M.topology(p).ok);
 for(const dx of [10,20,40,60]){
  const target=[start[0]+dx,start[1]],direct={...p,nodes:{...p.nodes,'3:16':target}};
  assert(!M.topology(direct).ok,'straight edges must reproduce the reported crossing');
