@@ -1,4 +1,4 @@
-# Moida routing v3 — mesh assignment
+# Moida routing v3 — mesh and interactive routing
 
 A fresh browser tool for planning LCD electrical pairs. Starts from the original artwork, with **60 SEG × 16 COM**, **75 × 54 mm**, and no inherited routing or assignments. This is half the previous width and height, one quarter of the area. Screen scale does not establish routing feasibility or scale down physical clearance requirements.
 
@@ -40,6 +40,20 @@ Moving points within the island updates its slices. Moving a point away, or clea
 
 Single-point drops and box-group drops use the same rules. If the gap would erase a contact area or the points are too close, the entire drop is rejected and the prior geometry is preserved. Slices, assignments, and mesh movement are one Undo/Redo transaction and survive save/load. This is geometric segmentation, not proof of conductive routing or manufacturability.
 
+## Interactive routing
+
+1. Click **Route**, then click two individually assigned artwork pieces. Their mesh assignments determine the net: a shared SEG uses the top layer; a shared COM uses the bottom layer. If both match, choose the layer explicitly. Pieces with no common net cannot be connected. Whole-segment highlighting alone does not assign every disconnected piece.
+2. Set trace width and clearance in millimeters (defaults: 0.12 mm each; SEG ↔ COM trace clearance defaults to 0.10 mm). The tool previews an automatic path. **Find path** clears manual waypoints and retries automatically.
+3. For a preferred path, click inside the desired passages in order after selecting both endpoints. Enable **Live cursor preview** to see a waypoint before clicking to keep it. Add more waypoints as needed; **Remove waypoint** removes the last. Turn guidance off to review the path through your fixed waypoints.
+4. Optionally enable **Push nearby artwork inward**. If ordinary routing fails, the solver searches with bounded inward movement, then reshapes only the boundaries near the trace. Amber pieces show proposed changes. The default maximum push is 0.15 mm. Push cannot split a piece, add/remove holes, remove a mesh or existing trace contact, or remove more than 20% of a piece's area. Thin pieces without a surviving interior are protected. Enable **Push existing traces** to also displace blocking traces. Set a separate maximum trace movement (default 0.30 mm). Endpoints stay fixed; unaffected bends are retained where possible. Amber outlines show moved traces and dashed lines show their previous positions. Both toggles can be enabled together to move traces and trim artwork.
+5. Click **Confirm route** to save the trace and its artwork changes together. Previewing never commits. **Cancel preview** or Escape discards the proposal. Undo/Redo includes the whole transaction. **Select trace** lets you click a confirmed trace; the confirmed-routes list is another way to select it. **Remove selected route** removes that trace and restores the geometry derived from the remaining traces. If restoration would invalidate a dependent route, removal is rejected; remove the dependent route first.
+
+Routes are stored in JSON and autosave. Import, assignment edits, slicing, and screen-size changes recheck existing routes; edits that invalidate a saved route are rejected. Remove the affected latest routes before changing their endpoints or assignments.
+
+The solver uses a bounded 8-direction grid search and straight-line shortcuts, with geometric checks on every resulting segment. Search runs in a worker so the interface stays responsive. Failure can mean the search resolution/budget missed a path, not that no route exists. It checks width, clearance from unassigned/foreign-net artwork, foreign-net traces on the same layer, endpoint contact, and the physical screen boundary. Outside same-net artwork, SEG and COM traces must maintain 0.10 mm edge-to-edge spacing across layers, so their exposed portions cannot cross. Their portions inside assigned artwork may overlap as electrode contacts. This separate setting is stored per trace. Legacy traces without it retain their original rule; new routes honor the larger cross-layer clearance of either trace. Artwork push affects the shared displayed shape and protects existing contacts on both layers. Original source artwork is never modified; pushed geometry is derived by replaying saved routes.
+
+This is an initial routing editor, not a complete manufacturing DRC: it does not yet check minimum artwork neck width, contact area, fabrication-specific rules, vias, or full-network connectivity. Review proposed geometry before confirming.
+
 ## Change dimensions and save
 
 **Apply size & mesh** changes counts and width. Explicitly dragged points and assignments are preserved; untouched points redistribute across the regular grid. Reducing counts is blocked if it would delete an assigned net. **Reset mesh positions** restores a regular grid without clearing assignments. Width and scale relative to 150 mm are linked; default scale is 0.5.
@@ -50,13 +64,15 @@ Edits, resizing, reset, new project, and imports support Undo/Redo. Save JSON fo
 
 Implemented: configurable mesh, individual intersection deformation, island/whole-segment pair assignments, pair uniqueness, search, pan/zoom, size setup, save/load, autosave, and undo/redo.
 
-Not yet implemented: manual slice drawing, manual row/region deformation controls, general topology repair, physical contacts, conductive traces, clearance-aware routing, segment push, or selective autorouting. New mesh drags are checked for crossings and folds, but mesh lines are still not fabrication geometry. Assignment statistics do not imply connectivity. No EDA integration is required.
+Not yet implemented: manual slice drawing, manual row/region deformation controls, general topology repair, fabrication contact design, full-network autorouting. New mesh drags are checked for crossings and folds, but mesh lines are still not fabrication geometry. Assignment statistics do not imply connectivity. No EDA integration is required.
 
 See [research and proposed specification](ROUTING_V3_RESEARCH.md) for the next phases. Fresh project defaults here supersede the older 48 × 16 and 150 mm working reference.
 
 ## Verification
 
 ```sh
+node 5_routing_v3/routing.test.cjs
+node 5_routing_v3/routing-browser.test.cjs
 node 5_routing_v3/model.test.cjs
 node 5_routing_v3/bends.test.cjs
 node 5_routing_v3/group.test.cjs
@@ -68,3 +84,31 @@ node 5_routing_v3/browser.test.cjs
 The browser test needs the local server above, Playwright (set `PLAYWRIGHT_MODULE` if necessary), and Google Chrome at the path in the test. It uses a fresh temporary browser context and does not modify the user's saved project. Tests cover pair conflicts, sibling reuse, protected resizing, validation, drag assignment, undo/redo, scaling, autosave, JSON round-trip, automatic reshaping, crossing rejection, pinned pairs, and Escape cancellation.
 
 The bend regression uses the saved S3/C16 case: rightward moves that fail with straight edges must pass with bends, preserve all other intersections, survive serialization and subsequent dragging, and still reject coincident pinned nodes.
+
+Confirmed traces hide the corresponding mesh edges between their assigned intersections on that layer. The other layer and the rest of the mesh remain visible. Removing a trace (or undoing its confirmation) restores its guides unless another confirmed trace covers them. The underlying mesh remains intact for editing and topology checks.
+
+Trace clearance applies to path portions outside artwork assigned to the same net on the routing layer. Inside that artwork the trace adds no clearance margin, but its physical width still cannot overlap foreign-net artwork or a foreign-net trace on the same layer. Cross-layer trace spacing compares only exposed portions outside their assigned artwork. Boundary crossings, concave shapes, and holes split the path into inside/outside portions. Push uses the same rule and the preview halo shows the outside clearance.
+
+## Adjust automatic slices
+
+Choose **Edit slices**, then click a cyan divider or choose it from the slice list. Set its gap width in millimeters and use **Apply slice**. Drag either endpoint to adjust position and angle, or enter the two endpoint coordinates in millimeters. The divider extends across the island; its endpoints are line controls rather than a finite cut that could leave pieces connected. Dragging previews the changed artwork; release commits a valid edit, Escape cancels. **Reset automatic** restores the mesh-derived divider.
+
+Edits preserve mesh contacts and revalidate saved routes. Invalid edits are rejected. Adjustments are stored per original island and mesh-point pair, survive save/load and Undo/Redo, and are removed when that pair no longer exists. Moving mesh points can be rejected if a saved divider would no longer separate them; reset that divider first.
+
+Right-panel sections fold automatically when switching tools. Click any section summary to expand it manually.
+
+### Trace push limits
+
+Trace push first attempts ordinary routing. If blocked, it reserves the waypoint-guided path and replans up to eight obstructing traces within their individual movement corridors, trying both processing orders. The complete result is rebuilt from original sliced artwork and rechecked after all trimming. If no valid arrangement is found, the preview cannot be confirmed. This is a bounded local search, not a guarantee that every feasible arrangement will be found. Existing trace endpoints are fixed.
+
+Confirming commits the new route, displaced traces, and artwork trim in one transaction. Undo restores all of them together; Redo reapplies them. Save/load preserves the adjusted routes. Removing just the new route later keeps the confirmed positions of the other traces and rebuilds artwork for those remaining routes.
+
+## Fine-tune a confirmed trace
+
+Use **Select trace** (or the confirmed-routes list), then **Edit selected route**. Drag an existing bend, or drag the middle of a trace segment to insert a bend. You can also drag either endpoint within its original assigned artwork piece. The piece and net stay fixed; endpoints outside the piece cannot be confirmed. Release to calculate a clearance-checked preview. Enable **Push existing traces** and/or **Push nearby artwork inward** if you want those adjustments included. The existing movement and trim limits apply.
+
+Press **Enter** or **Confirm changes** to replace the selected trace in place. No duplicate trace is added. Escape cancels the edit. Undo/Redo covers the edited trace, any displaced neighbors, and artwork restoration together. Edits survive autosave and JSON save/load.
+
+Each edit rebuilds artwork from the original geometry plus current automatic/manual slices and the revised routes. Trim abandoned by the edited trace restores automatically; cuts still needed by other confirmed traces remain. The preview reports how many pieces regained artwork. If restoring or rerouting would break another trace's clearance/contact and no valid push arrangement is found, the edit is rejected.
+
+Routing disconnected sibling pieces: an unassigned piece can inherit its original segment’s unique assigned SEG/COM pair when selected as a routing endpoint. The assignment is staged with the preview and saved only on confirmation; Cancel leaves it unchanged and Undo restores both assignment and route. When both SEG and COM are shared, choose the desired layer explicitly. Segments with multiple assigned pairs and unassigned automatic slice regions require explicit mesh assignment first.
