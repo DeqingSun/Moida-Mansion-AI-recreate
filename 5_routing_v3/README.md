@@ -134,3 +134,15 @@ Route replay, trace-edit confirmation, and artwork/slice changes reuse validatio
 Adjusted slices now use finite, flat-ended cuts: the handles set the actual cut extent. A short cut that leaves both mesh contacts in one connected region is rejected on release instead of being extended. Existing saved slice edits retain their previous behavior until a divider on that source island is adjusted; the island then uses finite cuts. Original automatic slicing remains unchanged until adjustment.
 
 A same-parent group sharing one mesh pair and connected only by internal sibling traces can be reassigned together. Moving its mesh anchor off artwork retains the group's electrical assignment until a new mesh pair is placed on a member. Both SEG/COM internal route nets then follow the new pair while paths remain unchanged. External connections, multiple original pairs, other active anchors, and final clearance/contact checks prevent incompatible reassignment.
+
+### Bottom electrode contacts
+
+Choose **Bottom electrodes → Add bottom electrodes** to add the centered contact row to an existing project. Left to right: COM 1–16 (bottom layer), one empty position, SEG 1–60 (top layer). The 77 positions have 1 mm pitch, 0.5 mm contact width, 0.5 mm edge gaps, and 3 mm length. The 76.5 mm outer span is centered on the screen; at 75 mm screen width it overhangs each side by 0.75 mm. Initial gap below the screen is 3 mm, matching the previous tool.
+
+Drag any contact in Bottom electrodes mode to move the group vertically, or enter its gap below the screen (0–100 mm). Horizontal centering is fixed. Dragging only previews; release validates the change. Attached trace endpoints follow, and invalid movements are rejected. Undo/redo and JSON preserve the row. Use Route to connect assigned artwork to the matching contact; the layer is inferred from that contact. Contacts have fixed nets and cannot be trimmed by artwork push. The routing area and Fit screen include the contact row.
+
+### Measure passage capacity
+
+Choose **Measure gap**, then click two pieces. The gold line marks their nearest edges, using current slices and pushed geometry. The panel and canvas show millimetres and estimated trace capacity. Enable **Measure whole original segments** to include every island of each selected original segment. A third click starts a new pair; Clear measurement clears the selection. Measuring does not modify the project.
+
+The rule matches the previous tool: 0.12 mm trace width, 0.12 mm between traces, and 0.12 mm to each artwork edge. Capacity is `max(0, floor((gap − 0.12) / 0.24))`; one trace needs 0.36 mm and two need 0.60 mm. This is geometric capacity between the selected shapes, not a routing guarantee or a count of free lanes after existing traces and other obstacles.
