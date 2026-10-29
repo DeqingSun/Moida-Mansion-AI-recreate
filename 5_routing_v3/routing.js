@@ -90,8 +90,33 @@ function search(start,end,clear,step,bounds=[0,0,3000,2160]){if(clear(start,end)
  let explored=0;while(heap.length&&explored++<70000){const cur=pop();if(cur.g!==cost.get(cur.k))continue;const a=point(cur.k);if(dist(a,end)<step*3&&clear(a,end)){const out=[end];let k=cur.k;while(k!==-1){out.push(point(k));k=parent.get(k);}out.push(start);out.reverse();const simple=[out[0]];for(let i=0;i<out.length-1;){let j=out.length-1;while(j>i+1&&!clear(out[i],out[j]))j--;simple.push(out[j]);i=j;}return simple;}
  for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dy)continue;const x=cur.k%nx+dx,y=Math.floor(cur.k/nx)+dy;if(x<0||x>=nx||y<0||y>=ny)continue;const k=key(x,y),b=point(k),g=cur.g+dist(a,b);if(g>=(cost.get(k)??Infinity)||!clear(a,b))continue;cost.set(k,g);parent.set(k,cur.k);push({k,g,f:g+dist(b,end)});}}
  throw Error('No path found at this search resolution. Try another waypoint or enable bounded push.');}
+// Local visibility routing on clearance-offset contours, used only by explicit section drags.
+function walkAround(p,items,r,stops){
+ const local=localContext(p,items,{...r,points:stops},p.routes||[]),clear=checker(p,local.nearby,r,local.traces),u=3000/p.widthMm,pad=2*u,epsilon=.005*u;
+ const polygons=[];
+ for(const old of local.traces){if(old.layer===r.layer&&old.net===r.net)continue;const gap=old.layer===r.layer?Math.max(old.clearanceMm,r.clearanceMm):Math.max(old.crossClearanceMm||0,r.crossClearanceMm||0);if(old.layer!==r.layer&&!gap)continue;const radius=(r.widthMm/2+old.widthMm/2+gap)*u+epsilon;for(const ps of offset(paths([old.points]),radius,true))polygons.push(ps.map(q=>[q.X/scale,q.Y/scale]));}
+ for(const item of local.nearby){if(net(p,item.id,r.layer)===r.net)continue;for(const ps of offset(paths(item.rings),(r.widthMm/2+r.clearanceMm)*u+epsilon))polygons.push(ps.map(q=>[q.X/scale,q.Y/scale]));}
+ const free=q=>clear(q,[q[0]+.0001,q[1]]);
+ const project=(q,a,b)=>{const dx=b[0]-a[0],dy=b[1]-a[1],t=Math.max(0,Math.min(1,((q[0]-a[0])*dx+(q[1]-a[1])*dy)/(dx*dx+dy*dy||1)));return [a[0]+dx*t,a[1]+dy*t];};
+ const pinned=stops.map((q,i)=>{if(i===0||i===stops.length-1||free(q))return q;let best=null,d=Infinity;for(const ring of polygons)for(let j=0;j<ring.length;j++){const point=project(q,ring[j],ring[(j+1)%ring.length]),distance=dist(q,point);if(distance<d&&distance<=pad&&free(point)){best=point;d=distance;}}if(!best)throw Error('No clearance-safe position near this drag. Move the section less or choose another passage.');return best;});
+ let result=[pinned[0]];
+ for(let leg=1;leg<pinned.length;leg++){
+  const a=pinned[leg-1],b=pinned[leg];if(clear(a,b)){result.push(b);continue;}
+  const box=[Math.min(a[0],b[0])-pad,Math.min(a[1],b[1])-pad,Math.max(a[0],b[0])+pad,Math.max(a[1],b[1])+pad],nodes=[a,b],seen=new Set();
+  for(const ring of polygons)for(const q of ring){if(q[0]<box[0]||q[0]>box[2]||q[1]<box[1]||q[1]>box[3])continue;const key=q.map(v=>v.toFixed(3)).join(':');if(!seen.has(key)&&free(q)){seen.add(key);nodes.push(q);}}
+  if(nodes.length>650)throw Error('Too many nearby contours for this section. Drag a shorter section.');
+  const costs=nodes.map(()=>Infinity),prev=[],done=new Set();costs[0]=0;
+  while(done.size<nodes.length){let index=-1,best=Infinity;for(let i=0;i<nodes.length;i++)if(!done.has(i)&&costs[i]+dist(nodes[i],b)<best){index=i;best=costs[i]+dist(nodes[i],b);}if(index<0)break;if(index===1)break;done.add(index);for(let j=0;j<nodes.length;j++){if(done.has(j))continue;const value=costs[index]+dist(nodes[index],nodes[j]);if(value<costs[j]&&clear(nodes[index],nodes[j])){costs[j]=value;prev[j]=index;}}}
+  if(!Number.isFinite(costs[1]))throw Error('Cannot walk around this obstruction within the local 2 mm area. Try a smaller drag or add a guide point.');
+  const section=[b];let index=1;while(index!==0){index=prev[index];section.push(nodes[index]);}section.reverse();result.push(...section.slice(1));
+ }
+ // Straighten redundant contour points while retaining the user's drag stops.
+ const clean=[result[0]];for(let j=1;j<result.length;j++)if(dist(result[j],clean.at(-1))>1e-5)clean.push(result[j]);
+ if(clean.length>34)throw Error('Walk-around needs more than 32 bends. Drag a shorter section or simplify some points first.');
+ return clean;
+}
 function planRoute(p,items,request,restriction=null,searchStep=null){const r=copy(request),waypoints=r.waypoints||[];delete r.waypoints;delete r.pushTraces;delete r.traceMoveMm;r.net=net(p,r.from,r.layer);checkMeta(p,items,r);if(waypoints.length>32||waypoints.some(q=>q.length!==2||q.some(n=>!Number.isFinite(n))))throw Error('Invalid route waypoints.');const stops=[r.points[0],...waypoints,r.points.at(-1)],unit=3000/p.widthMm;
- const manual=r.manual;delete r.manual;if(manual){r.points=stops;const result=applyOne(p,items,r,p.routes||[]);for(const old of [...(p.routes||[]),r])checkMeta(p,result.items,old);return {route:r,...result};}
+ const walk=r.walkAround;delete r.walkAround;const manual=r.manual;delete r.manual;if(walk){r.points=walkAround(p,items,r,stops);const result=applyOne(p,items,r,p.routes||[]);return {route:r,...result};}if(manual){r.points=stops;const result=applyOne(p,items,r,p.routes||[]);for(const old of [...(p.routes||[]),r])checkMeta(p,result.items,old);return {route:r,...result};}
  const run=push=>{let searchItems=items;if(push)searchItems=items.flatMap(i=>{if(i.electrode||net(p,i.id,r.layer)===r.net)return [i];const ps=offset(paths(i.rings),-r.pushMm*unit);if(!ps.length)return [i];const tree=boolean(ps,[],C.ClipType.ctUnion);return regions(tree).map(rs=>shape(i,rs));});const check=checker(p,searchItems,r,p.routes||[]),clear=(a,b)=>check(a,b)&&(!restriction||restriction(a,b));let points=[];for(let j=1;j<stops.length;j++){let section;try{section=search(stops[j-1],stops[j],clear,searchStep||Math.max(6,Math.min(16,(r.widthMm/2+r.clearanceMm)*unit)),E.bounds(p));}catch(error){const blocked=items.filter(i=>net(p,i.id,r.layer)!==r.net&&S.contains(i,stops[j]));const detail=blocked.length?` Waypoint lies inside ${blocked.map(i=>i.id+' ('+(net(p,i.id,r.layer)===undefined?'unassigned':r.layer+' '+net(p,i.id,r.layer))+')').join(', ')}; requested trace is ${r.layer} ${r.net}. Move the waypoint into a clear passage; push must preserve artwork and contacts.`:'';throw Error(error.message+detail+` Leg ${j}: (${(stops[j-1][0]/unit).toFixed(2)}, ${(stops[j-1][1]/unit).toFixed(2)}) → (${(stops[j][0]/unit).toFixed(2)}, ${(stops[j][1]/unit).toFixed(2)}) mm.`);}points.push(...section.slice(j===1?0:1));}r.points=points;const result=applyOne(p,items,r,p.routes||[]);const all=[...(p.routes||[]),r];for(const old of all)checkMeta(p,result.items,old);return {route:r,items:result.items,changed:result.changed};};
  try{return run(false);}catch(e){if(!r.pushMm)throw e;
  // The coarse eroded search can miss a shallow, valid straight corridor.
