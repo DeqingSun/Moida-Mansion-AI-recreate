@@ -56,3 +56,44 @@ const joined=R.plan(sharedProject,[sharedPad,otherPad,segPad],{...request,from:'
 assert.equal(joined.route.points.length,2);assert.equal(joined.changed.length,0);
 assert.doesNotThrow(()=>R.apply({...sharedProject,routes:[...sharedProject.routes,joined.route]},[sharedPad,otherPad,segPad]));
 console.log('PASS: SEG and COM contacts can overlap inside artwork, with no push; exterior crossing tests remain enforced.');
+
+assert.throws(()=>R.plan(p,[a,b,obstacle],{...request,manual:true}),/clearance|collision|path|overlap|push/i);
+const exact=R.plan(p,[a,b],{...request,manual:true,waypoints:[[170,50]]});assert.deepEqual(exact.route.points,[[70,110],[170,50],[270,110]]);assert.equal(exact.route.manual,undefined);
+console.log('PASS: manual path preserves exact points and refuses automatic detours.');
+// Raising the push allowance beyond a thin obstacle's inradius must not reject
+// a shallow cut that already passes with a smaller allowance.
+const thinTop=rect('thinTop',140,95,40,10),thinItems=[a,b,thinTop];
+const shallow={...request,manual:true,widthMm:.12,clearanceMm:.12,points:[[70,106],[270,106]],pushMm:.1};
+const smallPush=R.plan(p,thinItems,shallow),largePush=R.plan(p,thinItems,{...shallow,pushMm:1});assert.deepEqual(largePush.items,smallPush.items);assert.throws(()=>R.plan(p,thinItems,{...shallow,points:[[70,100],[270,100]],pushMm:1}),/split|erase|shrink/);
+console.log('PASS: larger push allowance permits shallow cuts in thin artwork, still rejects destructive cuts.');
+for(const [field,value,label,range]of [['widthMm',0,'Trace width','0.02 to 2'],['clearanceMm',3,'Same-layer clearance','0.01 to 2'],['pushMm',11,'Maximum inward movement','0 to 10'],['crossClearanceMm',-1,'SEG ↔ COM trace clearance','0 to 2']])assert.throws(()=>R.plan(p,[a,b],{...request,[field]:value}),error=>error.message.includes(label)&&error.message.includes(value+' mm')&&error.message.includes(range));
+console.log('PASS: invalid route settings identify field, value, and allowed range.');
+
+for(const pushMm of [2,10]){const result=R.plan(p,thinItems,{...shallow,pushMm});assert.deepEqual(result.items,smallPush.items);assert.doesNotThrow(()=>R.apply({...p,routes:[result.route]},thinItems));}
+console.log('PASS: 2 mm and 10 mm inward limits route and replay successfully.');
+// A shallow transverse cut may discard a small scrap, but not its contacts.
+const scrapA=rect('a',50,0,40,40),scrapB=rect('b',250,0,40,40),scrapObstacle=rect('o',140,0,40,100),scrapItems=[scrapA,scrapB,scrapObstacle];
+const scrapRequest={...request,manual:true,widthMm:.12,clearanceMm:.12,pushMm:10,points:[[70,10],[270,10]]};
+const scrapResult=R.plan(p,scrapItems,scrapRequest);assert.equal(scrapResult.changed.length,1);assert(scrapResult.items.find(i=>i.id==='o').bounds[1]>10);assert.doesNotThrow(()=>R.apply({...p,routes:[scrapResult.route]},scrapItems));assert.deepEqual(R.apply({...p,routes:[]},scrapItems),scrapItems);
+assert.throws(()=>R.plan({...p,nodes:{'2:1':[160,5]},meshAnchors:{o:[{t:2,b:1}]}},scrapItems,scrapRequest),/mesh contact/);
+const contact={from:'o',to:'c',layer:'SEG',net:2,widthMm:.12,clearanceMm:.12,pushMm:0,points:[[160,5],[210,5]]};
+assert.throws(()=>R.plan({...p,assignments:{...p.assignments,o:{t:2,b:1},c:{t:2,b:2}},routes:[contact]},[...scrapItems,rect('c',200,0,20,10)],scrapRequest),/trace contact/);
+assert.throws(()=>R.plan(p,scrapItems,{...scrapRequest,points:[[70,30],[270,30]]}),/maximum 20%/);
+console.log('PASS: small split scraps discarded and restored on removal; mesh/trace contacts and total area limit protected.');
+// Local validation and cached replay must agree with the full-workspace path.
+const cachedProject={...p,routes:[scrapResult.route]};
+assert.deepEqual(R.apply(cachedProject,scrapItems),R.fullCheck(cachedProject,scrapItems));
+assert.deepEqual(R.apply(cachedProject,scrapItems),R.fullCheck(cachedProject,scrapItems));
+const shiftedObstacle=[scrapA,scrapB,rect('o',140,0,40,30)];
+for(const check of [R.apply,R.fullCheck])assert.throws(()=>check(cachedProject,shiftedObstacle),/maximum 20%/);
+for(const check of [R.apply,R.fullCheck])assert.throws(()=>check({...cachedProject,nodes:{'2:1':[160,5]},meshAnchors:{o:[{t:2,b:1}]}},scrapItems),/mesh contact/);
+for(const check of [R.apply,R.fullCheck])assert.throws(()=>check({...cachedProject,assignments:{...p.assignments,b:{t:3,b:2}}},scrapItems),/sharing/);
+console.log('PASS: local/cached/full validation agree; geometry, mesh contacts, and assignment edits invalidate reused results.');
+
+const diagnostics=R.diagnose(p,[a,b,obstacle],{...request,manual:true});
+assert.equal(diagnostics.length,1);assert.equal(diagnostics[0].leg,1);
+assert(diagnostics[0].a[0]>120&&diagnostics[0].a[0]<140);
+assert(diagnostics[0].b[0]>180&&diagnostics[0].b[0]<200);
+assert.deepEqual(R.diagnose(p,[a,b,obstacle],{...request,waypoints:[[100,40],[220,40]]}),[]);
+assert(R.diagnose(crossed,[a,b,c,d],request).length);
+console.log('PASS: diagnostics localize artwork and trace conflicts; clear manual detour has no markers.');

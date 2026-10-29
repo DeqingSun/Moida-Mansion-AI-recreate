@@ -1,2 +1,2 @@
-importScripts('../2_refine_routing/vendor/clipper.js','auto-slice.js','routing.js?v=endpoint-edit-1');
-onmessage=e=>{try{postMessage({result:TraceRouting.plan(e.data.project,e.data.items,e.data.request,e.data.baseItems)});}catch(error){postMessage({error:error.message});}};
+importScripts('../2_refine_routing/vendor/clipper.js','auto-slice.js?v=visible-slices-1','routing.js?v=manual-diagnostics-1');
+onmessage=e=>{try{postMessage({result:TraceRouting.plan(e.data.project,e.data.items,e.data.request,e.data.baseItems)});}catch(error){let issues=[];try{issues=TraceRouting.diagnose(e.data.project,e.data.items,e.data.request);}catch{}postMessage({error:error.message,issues});}};

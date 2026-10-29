@@ -34,3 +34,5 @@ assert.deepEqual(transfer.assignments[items[1].id],{t:5,b:16});
 const malformed=M.clone(transfer);malformed.assignments[siblings[0].id]={t:4,b:16};
 assert.throws(()=>M.validate(malformed,D),/already belongs/);
 console.log('PASS: explicit pair transfer clears former siblings, preserves other nets; imports still reject duplicate owners.');
+// Incremental checks must match full checks for edits to a valid baseline.
+{const data={sourceHash:'local-check',segments:[]},base=M.create(data,8,8);for(const delta of [[5,5],[500,0],[-100,100],[0,-400]]){const next=M.clone(base),q=M.position(base,4,4);next.nodes['4:4']=[q[0]+delta[0],q[1]+delta[1]];assert.equal(M.topology(next,base).ok,M.topology(next).ok);}console.log('PASS: local changed-edge and cell checks match full checks for valid and crossing moves.');}
