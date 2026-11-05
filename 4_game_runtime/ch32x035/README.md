@@ -1,5 +1,39 @@
 # CH32X035
 
+## Quick start: test with the computer display
+
+Connect a CH32X035 already flashed with `moida_test` firmware over USB, and close
+other serial monitors. The game runs on the board; the browser displays its LCD
+segments and sends button presses. No physical LCD is needed for this test.
+
+From the repository root, install the Python dependency once:
+
+```sh
+python3 -m pip install pyserial
+```
+
+Find the board's serial port (on macOS):
+
+```sh
+python3 -m serial.tools.list_ports
+```
+
+Start the display bridge, replacing the example device path with your board's
+port from that list. The X035 uses the shared server in the `ch32v307` folder:
+
+```sh
+python3 4_game_runtime/ch32v307/serial_server.py --device /dev/cu.usbmodemCH32X0351
+```
+
+Open [the MCU display](http://127.0.0.1:8768/4_game_runtime/mcu.html) and click
+**Start / Reset**. Keep the Python process running while playing. Use the onscreen
+buttons or **← / →** to move, **↑ / Space** for stairs/exit, and **Enter** to search.
+Any game button advances the intro/dialogue.
+
+After reconnecting USB or resetting the board, click **Start / Reset** again.
+If its serial port changes, restart the Python command with the new `--device`.
+Stop the server with **Ctrl+C** in the terminal.
+
 See [optimized build](#optimized-usb-test-build--2026-10-21) for the current result.
 The assessment below is the historical pre-optimization baseline.
 
