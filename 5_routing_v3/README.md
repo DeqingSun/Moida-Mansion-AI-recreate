@@ -152,3 +152,11 @@ The rule matches the previous tool: 0.12 mm trace width, 0.12 mm between traces,
 Select a trace, choose **Edit selected route**, then enable **Walk around wires when dragging a section**. Drag the middle of a line section. Pointer motion is a lightweight preview; release runs a local worker search along clearance-offset contours and adds bends around obstructions. Contacts remain fixed and neighboring wires do not move. The contour includes a 0.005 mm numerical margin beyond the applicable clearance. Both same-layer and SEG/COM spacing are checked against the resulting geometry before confirmation.
 
 The result remains a preview: Enter confirms, Escape cancels. Drag handles to refine it, double-click a line to insert a bend, right-click a bend to remove it, or select a bend and press Delete/Backspace. Endpoints cannot be removed. With no bend selected, Delete removes the last waypoint. Walk-around is opt-in; ordinary manual editing does not insert points automatically. Search is bounded to nearby contours (2 mm around each affected leg); excessively dense or blocked passages produce an error and retain the draft instead of saving an invalid route.
+
+### Play the edited artwork in the simulator
+
+Use **Export simulator JSON** to save `Moida-v3-simulator.json`. It contains the current moved, vertex-edited, sliced, and route-trimmed artwork with the original game-bit mapping. It excludes mesh guides, traces, and connector pads. Keep **Save JSON** for the separate editable routing project.
+
+Run `python3 4_game_runtime/serve.py --port 8767`, open `http://127.0.0.1:8767/4_game_runtime/live.html`, and choose **Load routed artwork**. Load the simulator JSON, then Start / Reset. All pieces of an original segment follow its game bit. Show all segments provides an all-on visual inspection; uncheck it to return to gameplay. Restore default artwork switches back without restarting the game. Imported artwork is kept for the current page session; reload it after a page refresh.
+
+This is an optical preview of shapes and animation, not an electrical connectivity or multiplexing simulation. Unwired pieces still follow their original game bit. The loader validates geometry and all 631 original bit mappings before replacing the display; invalid imports leave the existing artwork intact.

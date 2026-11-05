@@ -26,3 +26,6 @@ assert.equal(reconnect.detachedAssignments.a_2.group,'a_2');assert.equal(reconne
 assert.doesNotThrow(()=>M.validate(reconnect,transferData));
 assert.deepEqual(M.validate(JSON.parse(JSON.stringify(reconnect)),transferData),reconnect);
 console.log('PASS: reattaching one wired component clears stale detached group members, preserving other siblings and reload.');
+const orphan=M.clone(p);orphan.assignments={a_1:{t:4,b:11},a_2:{t:2,b:10}};orphan.detachedAssignments={a_0:{t:3,b:11,group:'a_0'}};
+for(const ids of [['a_0','a_1'],['a_1','a_0']]){const proposal=M.routeProject(orphan,items,ids);assert.deepEqual(proposal.assignments.a_0,{t:4,b:11});assert.equal(proposal.detachedAssignments.a_0,undefined);assert.deepEqual(R.common(proposal,...ids),['SEG','COM']);assert.doesNotThrow(()=>M.validate(proposal,data));}
+assert(orphan.detachedAssignments.a_0);assert.equal(orphan.assignments.a_0,undefined);console.log('PASS: unwired detached sibling inherits the selected pair in either order; original remains unchanged before confirmation.');

@@ -160,7 +160,9 @@ function plan(p,items,request,baseItems=null){
 // Replace a route in place and rebuild artwork from the original slice geometry.
 // Do not retain cuts made by the old version of the trace.
 function edit(p,items,request,baseItems){const index=request.editIndex,old=p.routes?.[index];if(!Number.isInteger(index)||!old||!baseItems)throw Error('Select a saved trace to edit.');if(request.from!==old.from||request.to!==old.to||request.layer!==old.layer)throw Error('Editing keeps the original artwork pieces and net fixed.');const other=p.routes.filter((r,i)=>i!==index),working={...p,routes:other},next=copy(request);delete next.editIndex;
- const restored=apply(working,baseItems),result=plan(working,restored,next,baseItems),proposed=result.routes||[...other,result.route],replacement=proposed.at(-1),routes=proposed.slice(0,-1);routes.splice(index,0,replacement);
+ // Walk against the visible corridor, including the edited trace's existing trims.
+ // Final replay below rebuilds every cut from base geometry and validates the replacement.
+ const restored=next.walkAround?items:apply(working,baseItems),result=plan(working,restored,next,baseItems),proposed=result.routes||[...other,result.route],replacement=proposed.at(-1),routes=proposed.slice(0,-1);routes.splice(index,0,replacement);
  const finalItems=apply({...p,routes},baseItems),changed=finalItems.filter(i=>JSON.stringify(i.rings)!==JSON.stringify(items.find(old=>old.id===i.id)?.rings)).map(i=>i.id),restoredIds=finalItems.filter(i=>{const before=items.find(old=>old.id===i.id);return before&&changed.includes(i.id)&&regions(boolean(paths(i.rings),paths(before.rings),C.ClipType.ctDifference)).some(rings=>area(rings)>1e-5);}).map(i=>i.id);
  return {...result,route:replacement,routes,items:finalItems,changed,restoredIds,editIndex:index,movedRoutes:(result.movedRoutes||[]).map(m=>({...m,index:m.index>=index?m.index+1:m.index}))};
 }

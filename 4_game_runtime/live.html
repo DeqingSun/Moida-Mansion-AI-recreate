@@ -8,8 +8,8 @@ body{font:16px system-ui;background:#17191b;color:#eee;max-width:780px;margin:24
 <nav><button id="reset">Start / Reset</button><button id="pause" disabled>Pause</button><label>Seed <input id="seed" value="1700000000000" inputmode="numeric" style="width:180px"></label><button id="new">New mansion</button><label><input id="sound" type="checkbox"> Sound</label><label><input id="encounters" type="checkbox" checked> Monster encounters</label></nav>
 <p><a href="layout.html">New: explore native C-generated mansion layouts by seed</a></p>
 <p>Display: routed artwork, including moved islands, shape edits and slices.</p>
-<div id="screen"></div>
+<nav><button id="loadPanel">Load routed artwork</button><input id="panelFile" type="file" accept=".json,application/json" hidden><button id="defaultPanel">Restore default artwork</button><label><input id="allSegments" type="checkbox"> Show all segments</label></nav><p id="panelStatus">Default artwork. Load Simulator JSON from routing v3 to preview moves, slices, and trims. This is a visual preview, not an electrical connectivity test.</p><div id="screen"></div>
 <nav><button class="game" data-button="2" disabled>← Left</button><button class="game" data-button="0" disabled>↑ Stairs / Exit</button><button class="game" data-button="1" disabled>Search</button><button class="game" data-button="3" disabled>Right →</button></nav>
 <details><summary>Diagnostic controls</summary><nav id="explore" hidden><strong>Explore rooms (diagnostic)</strong><button data-direction="0">← West</button><button data-direction="1">East →</button><button data-direction="2">Upstairs ↑</button><button data-direction="3">Downstairs ↓</button><button id="escape" hidden>Leave mansion</button><button id="searchNext">Search next object</button></nav>
 </details><p id="walkStatus"></p><p id="generation"></p><p id="status">Loading artwork…</p>
-<script src="live.js"></script></html>
+<script src="panel-import.js?v=1"></script><script src="live.js?v=panel-import-1"></script></html>

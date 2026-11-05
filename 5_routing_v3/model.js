@@ -259,6 +259,7 @@ function editArtwork(p,data,source,delta,vertex=null,scope='whole'){
 function routeProject(p,items,ids,allowPending=false){
  const staged=clone(p);
  for(const id of ids){
+  if(staged.detachedAssignments?.[id]&&!(staged.routes||[]).some(r=>r.from===id||r.to===id))delete staged.detachedAssignments[id];
   if(staged.assignments[id]||staged.detachedAssignments?.[id]||items.find(i=>i.id===id)?.electrode)continue;
   const item=items.find(i=>i.id===id);
   if(!item)throw Error('Click an artwork piece to route.');
@@ -270,6 +271,10 @@ function routeProject(p,items,ids,allowPending=false){
   if(pairs.size!==1)throw Error(pairs.size?'This segment has multiple mesh pairs. Assign this piece explicitly before routing.':'Assign a mesh point to this segment before routing.');
   const a=[...pairs.values()][0];assign(staged,items,[id],a.t,a.b);
  }
+ // Removing a stale, unwired member must also update any remaining group names.
+ const groups=new Map();for(const [id,a] of Object.entries(staged.detachedAssignments||{})){if(!groups.has(a.group))groups.set(a.group,[]);groups.get(a.group).push(id);}
+ for(const ids of groups.values()){const group=ids.sort().join('|');for(const id of ids)staged.detachedAssignments[id].group=group;}
+ for(const r of staged.routes||[]){const a=staged.detachedAssignments?.[r.from],b=staged.detachedAssignments?.[r.to];if(typeof r.net==='string'&&a&&b&&a.group===b.group)r.net=`floating:${a.group}:${r.layer}`;}
  return staged;
 }
 function moveElectrodes(p,gapMm){const next=clone(p),old=p.electrodes?.gapMm??3;next.electrodes={gapMm};const dy=(gapMm-old)*3000/p.widthMm;for(const r of next.routes||[])for(const [id,index] of [[r.from,0],[r.to,r.points.length-1]])if(E.net(p,id,r.layer)!==undefined)r.points[index][1]+=dy;return next;}

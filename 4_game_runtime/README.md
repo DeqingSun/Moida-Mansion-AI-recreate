@@ -458,3 +458,9 @@ node 4_game_runtime/build-routed-panel.cjs /path/to/project.json
 Reload the simulator afterward. The generator does not modify the routing project
 or firmware. EDA geometry is ignored, matching the current editor's traces-only
 EDA import policy. Original artwork remains in the preliminary-routing folder.
+
+## Load routing v3 artwork during play
+
+In routing v3, click **Export simulator JSON**. On `live.html`, choose **Load routed artwork** and select that JSON. The current moved/split/trimmed geometry replaces the display without changing game logic or restarting the current game. All sub-pieces remain grouped by their original game bit. **Show all segments** inspects the whole panel; **Restore default artwork** returns to the built-in display. Imports are session-only and must be loaded again after refreshing the page.
+
+The import is a visual/animation check: it does not simulate trace connectivity, unconnected electrodes, shorts, or multiplexing. Invalid files and mismatched game-bit mappings are rejected without replacing the current panel. Regression: `node 5_routing_v3/simulator-export.test.cjs`.

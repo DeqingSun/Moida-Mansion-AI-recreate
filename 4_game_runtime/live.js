@@ -3,7 +3,12 @@
  const el=id=>document.getElementById(id);
  const [svg,ids]=await Promise.all([fetch('recovered/routed-panel.svg').then(r=>r.text()),fetch('recovered/segment-ids.json').then(r=>r.json())]);
  el('screen').innerHTML=svg;
- const segments=ids.map(id=>document.getElementById('seg_'+id));
+ let segments=ids.map(id=>document.getElementById('seg_'+id)),lastWords=new Array(20).fill(0);
+ function paint(){segments.forEach((s,i)=>s.style.display=el('allSegments').checked||((lastWords[i>>>5]>>>(i&31))&1)?'':'none');}
+ el('loadPanel').onclick=()=>el('panelFile').click();
+ el('panelFile').onchange=async()=>{const file=el('panelFile').files[0];if(!file)return;try{if(file.size>25000000)throw Error('Panel file exceeds 25 MB.');const raw=JSON.parse(await file.text()),panel=SimulatorPanel.render(raw,ids,document);el('screen').replaceChildren(panel.svg);segments=panel.groups;paint();el('panelStatus').textContent=`${file.name}: ${raw.pieces.length} pieces / ${ids.length} game bits · ${raw.widthMm} mm wide. Visual preview; electrical connectivity is not simulated.`;}catch(e){el('panelStatus').textContent='Artwork was not changed: '+e.message;}finally{el('panelFile').value='';}};
+ el('allSegments').onchange=paint;
+ el('defaultPanel').onclick=()=>{el('screen').innerHTML=svg;segments=ids.map(id=>el('screen').querySelector('#seg_'+id));paint();el('panelStatus').textContent='Default artwork restored.';};
  segments.forEach(s=>s.style.display='none');
  let searched=false,session=null,timer=null,busy=false,paused=false,finished=false,frames=0,cycle=0,audio,pendingButtons=0,lastButtons=0,pendingSearch=false;
  const controls=[...document.querySelectorAll('.game')];
@@ -17,7 +22,7 @@
   cancel();busy=true;buttons|=pendingButtons;pendingButtons=0;if(buttons&lastButtons){pendingButtons=buttons;buttons=0;}lastButtons=buttons;const start=performance.now();
   try{
    const f=await request('/api/tick',{session,buttons,direction,animate:true,searchNext,idleAnimation:true,spiders:true,ghosts:true,encounters:el('encounters').checked});
-   segments.forEach((s,i)=>s.style.display=(f.words[i>>>5]>>>(i&31))&1?'':'none');
+   lastWords=f.words;paint();
    if(el('sound').checked&&audio&&f.beeperHz>0){const oscillator=audio.createOscillator(),gain=audio.createGain();oscillator.type='square';oscillator.frequency.value=f.beeperHz;gain.gain.value=.025;oscillator.connect(gain).connect(audio.destination);oscillator.start();oscillator.stop(audio.currentTime+f.beeperDurationInMs/1000);}
    if(f.cycle!==cycle){cycle=f.cycle;searched=false;finished=false;el('explore').hidden=true;el('walkStatus').textContent='';el('generation').textContent=`Seed ${el('seed').value.trim()} · mansion ${cycle+1} · entrance F${Math.floor(f.coord/4)} S${f.coord%4}`;}
    el('escape').hidden=!f.canEscape;

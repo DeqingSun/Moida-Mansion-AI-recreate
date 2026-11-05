@@ -16,3 +16,13 @@ assert.equal(restored.routes.length,1);assert(restored.restoredIds.includes('wal
 const movedEndpoint=R.plan(trimmedProject,trimmed,{...trimmedRoute,editIndex:0,points:[[71,110],[271,110]]},base);assert.deepEqual(movedEndpoint.route.points[0],[71,110]);assert.deepEqual(movedEndpoint.route.points.at(-1),[271,110]);
 assert.throws(()=>R.plan(trimmedProject,trimmed,{...trimmedRoute,editIndex:0,points:[[10,110],[270,110]]},base),/contact/);
 console.log('PASS: editing replaces in place, pushes a neighbor, preserves endpoints, restores abandoned trim from original geometry, no mutation before confirm.');
+
+// A saved route's own trim is an available corridor during explicit walk edits.
+const walkSame=R.plan(trimmedProject,trimmed,{...trimmedRoute,editIndex:0,manual:true,walkAround:true,points:[trimmedRoute.points[0],trimmedRoute.points.at(-1)],waypoints:trimmedRoute.points.slice(1,-1)},base);
+assert.deepEqual(walkSame.route.points,trimmedRoute.points);
+assert.doesNotThrow(()=>R.apply({...p,routes:walkSame.routes},base));
+const walkAway=R.plan(trimmedProject,trimmed,{...trimmedRoute,editIndex:0,manual:true,walkAround:true,points:[trimmedRoute.points[0],trimmedRoute.points.at(-1)],waypoints:[[120,130],[220,130]]},base);
+assert(walkAway.restoredIds.includes('wall'));
+assert.deepEqual(walkAway.items.find(i=>i.id==='wall').rings,base.find(i=>i.id==='wall').rings);
+assert.doesNotThrow(()=>R.apply({...p,routes:walkAway.routes},base));
+console.log('PASS: walk edits retain existing trim corridors and restore abandoned cuts on final replay.');

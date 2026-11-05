@@ -1,2 +1,2 @@
-importScripts('electrodes.js?v=1','../2_refine_routing/vendor/clipper.js','auto-slice.js?v=visible-slices-1','routing.js?v=walk-1');
+importScripts('electrodes.js?v=1','../2_refine_routing/vendor/clipper.js','auto-slice.js?v=visible-slices-1','routing.js?v=walk-trim-2');
 onmessage=e=>{try{postMessage({result:TraceRouting.plan(e.data.project,e.data.items,e.data.request,e.data.baseItems)});}catch(error){let issues=[];try{issues=TraceRouting.diagnose(e.data.project,e.data.items,e.data.request);}catch{}postMessage({error:error.message,issues});}};
