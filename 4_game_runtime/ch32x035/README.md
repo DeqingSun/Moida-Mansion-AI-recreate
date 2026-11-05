@@ -30,6 +30,39 @@ Open [the MCU display](http://127.0.0.1:8768/4_game_runtime/mcu.html) and click
 buttons or **← / →** to move, **↑ / Space** for stairs/exit, and **Enter** to search.
 Any game button advances the intro/dialogue.
 
+Before clicking **Start / Reset**, uncheck **Piezo sound** to start muted.
+The bridge applies this setting before starting the game. You can also change
+it during play or while paused. Muting stops the current note immediately. This requires rebuilding and
+flashing the updated `moida_test` firmware and restarting the Python server. Older
+firmware can still play but the sound control stays disabled. The setting survives
+Start / Reset and self-tests; a power cycle or MCU reset restores sound enabled.
+Serial commands `m` and `u` mute and unmute respectively.
+
+Physical buttons connect each pin to **GND when pressed**, using internal pull-ups:
+
+| Button | GPIO | QSOP28 pin | Game mask |
+|---|---|---:|---:|
+| Stairs / Exit | PA0 | 9 | 1 |
+| Search | PA1 | 10 | 2 |
+| Left | PA2 | 11 | 4 |
+| Right | PA3 | 12 | 8 |
+
+The firmware polls these inputs with 20 ms debouncing; no EXTI setup is needed.
+Short debounced taps are retained until the next game tick, and held buttons use
+normal game input handling. Physical and webpage buttons both work. Start the game
+with **Start / Reset** on the webpage; physical buttons do not start a paused game.
+The updated firmware must be flashed for these inputs to work. GPIO reads and
+pull-up configuration use direct PA0–PA3 register access to avoid the flash cost
+of Arduino's general pin dispatch. Build using the optimized script:
+
+```sh
+python3 4_game_runtime/ch32x035/build.py
+```
+
+With physical buttons and piezo control, this build uses 57,748 bytes of flash
+(5,740 bytes spare) and 14,212 bytes of static RAM. These figures include sections
+omitted by the Arduino summary. The script builds only; it does not flash.
+
 After reconnecting USB or resetting the board, click **Start / Reset** again.
 If its serial port changes, restart the Python command with the new `--device`.
 Stop the server with **Ctrl+C** in the terminal.

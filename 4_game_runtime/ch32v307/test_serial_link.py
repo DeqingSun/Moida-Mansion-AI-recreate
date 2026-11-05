@@ -25,4 +25,42 @@ class ReconnectTests(unittest.TestCase):
   with patch('serial_server.time.monotonic',side_effect=[0,3]):
    with self.assertRaises(TimeoutError):link.reply_line(b'd','.*')
   self.assertIsNone(link.device);dev.close.assert_called_once()
+class SoundTests(unittest.TestCase):
+ def test_mute_is_acknowledged_before_start(self):
+  link=SerialLink('/dev/test');link.reconnect=MagicMock()
+  link.reply_line=MagicMock(side_effect=['ready=1 sound=1','ready=1 sound=0','ready=1 sound=0'])
+  link.start_game(False)
+  self.assertEqual([c.args[0] for c in link.reply_line.call_args_list],[b'i',b'm',b'r'])
+ def test_reset_must_preserve_acknowledged_mute(self):
+  link=SerialLink('/dev/test');link.reconnect=MagicMock()
+  link.reply_line=MagicMock(side_effect=['ready=1 sound=1','ready=1 sound=0','ready=1 sound=1','ready=1 sound=0'])
+  with self.assertRaisesRegex(ValueError,'changed during reset'):link.start_game(False)
+  self.assertEqual([c.args[0] for c in link.reply_line.call_args_list],[b'i',b'm',b'r',b'm'])
+ def test_unsupported_mute_does_not_start(self):
+  link=SerialLink('/dev/test');link.reconnect=MagicMock()
+  link.reply_line=MagicMock(return_value='ready=1')
+  with self.assertRaisesRegex(ValueError,'before starting muted'):link.start_game(False)
+  self.assertEqual([c.args[0] for c in link.reply_line.call_args_list],[b'i'])
+ def test_older_firmware_can_start_with_sound_default(self):
+  link=SerialLink('/dev/test');link.reconnect=MagicMock()
+  link.reply_line=MagicMock(return_value='ready=1')
+  link.start_game(True)
+  self.assertEqual([c.args[0] for c in link.reply_line.call_args_list],[b'i',b'r'])
+
+ def test_mute_and_unmute_require_board_acknowledgement(self):
+  link=SerialLink('/dev/test')
+  link.reply_line=MagicMock(side_effect=['ready=1 sound=0 ticks=10','ready=1 sound=1 ticks=10'])
+  self.assertIs(link.set_sound(False),False)
+  self.assertIs(link.set_sound(True),True)
+  self.assertEqual([c.args[0] for c in link.reply_line.call_args_list],[b'm',b'u'])
+ def test_missing_or_wrong_acknowledgement_is_rejected(self):
+  link=SerialLink('/dev/test')
+  for response in ['ready=1 ticks=10','ready=1 sound=1 ticks=10']:
+   link.reply_line=MagicMock(return_value=response)
+   with self.assertRaisesRegex(ValueError,'did not confirm'):link.set_sound(False)
+ def test_non_boolean_is_rejected_without_serial_write(self):
+  link=SerialLink('/dev/test');link.reply_line=MagicMock()
+  with self.assertRaises(ValueError):link.set_sound('false')
+  link.reply_line.assert_not_called()
 if __name__=='__main__':unittest.main()
+

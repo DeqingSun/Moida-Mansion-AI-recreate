@@ -1,6 +1,7 @@
 // Run build.py first to populate src/ from the canonical portable C core.
 #include <Arduino.h>
 #include <SimpleUsbSerial.h>
+#include "buttons.h"
 #define PORT SerialUSB
 #if !defined(SYSCLK_FREQ_48MHz_HSI)
 #error "Select CH32X035 internal 48 MHz clock."
@@ -37,6 +38,14 @@ static MoidaFrame latest;
 static uint32_t digest, ticks, maxTickUs, initUs, lastTick;
 static bool ready, running, soundOn=true;
 static uint8_t nextButtons;
+static PhysicalButtons physicalButtons;
+static_assert(MOIDA_BUTTON_STAIRS==1 && MOIDA_BUTTON_SEARCH==2 &&
+              MOIDA_BUTTON_LEFT==4 && MOIDA_BUTTON_RIGHT==8, "Button mapping changed");
+static void pollButtons() {
+  const uint8_t pressed=uint8_t(~GPIOA->INDR)&0x0F;
+  physicalButtons.update(pressed,millis());
+  if(!running) physicalButtons.discard();
+}
 static void present(void*, const MoidaFrame *f) {
   latest = *f;
   uint32_t mapStart=measurementMicros();
@@ -75,7 +84,7 @@ static void resetGame() {
   ready = moida_host_init(&host,1700000000000LL,&hal);
   initUs = measurementMicros()-start;
   digest=2166136261u; lcdHash=2166136261u; lcdLastUs=lcdMaxUs=0; ticks=0; maxTickUs=0; nextButtons=0;
-  latest={}; lastTick=millis();
+  latest={}; physicalButtons.discard(); lastTick=millis();
 }
 static bool step(uint8_t buttons) {
   uint32_t start=measurementMicros();
@@ -87,6 +96,14 @@ static bool step(uint8_t buttons) {
 }
 static void status() {
   emit("ready="); emit(ready);
+  emit(" sound="); emit(soundOn);
+  emit(" running="); emit(running);
+  emit(" gpio_pressed="); emit(uint32_t(~GPIOA->INDR)&15);
+  emit(" buttons_stable="); emit(physicalButtons.stable);
+  emit(" game_buttons="); emit(host.game.previous_buttons);
+  emit(" game_stage="); emit(host.game.stage);
+  emit(" gpio_config="); emit(GPIOA->CFGLR&0xFFFFu,HEX);
+  emit(" gpio_pullup="); emit(GPIOA->OUTDR&15);
   emit(" clock_hz="); emit(SystemCoreClock);
   emit(" host_bytes="); emit(sizeof(host));
   emit(" init_us="); emit(initUs);
@@ -99,29 +116,39 @@ static void status() {
   PORT.flush(); // Submit the final partial USB packet, including self-test output.
 }
 static void selfTest() {
+  bool previousSound=soundOn;
   running=false; piezo_stop(); soundOn=false; resetGame();
   for(unsigned i=0;i<1000 && ready;i++) {
     uint8_t b=(i%23==0)?(1u<<((i/23)%4)):0;
     if(!step(b)) break;
   }
-  soundOn=true;
+  soundOn=previousSound;
   emit(ready && ticks==1000 && digest==MOIDA_EXPECTED_HASH && lcdHash==MOIDA_EXPECTED_LCD_HASH ? "PASS " : "FAIL ");
   emit("expected="); line(MOIDA_EXPECTED_HASH,HEX);
   status(); // Test leaves its final state paused. 'r' starts a fresh game.
 }
 static void help() {
   line("Moida C test: t=self-test, r=reset/run, p=pause/resume, i=stats, d=display");
-  line("a=left, f=right, w=stairs, s=search; b=piezo test tone; h=help");
+  line("a=left, f=right, w=stairs, s=search; b=piezo test tone; m=mute, u=unmute; h=help");
   PORT.flush();
 }
 void setup() {
+  // PA0..PA3 input pull-up (WCH GPIO_Mode_IPU = 0x48).
+  // Direct access avoids linking Arduino's general pin/peripheral dispatch.
   piezo_init();
   PORT.begin(115200);
+  RCC->APB2PCENR |= RCC_IOPAEN;
+  (void)RCC->APB2PCENR; // Read back the clock enable before accessing GPIO.
+  GPIOA->CFGLR = (GPIOA->CFGLR & ~0xFFFFu) | 0x8888u;
+  // Select pull-up after configuring input mode. Explicit OUTDR avoids the
+  // ineffective early BSHR write observed on the board (OUTDR stayed zero).
+  GPIOA->OUTDR |= 0x0Fu;
   resetGame(); running=false;
   // No wait-for-terminal: send h/i/t after opening it.
   help(); status();
 }
 void loop() {
+  pollButtons();
   if(PORT.available()) {
     char c=PORT.read();
     switch(c) {
@@ -130,7 +157,9 @@ void loop() {
     case 't': selfTest(); break;
     case 'r': piezo_stop(); resetGame(); running=ready; status(); break;
     case 'p': piezo_stop(); running=ready&&!running; lastTick=millis(); status(); break;
-    case 'b': piezo_play(440,500); break;
+    case 'm': soundOn=false; piezo_stop(); status(); break;
+    case 'u': soundOn=true; status(); break;
+    case 'b': if(soundOn) piezo_play(440,500); break;
     case 'a': nextButtons=MOIDA_BUTTON_LEFT; break;
     case 'f': nextButtons=MOIDA_BUTTON_RIGHT; break;
     case 'w': nextButtons=MOIDA_BUTTON_STAIRS; break;
@@ -141,6 +170,6 @@ void loop() {
     }
   }
   if(running && uint32_t(millis()-lastTick)>=MOIDA_TICK_MS) {
-    lastTick=millis(); step(nextButtons); nextButtons=0;
+    lastTick=millis(); step(nextButtons|physicalButtons.take()); nextButtons=0;
   }
 }

@@ -25,6 +25,27 @@ class SerialLink:
   try:self.device.write(command);self.device.flush()
   except OSError:
    self.close();raise
+ def start_game(self,enabled=True):
+  if type(enabled) is not bool:raise ValueError('Expected enabled boolean')
+  self.reconnect()
+  status=self.reply_line(b'i',r'ready=.*')
+  if re.search(r'(?:^| )sound=([01])(?: |$)',status):
+   self.set_sound(enabled)
+  elif not enabled:
+   raise ValueError('Update CH32X035 firmware before starting muted')
+  result=self.reply_line(b'r',r'ready=.*')
+  if re.search(r'(?:^| )sound=([01])(?: |$)',status):
+   confirmed=re.search(r'(?:^| )sound=([01])(?: |$)',result)
+   if not confirmed or bool(int(confirmed[1]))!=enabled:
+    self.set_sound(False)
+    raise ValueError('Sound setting changed during reset; board muted. Update firmware and retry.')
+  return result
+ def set_sound(self,enabled):
+  if type(enabled) is not bool:raise ValueError('Expected enabled boolean')
+  line=self.reply_line(b'u' if enabled else b'm',r'ready=.*')
+  sound=re.search(r'(?:^| )sound=([01])(?: |$)',line)
+  if not sound or bool(int(sound[1]))!=enabled:raise ValueError('Board did not confirm the piezo setting')
+  return enabled
  def reply_line(self,command,pattern):
   try:
    self.write(command)
@@ -48,7 +69,7 @@ def main():
  link=SerialLink(args.device)
  # Keep HTTP alive even when the board is absent. Reset opens a fresh USB handle.
  reply_line=link.reply_line
- state={'started':False,'paused':True}
+ state={'started':False,'paused':True,'sound':None}
  class Handler(SimpleHTTPRequestHandler):
   def __init__(self,*a,**kw):super().__init__(*a,directory=str(ROOT),**kw)
   def log_request(self,code='-',size='-'):
@@ -57,6 +78,10 @@ def main():
    body=json.dumps(data).encode();self.send_response(code)
    self.send_header('Content-Type','application/json');self.send_header('Cache-Control','no-store')
    self.send_header('Content-Length',str(len(body)));self.end_headers();self.wfile.write(body)
+  def do_GET(self):
+   if self.path=='/api/mcu/capabilities':
+    return self.reply(200,{'soundBeforeStart':True})
+   super().do_GET()
   def do_POST(self):
    host=self.headers.get('Host','')
    if host not in (f'127.0.0.1:{args.port}',f'localhost:{args.port}') or self.headers.get('Origin') not in (None,f'http://{host}'):
@@ -69,11 +94,18 @@ def main():
     with lock:
      if self.path=='/api/mcu/start':
       state.update(started=False,paused=True)
-      link.reconnect()
-      line=reply_line(b'r',r'ready=.*')
+      line=link.start_game(data.get('enabled',True))
       if not line.startswith('ready=1 '):raise ValueError(line)
-      state.update(started=True,paused=False)
+      sound=re.search(r'(?:^| )sound=([01])(?: |$)',line)
+      state.update(started=True,paused=False,sound=bool(int(sound[1])) if sound else None)
       return self.reply(200,dict(state,status=line))
+     if self.path=='/api/mcu/sound':
+      if not state['started']:raise ValueError('Start the game first')
+      if state['sound'] is None:raise ValueError('Update the CH32X035 firmware to enable piezo control')
+      enabled=data.get('enabled')
+      if type(enabled) is not bool:raise ValueError('Expected enabled boolean')
+      state['sound']=link.set_sound(enabled)
+      return self.reply(200,dict(state))
      if self.path=='/api/mcu/pause':
       if not state['started']:raise ValueError('Start the game first')
       desired=data.get('paused')
