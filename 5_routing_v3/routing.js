@@ -81,7 +81,7 @@ function checkFinal(p,items,r,previous){
  if(!fullValidation)remember(clearCache,local.key,true);
 }
 function fullCheck(p,items){const old=fullValidation;fullValidation=true;try{return apply(p,items);}finally{fullValidation=old;}}
-function apply(p,items){let current=items;const previous=[];if(!Array.isArray(p.routes||[])||(p.routes||[]).length>500)throw Error('Invalid saved routes.');for(const r of p.routes||[]){current=applyOne(p,current,r,previous).items;previous.push(r);}for(let index=0;index<previous.length;index++){const r=previous[index];checkFinal(p,current,r,previous.slice(0,index));}return current;}
+function apply(p,items){let current=items;const previous=[];if(!Array.isArray(p.routes||[]))throw Error('Invalid saved routes: expected a list of traces.');for(const r of p.routes||[]){current=applyOne(p,current,r,previous).items;previous.push(r);}for(let index=0;index<previous.length;index++){const r=previous[index];checkFinal(p,current,r,previous.slice(0,index));}return current;}
 // Bounded 8-direction A*, followed by exact segment-clearance shortcuts.
 function search(start,end,clear,step,bounds=[0,0,3000,2160]){if(clear(start,end))return [start,end];const nx=Math.ceil((bounds[2]-bounds[0])/step)+1,ny=Math.ceil((bounds[3]-bounds[1])/step)+1,key=(x,y)=>y*nx+x,point=k=>[bounds[0]+(k%nx)*step,bounds[1]+Math.floor(k/nx)*step];const heap=[],cost=new Map(),parent=new Map();
  const push=e=>{heap.push(e);let i=heap.length-1;while(i){const j=(i-1)>>1;if(heap[j].f<=e.f)break;heap[i]=heap[j];i=j;}heap[i]=e;};

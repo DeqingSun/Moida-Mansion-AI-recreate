@@ -1,0 +1,14 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const M=require('./model.js');require('../2_refine_routing/segments-data.js');
+const DATA=globalThis.ROUTER_DATA,base=M.create(DATA),before=JSON.stringify(base);
+const moves=[{nodes:{'1:1':[-50,-50]},bends:{},ids:['1:1']},{nodes:{'1:1':[-60,-60]},bends:{},ids:['1:1']}];
+let result;
+const context={MeshModel:M,ROUTER_DATA:DATA,AutoSlice:require('./auto-slice.js'),ShapeEdit:require('./shape.js'),importScripts(){},postMessage:r=>result=r};
+vm.createContext(context);vm.runInContext(fs.readFileSync(__dirname+'/mesh-worker.js','utf8'),context);
+context.onmessage({data:{base,moves}});
+assert(!result.error,result.error);assert.deepEqual(result.project.nodes['1:1'],[-60,-60]);
+assert(result.check.ok);assert.deepEqual(result.items,M.artwork(DATA,result.project));
+assert.equal(JSON.stringify(base),before);
+context.onmessage({data:{base,moves:[{nodes:{'1:1':M.position(base,2,1)},bends:{},ids:['1:1']}]}});
+assert(result.error);assert.equal(JSON.stringify(base),before);
+console.log('PASS: background mesh batching, final artwork, crossing rejection, unchanged baseline.');
