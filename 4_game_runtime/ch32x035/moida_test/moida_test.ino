@@ -9,7 +9,9 @@
 extern "C" {
 #include "src/moida_hal.h"
 #include "piezo.h"
+#include "i2c.h"
 }
+#define HT16C24A_ADDR 0x3D
 #include "src/expected.h"
 // Small integer-only reporting avoids Arduino Print's general number formatter.
 static void emit(const char *s) { while (*s) PORT.write((uint8_t)*s++); }
@@ -127,15 +129,28 @@ static void selfTest() {
   emit("expected="); line(MOIDA_EXPECTED_HASH,HEX);
   status(); // Test leaves its final state paused. 'r' starts a fresh game.
 }
+static void probeLcdDriver() {
+  static const char *const errors[]={"","nack","busy","timeout"};
+  int result=i2c_probe(HT16C24A_ADDR);
+  uint8_t lines=i2c_lines();
+  emit("ht16c24a="); emit(result==I2C_OK);
+  if(result!=I2C_OK){ emit(" err="); emit(errors[result]); }
+  emit(" addr="); emit(HT16C24A_ADDR,HEX);
+  emit(" sda="); emit(lines&1u);
+  emit(" scl="); line((lines>>1)&1u);
+  PORT.flush();
+}
 static void help() {
   line("Moida C test: t=self-test, r=reset/run, p=pause/resume, i=stats, d=display");
-  line("a=left, f=right, w=stairs, s=search; b=piezo test tone; m=mute, u=unmute; h=help");
+  line("a=left, f=right, w=stairs, s=search; b=piezo test tone; m=mute, u=unmute");
+  line("l=HT16C24A probe (I2C SDA=PC18, SCL=PC19); h=help");
   PORT.flush();
 }
 void setup() {
   // PA0..PA3 input pull-up (WCH GPIO_Mode_IPU = 0x48).
   // Direct access avoids linking Arduino's general pin/peripheral dispatch.
   piezo_init();
+  i2c_init();
   PORT.begin(115200);
   RCC->APB2PCENR |= RCC_IOPAEN;
   (void)RCC->APB2PCENR; // Read back the clock enable before accessing GPIO.
@@ -160,6 +175,7 @@ void loop() {
     case 'm': soundOn=false; piezo_stop(); status(); break;
     case 'u': soundOn=true; status(); break;
     case 'b': if(soundOn) piezo_play(440,500); break;
+    case 'l': probeLcdDriver(); break;
     case 'a': nextButtons=MOIDA_BUTTON_LEFT; break;
     case 'f': nextButtons=MOIDA_BUTTON_RIGHT; break;
     case 'w': nextButtons=MOIDA_BUTTON_STAIRS; break;

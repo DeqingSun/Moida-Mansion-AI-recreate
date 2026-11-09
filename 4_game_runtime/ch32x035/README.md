@@ -59,9 +59,14 @@ of Arduino's general pin dispatch. Build using the optimized script:
 python3 4_game_runtime/ch32x035/build.py
 ```
 
-With physical buttons and piezo control, this build uses 57,748 bytes of flash
-(5,740 bytes spare) and 14,212 bytes of static RAM. These figures include sections
-omitted by the Arduino summary. The script builds only; it does not flash.
+With physical buttons, piezo control and the HT16C24A I2C probe, this build uses
+58,660 bytes of flash (4,828 bytes spare) and 14,212 bytes of static RAM. These
+figures include sections omitted by the Arduino summary. The script builds only;
+it does not flash.
+
+This firmware **turns off SWD** at startup so PC18/PC19 can carry I2C to the LCD
+driver. Flash it over USB (the bootloader), as usual. Serial command `l` checks
+whether the HT16C24A answers; see [HT16C24A I2C](#ht16c24a-i2c--2026-11-09).
 
 After reconnecting USB or resetting the board, click **Start / Reset** again.
 If its serial port changes, restart the Python command with the new `--device`.
@@ -440,3 +445,57 @@ X035 now has 7,828 bytes of flash headroom. RAM and stack reservations are
 unchanged. Both target builds retain expected checksum `98D3E4E`.
 Validation passed 400 mansion-generation cases and 49,699 exact original/C ticks
 across 17 full sessions with sanitizers enabled. No firmware was uploaded.
+
+## HT16C24A I2C — 2026-11-09
+
+First step toward the physical LCD: a hardware I2C1 master and a serial command
+that checks whether the **HT16C24A** LCD driver is on the bus. No display data
+is sent yet.
+
+| Signal | Pin | QSOP28 pin |
+|---|---|---:|
+| SDA | PC18 | 28 |
+| SCL | PC19 | 1 |
+
+Fit a 4.7 kΩ pull-up from each line to VDD (the HT16C24A datasheet's typical
+value). The HT16C24A runs from 2.4–5.5 V and shares VDD and GND with the MCU.
+Its 7-bit address is fixed at **0x3D** (address bits `0111101`; write byte
+`0x7A`, read byte `0x7B`).
+
+Why these pins: on the G8R6 package, I2C1 can only reach PC16/PC17 (USB) or
+PC18/PC19 (SWD). The other remaps need PA10, PA11 or PA14, which QSOP28 lacks.
+The firmware selects `AFIO_PCFR1.I2C1_RM = 011` (SCL/PC19, SDA/PC18) and
+`SW_CFG = 100`, which **turns SWD off**. Flash over USB instead. The header's
+`AFIO_PCFR1_*` macros follow the V30x layout, so `i2c.c` uses the X035 RM field
+positions directly.
+
+Driver (`moida_test/i2c.c`, beside the sketch): register-level and polled, no
+Arduino `Wire`. 100 kHz standard mode (`FREQ = 48`, `CCR = 240`). Every wait has a
+timeout of a few milliseconds, and the peripheral resets itself after a bus
+error or timeout.
+
+Command `l` sends an address-only write to 0x3D and prints one line:
+
+| Output | Meaning |
+|---|---|
+| `ht16c24a=1 addr=3D sda=1 scl=1` | The HT16C24A acknowledged. |
+| `ht16c24a=0 err=nack ... sda=1 scl=1` | Bus is fine, but nothing answered at 0x3D: chip missing, unpowered or miswired. |
+| `ht16c24a=0 err=busy ...` | A line is held low: usually missing pull-ups, or SDA/SCL shorted to GND. |
+| `ht16c24a=0 err=timeout ...` | The I2C peripheral did not respond. See the batch note below. |
+
+`sda`/`scl` show the pin levels after the attempt; both 0 usually means no
+pull-ups or no power on the pull-up rail. Avoid probing within 1 ms of powering
+the HT16C24A.
+
+Batch caveat: the X035 datasheet says I2C is unavailable on chips whose batch
+number has 0 as the fifth digit from the end. Check the chip marking if `l`
+always times out.
+
+| Build | Flash | Static RAM | Flash margin |
+|---|---:|---:|---:|
+| Before I2C | 58,060 B | 14,212 B | 5,428 B |
+| With I2C probe | **58,660 B** | **14,212 B** | **4,828 B** |
+
+Display and LCD-map hashes are unchanged (`98D3E4E`, `3E37DCCC`). Disassembly
+confirms the `PCFR1` write (`SW_CFG=100`, `I2C1_RM=011`) and PC18/PC19
+alternate-function mode. Not yet tested on hardware.
