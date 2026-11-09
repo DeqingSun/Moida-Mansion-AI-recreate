@@ -60,7 +60,7 @@ python3 4_game_runtime/ch32x035/build.py
 ```
 
 With physical buttons, piezo control and the HT16C24A I2C probe, this build uses
-58,660 bytes of flash (4,828 bytes spare) and 14,212 bytes of static RAM. These
+59,416 bytes of flash (4,072 bytes spare) and 14,212 bytes of static RAM. These
 figures include sections omitted by the Arduino summary. The script builds only;
 it does not flash.
 
@@ -449,8 +449,8 @@ across 17 full sessions with sanitizers enabled. No firmware was uploaded.
 ## HT16C24A I2C — 2026-11-09
 
 First step toward the physical LCD: a hardware I2C1 master and a serial command
-that checks whether the **HT16C24A** LCD driver is on the bus. No display data
-is sent yet.
+that checks whether the **HT16C24A** LCD driver is on the bus and its display RAM
+can be read and written. The display is never switched on yet.
 
 | Signal | Pin | QSOP28 pin |
 |---|---|---:|
@@ -470,22 +470,40 @@ The firmware selects `AFIO_PCFR1.I2C1_RM = 011` (SCL/PC19, SDA/PC18) and
 positions directly.
 
 Driver (`moida_test/i2c.c`, beside the sketch): register-level and polled, no
-Arduino `Wire`. 100 kHz standard mode (`FREQ = 48`, `CCR = 240`). Every wait has a
-timeout of a few milliseconds, and the peripheral resets itself after a bus
-error or timeout.
+Arduino `Wire`. 100 kHz standard mode (`FREQ = 48`, `CCR = 240`). It provides an
+address probe, a write, and a write followed by a repeated-START read. The last
+received byte is NACKed, with interrupts briefly disabled so the NACK and STOP
+are queued in time. Every wait has a timeout of a few milliseconds, and the
+peripheral resets itself after a bus error or timeout.
 
-Command `l` sends an address-only write to 0x3D and prints one line:
+Command `l` runs three steps and prints one line:
+
+1. An address-only write to 0x3D (`ht16c24a=`).
+2. A read of display RAM bytes 00–07 (`ram00=`, 16 hex digits). This uses the
+   display data command (`0x80`, address), then a repeated START with the read
+   address `0x7B`.
+3. A write/read-back test on RAM byte 00 with `55` and `AA`, then restoring the
+   original value (`ram_rw=`).
+
+The HT16C24A has no ID register, and its command settings (duty, bias,
+oscillator, display, frame rate, blink, voltage) are write-only. Display RAM is
+the only readable state, so these steps are the most the chip can report. After
+power-on the display and oscillator are off, so the RAM test is invisible. Power-on
+RAM contents are not specified, so `ram00` values are arbitrary until written.
 
 | Output | Meaning |
 |---|---|
-| `ht16c24a=1 addr=3D sda=1 scl=1` | The HT16C24A acknowledged. |
-| `ht16c24a=0 err=nack ... sda=1 scl=1` | Bus is fine, but nothing answered at 0x3D: chip missing, unpowered or miswired. |
-| `ht16c24a=0 err=busy ...` | A line is held low: usually missing pull-ups, or SDA/SCL shorted to GND. |
-| `ht16c24a=0 err=timeout ...` | The I2C peripheral did not respond. See the batch note below. |
+| `ht16c24a=1 addr=3D ram00=… ram_rw=ok sda=1 scl=1` | Present; reads and writes both work. |
+| `ht16c24a=1 … ram_rw=fail wrote=55 read=XX …` | Present, but RAM did not hold the written value. |
+| `ht16c24a=1 … err=nack …` | Present, but a later transfer was not acknowledged. |
+| `ht16c24a=0 addr=3D err=nack sda=1 scl=1` | Bus is fine, but nothing answered at 0x3D: chip missing, unpowered or miswired. |
+| `ht16c24a=0 … err=busy …` | A line is held low: usually missing pull-ups, or SDA/SCL shorted to GND. |
+| `ht16c24a=0 … err=timeout …` | The I2C peripheral did not respond. See the batch note below. |
 
 `sda`/`scl` show the pin levels after the attempt; both 0 usually means no
 pull-ups or no power on the pull-up rail. Avoid probing within 1 ms of powering
-the HT16C24A.
+the HT16C24A. The address probe was confirmed on hardware
+(`ht16c24a=1 addr=3D sda=1 scl=1`); the RAM read/write steps are not yet tested.
 
 Batch caveat: the X035 datasheet says I2C is unavailable on chips whose batch
 number has 0 as the fifth digit from the end. Check the chip marking if `l`
@@ -494,8 +512,9 @@ always times out.
 | Build | Flash | Static RAM | Flash margin |
 |---|---:|---:|---:|
 | Before I2C | 58,060 B | 14,212 B | 5,428 B |
-| With I2C probe | **58,660 B** | **14,212 B** | **4,828 B** |
+| With I2C address probe | 58,660 B | 14,212 B | 4,828 B |
+| With RAM read/write test | **59,416 B** | **14,212 B** | **4,072 B** |
 
 Display and LCD-map hashes are unchanged (`98D3E4E`, `3E37DCCC`). Disassembly
 confirms the `PCFR1` write (`SW_CFG=100`, `I2C1_RM=011`) and PC18/PC19
-alternate-function mode. Not yet tested on hardware.
+alternate-function mode.

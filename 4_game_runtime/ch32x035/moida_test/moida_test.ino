@@ -129,13 +129,50 @@ static void selfTest() {
   emit("expected="); line(MOIDA_EXPECTED_HASH,HEX);
   status(); // Test leaves its final state paused. 'r' starts a fresh game.
 }
+static void emitHex2(uint8_t v) { emit(v>>4,HEX); emit(v&15u,HEX); }
+// Display RAM is the HT16C24A's only readable state; command settings are write-only.
+static int readLcdRam(uint8_t address, uint8_t *data, unsigned count) {
+  const uint8_t setPointer[]={0x80,address};
+  return i2c_write_read(HT16C24A_ADDR,setPointer,2,data,count);
+}
+static int writeLcdRam(uint8_t address, uint8_t value) {
+  const uint8_t write[]={0x80,address,value};
+  return i2c_write(HT16C24A_ADDR,write,3);
+}
+// Write/read back two patterns at RAM 00, then restore it. The display is off
+// after power-on, so this is invisible on the glass.
+static int lcdRamReadback(uint8_t original) {
+  static const uint8_t patterns[]={0x55,0xAA};
+  int result=I2C_OK;
+  uint8_t readBack=0;
+  unsigned i;
+  for(i=0;i<2 && result==I2C_OK;i++) {
+    result=writeLcdRam(0,patterns[i]);
+    if(result==I2C_OK) result=readLcdRam(0,&readBack,1);
+    if(result==I2C_OK && readBack!=patterns[i]) break;
+  }
+  int restore=writeLcdRam(0,original);
+  if(result!=I2C_OK) return result;
+  if(i<2){ emit(" ram_rw=fail wrote="); emitHex2(patterns[i]); emit(" read="); emitHex2(readBack); }
+  else emit(" ram_rw=ok");
+  return restore;
+}
 static void probeLcdDriver() {
   static const char *const errors[]={"","nack","busy","timeout"};
   int result=i2c_probe(HT16C24A_ADDR);
-  uint8_t lines=i2c_lines();
   emit("ht16c24a="); emit(result==I2C_OK);
-  if(result!=I2C_OK){ emit(" err="); emit(errors[result]); }
   emit(" addr="); emit(HT16C24A_ADDR,HEX);
+  if(result==I2C_OK) {
+    uint8_t ram[8];
+    result=readLcdRam(0,ram,sizeof ram);
+    if(result==I2C_OK) {
+      emit(" ram00=");
+      for(unsigned i=0;i<sizeof ram;i++) emitHex2(ram[i]);
+      result=lcdRamReadback(ram[0]);
+    }
+  }
+  if(result!=I2C_OK){ emit(" err="); emit(errors[result]); }
+  uint8_t lines=i2c_lines();
   emit(" sda="); emit(lines&1u);
   emit(" scl="); line((lines>>1)&1u);
   PORT.flush();
@@ -143,7 +180,7 @@ static void probeLcdDriver() {
 static void help() {
   line("Moida C test: t=self-test, r=reset/run, p=pause/resume, i=stats, d=display");
   line("a=left, f=right, w=stairs, s=search; b=piezo test tone; m=mute, u=unmute");
-  line("l=HT16C24A probe (I2C SDA=PC18, SCL=PC19); h=help");
+  line("l=HT16C24A probe + RAM read/write test (I2C SDA=PC18, SCL=PC19); h=help");
   PORT.flush();
 }
 void setup() {
