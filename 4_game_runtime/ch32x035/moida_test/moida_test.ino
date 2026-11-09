@@ -1,4 +1,19 @@
 // Run build.py first to populate src/ from the canonical portable C core.
+
+// GPIO assignment:
+// PA0: button stairs
+// PA1: button search
+// PA2: button left
+// PA3: button right
+// PC3: LED on board
+// PC16: USB D-
+// PC17: USB D+
+// PC18: I2C SDA
+// PC19: I2C SCL
+// PB6: piezo -
+// PB9: piezo +
+// PB12: EN_DCDC for ME2107A33M5G
+
 #include <Arduino.h>
 #include <SimpleUsbSerial.h>
 #include "buttons.h"
