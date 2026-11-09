@@ -160,3 +160,19 @@ Use **Export simulator JSON** to save `Moida-v3-simulator.json`. It contains the
 Run `python3 4_game_runtime/serve.py --port 8767`, open `http://127.0.0.1:8767/4_game_runtime/live.html`, and choose **Load routed artwork**. Load the simulator JSON, then Start / Reset. All pieces of an original segment follow its game bit. Show all segments provides an all-on visual inspection; uncheck it to return to gameplay. Restore default artwork switches back without restarting the game. Imported artwork is kept for the current page session; reload it after a page refresh.
 
 This is an optical preview of shapes and animation, not an electrical connectivity or multiplexing simulation. Unwired pieces still follow their original game bit. The loader validates geometry and all 631 original bit mappings before replacing the display; invalid imports leave the existing artwork intact.
+
+### Manual slices
+
+Select an artwork island with **Select artwork**, open **Edit slices**, then click
+**Add manual slice to selected artwork**. Drag from outside one edge to outside
+another. Draw several cuts if needed, then **Apply manual cuts**. Escape cancels
+the staged cuts. The width field applies to each new cut as it is drawn.
+
+Manual slots end at their handles. They replace automatic slicing on that source
+island, persist when mesh points move away, and produce independently assignable
+sub-segments. Each resulting piece may contain one mesh pair; add enough cuts to
+separate existing contacts. Other islands continue to use automatic slicing.
+Select a manual divider to adjust its width/endpoints or remove it. Removing the
+last manual cut restores the island's normal automatic slicing. Undo restores
+previous geometry and assignments. Moves translate manual cuts with their island.
+Cuts that erase mesh contacts or disconnect confirmed trace endpoints are rejected.

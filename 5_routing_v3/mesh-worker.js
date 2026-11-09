@@ -1,5 +1,5 @@
 'use strict';
-importScripts('../2_refine_routing/segments-data.js','../2_refine_routing/vendor/clipper.js','auto-slice.js','electrodes.js','routing.js?v=route-count-3','shape.js','model.js');
+importScripts('../2_refine_routing/segments-data.js','../2_refine_routing/vendor/clipper.js','auto-slice.js?v=manual-slices-1','electrodes.js','routing.js?v=route-count-3','shape.js','model.js?v=manual-slices-1');
 onmessage=e=>{
  try {
   const M=MeshModel, data=ROUTER_DATA, base=e.data.base;

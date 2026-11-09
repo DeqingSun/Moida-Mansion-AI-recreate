@@ -29,6 +29,14 @@ function validate(raw,data){if(!raw||raw.format!=='moida-mesh-v3'||![1,2,3].incl
  if(raw.sliceGapMm!==undefined){if(!Number.isFinite(raw.sliceGapMm)||raw.sliceGapMm<.01||raw.sliceGapMm>2)throw Error('Invalid automatic slice gap.');p.sliceGapMm=raw.sliceGapMm;}
  if(raw.meshAnchors!==undefined){if(!raw.meshAnchors||Array.isArray(raw.meshAnchors)||typeof raw.meshAnchors!=='object')throw Error('Invalid slice anchors.');const base=new Map(G.apply(artwork(data),p).map(i=>[i.id,i])),used=new Set();for(const [id,sites]of Object.entries(raw.meshAnchors)){if(!base.has(id)||!Array.isArray(sites)||sites.length>128)throw Error('Invalid slice anchors.');p.meshAnchors[id]=sites.map(a=>{pair(p,a.t,a.b);const k=key(a.t,a.b);if(used.has(k)||!S.contains(base.get(id),position(p,a.t,a.b)))throw Error('Invalid or duplicate slice anchor.');used.add(k);return {t:a.t,b:a.b};});}}
  if(raw.sliceEdits!==undefined){if(!raw.sliceEdits||typeof raw.sliceEdits!=='object'||Array.isArray(raw.sliceEdits))throw Error('Invalid slice adjustments.');p.sliceEdits={};const valid=new Set();for(const [id,sites] of Object.entries(p.meshAnchors))for(let i=0;i<sites.length;i++)for(let j=i+1;j<sites.length;j++)valid.add(S.sliceKey(id,sites[i],sites[j]));for(const [key,e] of Object.entries(raw.sliceEdits)){if(!valid.has(key))continue;if(!e||!Number.isFinite(e.widthMm)||e.widthMm<.01||e.widthMm>2||!Array.isArray(e.ends)||e.ends.length!==2||e.ends.some(q=>!Array.isArray(q)||q.length!==2||q.some(n=>!Number.isFinite(n)||Math.abs(n)>100000)))throw Error('Invalid slice width or endpoints.');if(e.finite!==undefined&&typeof e.finite!=='boolean')throw Error('Invalid slice endpoint mode.');p.sliceEdits[key]=clone(e);}}
+ if(raw.manualSlices!==undefined){
+  if(!raw.manualSlices||typeof raw.manualSlices!=='object'||Array.isArray(raw.manualSlices))throw Error('Invalid manual slices.');
+  const sources=new Set(artwork(data).map(i=>i.id));p.manualSlices=clone(raw.manualSlices);
+  for(const [source,cuts]of Object.entries(p.manualSlices)){
+   if(!sources.has(source)||!Array.isArray(cuts)||cuts.length>128)throw Error('Invalid manual slice source or count.');
+   const ids=new Set();for(const c of cuts){if(!c||!Number.isInteger(c.id)||c.id<1||ids.has(c.id)||!Number.isFinite(c.widthMm)||c.widthMm<.01||c.widthMm>2||!Array.isArray(c.ends)||c.ends.length!==2||c.ends.some(q=>!Array.isArray(q)||q.length!==2||q.some(v=>!Number.isFinite(v)||Math.abs(v)>100000)))throw Error('Invalid manual slice width, endpoints, or ID.');ids.add(c.id);}
+  }
+ }
  if(raw.detachedAssignments!==undefined){if(!raw.detachedAssignments||typeof raw.detachedAssignments!=='object'||Array.isArray(raw.detachedAssignments))throw Error('Invalid detached internal wiring.');p.detachedAssignments=clone(raw.detachedAssignments);const all=new Map(artwork(data,p).map(i=>[i.id,i]));for(const [id,a]of Object.entries(p.detachedAssignments)){if(!all.has(id)||raw.assignments[id]||!a||typeof a.group!=='string'||!a.group.split('|').includes(id))throw Error('Invalid detached internal wiring.');pair(p,a.t,a.b);const members=a.group.split('|');if(members.some(other=>all.get(other)?.parentId!==all.get(id).parentId||p.detachedAssignments[other]?.group!==a.group))throw Error('Detached wiring must remain within one original segment.');}}
  const items=artwork(data,p);
  for(const [id,a]of Object.entries(raw.assignments)){if(!a)throw Error('Invalid assignment.');assign(p,items,[id],a.t,a.b);}if(raw.routes!==undefined){p.routes=clone(raw.routes);artwork(data,p);}return p;}
@@ -187,7 +195,7 @@ function placePoints(p,data,moved,previous=p,detachOnly=false){
  const current=artwork(data,{...p,routes:[]});
  for(const source of changed)for(const id of Object.keys(p.assignments))if(id===source||id.startsWith(source+'_sub'))delete p.assignments[id];
  // A transferred pair may leave internally wired siblings without a mesh.
- for(const target of current){const a=target.autoPair||p.meshAnchors[target.sourceId]?.[0];if(!changed.has(target.sourceId)||!a)continue;
+ for(const target of current){const a=target.autoPair||(!target.manualPiece&&p.meshAnchors[target.sourceId]?.[0]);if(!changed.has(target.sourceId)||!a)continue;
   const oldIds=Object.keys(before.assignments).filter(id=>before.assignments[id].t===a.t&&before.assignments[id].b===a.b&&current.find(i=>i.id===id)?.parentId!==target.parentId),set=new Set(oldIds);
   const routes=(p.routes||[]).filter(r=>set.has(r.from)||set.has(r.to));
   if(!routes.length||routes.some(r=>!set.has(r.from)||!set.has(r.to)))continue;
@@ -195,7 +203,7 @@ function placePoints(p,data,moved,previous=p,detachOnly=false){
   for(const id of oldIds){p.detachedAssignments[id]={...before.assignments[id],group};delete p.assignments[id];}
   for(const r of routes)r.net=`floating:${group}:${r.layer}`;
  }
- for(const item of current){if(!changed.has(item.sourceId))continue;const a=item.autoPair||p.meshAnchors[item.sourceId]?.[0];if(a)assign(p,current,[item.id],a.t,a.b,true);}
+ for(const item of current){if(!changed.has(item.sourceId))continue;const a=item.autoPair||(!item.manualPiece&&p.meshAnchors[item.sourceId]?.[0]);if(a)assign(p,current,[item.id],a.t,a.b,true);}
  // Internal sibling wiring follows a newly assigned pair as one component.
  // External connections and independently anchored siblings must not be retagged.
  const byId=new Map(current.map(i=>[i.id,i])),seen=new Set();
@@ -236,6 +244,33 @@ function placePoints(p,data,moved,previous=p,detachOnly=false){
  artwork(data,p);
  return p;
 }
+// Reconcile changed piece IDs by physical contacts, never silently move a route.
+function manualSlice(p,data,source,id,edit){
+ const next=clone(p),old=artwork(data,{...p,routes:[]});
+ if(!artwork(data).some(i=>i.id===source))throw Error('Select an artwork island first.');
+ if(old.some(i=>i.sourceId===source&&p.detachedAssignments?.[i.id]))throw Error('Assign the internally wired pieces before changing their manual slices.');
+ next.manualSlices??={};const cuts=next.manualSlices[source]||[];
+ if(id==null){for(const cut of Array.isArray(edit)?edit:[edit]){id=Math.max(0,...cuts.map(c=>c.id))+1;cuts.push({id,...cut});}}
+ else {const index=cuts.findIndex(c=>c.id===id);if(index<0)throw Error('Manual slice no longer exists.');if(edit)cuts[index]={id,...edit};else cuts.splice(index,1);}
+ if(cuts.length)next.manualSlices[source]=cuts;else delete next.manualSlices[source];
+ // Validate cut data before invoking geometry code.
+ const shell={...next,assignments:{},routes:[],detachedAssignments:{}};
+ validate(shell,data);
+ const current=artwork(data,{...next,routes:[]}),affected=current.filter(i=>i.sourceId===source),prior=old.filter(i=>i.sourceId===source);
+ for(const piece of prior)delete next.assignments[piece.id];
+ for(const piece of affected){
+  let a=piece.autoPair;
+  if(!a){const choices=new Map(prior.filter(o=>p.assignments[o.id]&&(S.contains(o,piece.point)||S.contains(piece,o.point))).map(o=>{const a=p.assignments[o.id];return [key(a.t,a.b),a];}));
+   if(choices.size>1)throw Error('Slice change would merge different mesh pairs. Move the contacts first.');a=[...choices.values()][0];}
+  if(a)assign(next,current,[piece.id],a.t,a.b);
+ }
+ for(const r of next.routes||[])for(const end of ['from','to'])if(prior.some(i=>i.id===r[end])){
+  const point=end==='from'?r.points[0]:r.points.at(-1),field=r.layer==='SEG'?'t':'b';
+  const target=affected.find(i=>S.contains(i,point)&&next.assignments[i.id]?.[field]===r.net);
+  if(!target)throw Error('Manual slice would disconnect a confirmed trace. Move its endpoint or adjust the slice.');r[end]=target.id;
+ }
+ return validate(next,data);
+}
 function artworkOffset(p,data,id){if(p.geometryOffsets?.[id])return p.geometryOffsets[id];const base=artwork(data).find(i=>i.id===id),rings=p.geometry?.[id];if(!rings)return [0,0];return [0,1].map(k=>{const values=base.rings.flatMap((r,ri)=>r.map((q,qi)=>rings[ri][qi][k]-q[k])).sort((a,b)=>a-b);return values[Math.floor(values.length/2)];});}
 function resetVertex(p,data,id,vertex){const original=artwork(data).find(i=>i.id===id),offset=artworkOffset(p,data,id);if(!original?.rings[vertex[0]]?.[vertex[1]])throw Error('Select a vertex first.');return editArtwork(p,data,id,original.rings[vertex[0]][vertex[1]].map((v,k)=>v+offset[k]),vertex);}
 function editArtwork(p,data,source,delta,vertex=null,scope='whole'){
@@ -250,6 +285,7 @@ function editArtwork(p,data,source,delta,vertex=null,scope='whole'){
   const keys=new Set(targets.flatMap(i=>(p.meshAnchors[i.id]||[]).map(a=>key(a.t,a.b))));
   if(keys.size){const moved=moveGroup(next,[...keys],delta);if(!moved.check.ok)throw Error(moved.check.reason);next.nodes=moved.project.nodes;next.bends=moved.project.bends;}
   for(const [k,e] of Object.entries(next.sliceEdits||{}))if(targets.some(i=>k.startsWith(i.id+'|')))e.ends=e.ends.map(q=>[q[0]+delta[0],q[1]+delta[1]]);
+  for(const target of targets)for(const cut of next.manualSlices?.[target.id]||[])cut.ends=cut.ends.map(q=>q.map((v,k)=>v+delta[k]));
   const current=artwork(data,p),ids=new Set(current.filter(i=>targets.some(target=>target.id===i.sourceId)).map(i=>i.id));
   for(const r of next.routes||[])for(const [id,index] of [[r.from,0],[r.to,r.points.length-1]])if(ids.has(id))r.points[index]=r.points[index].map((v,k)=>v+delta[k]);
  }
@@ -278,5 +314,5 @@ function routeProject(p,items,ids,allowPending=false){
  return staged;
 }
 function moveElectrodes(p,gapMm){const next=clone(p),old=p.electrodes?.gapMm??3;next.electrodes={gapMm};const dy=(gapMm-old)*3000/p.widthMm;for(const r of next.routes||[])for(const [id,index] of [[r.from,0],[r.to,r.points.length-1]])if(E.net(p,id,r.layer)!==undefined)r.points[index][1]+=dy;return next;}
-const api={moveElectrodes,artworkOffset,resetVertex,editArtwork,routeProject,clone,artwork,key,create,position,assign,resize,validate,topology,deform,edgePath,meshEdges,routedMeshEdges,simplify,boxPoints,moveGroup,placePoints};root.MeshModel=api;if(typeof module!=='undefined')module.exports=api;
+const api={manualSlice,moveElectrodes,artworkOffset,resetVertex,editArtwork,routeProject,clone,artwork,key,create,position,assign,resize,validate,topology,deform,edgePath,meshEdges,routedMeshEdges,simplify,boxPoints,moveGroup,placePoints};root.MeshModel=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);
