@@ -1,0 +1,63 @@
+{
+  "source_sha256": "73eec976a6ad6df66238746234f0678fa0b810aad3ffeca7241e986d6dd0f66b",
+  "sheet_ohm_per_square": 30,
+  "capacitance_pF_per_mm2": 10,
+  "model": "Independent electrode, other layer ideal-clamped; 2D resistor grid first moment; ideal source at pad. Not RMS waveform simulation.",
+  "results": [
+    {
+      "net": "T-N034",
+      "grid_mm": 0.05,
+      "overlap_mm2": 297.7966715092,
+      "cap_nF_at_10pFmm2": 2.977966715092,
+      "mean_delay_max_us": 53.263571833544546,
+      "mean_delay_p50_us": 52.99411841834921,
+      "nodes": 125861,
+      "lost_conductor_pixels": 0,
+      "raster_cap_area_mm2": 302.3425000000001
+    },
+    {
+      "net": "B-W016",
+      "grid_mm": 0.05,
+      "overlap_mm2": 554.97667607975,
+      "cap_nF_at_10pFmm2": 5.5497667607975,
+      "mean_delay_max_us": 100.24553014162032,
+      "mean_delay_p50_us": 64.60202091496706,
+      "nodes": 235758,
+      "lost_conductor_pixels": 0,
+      "raster_cap_area_mm2": 563.9900000000001
+    },
+    {
+      "net": "B-W006",
+      "grid_mm": 0.05,
+      "overlap_mm2": 641.9187945064,
+      "cap_nF_at_10pFmm2": 6.419187945064,
+      "mean_delay_max_us": 129.16402642675783,
+      "mean_delay_p50_us": 121.89374604569241,
+      "nodes": 267224,
+      "lost_conductor_pixels": 1819,
+      "raster_cap_area_mm2": 646.3475000000001
+    },
+    {
+      "net": "B-W005",
+      "grid_mm": 0.05,
+      "overlap_mm2": 689.7551053401,
+      "cap_nF_at_10pFmm2": 6.897551053401001,
+      "mean_delay_max_us": 179.8757528141791,
+      "mean_delay_p50_us": 173.65562346986354,
+      "nodes": 287142,
+      "lost_conductor_pixels": 3669,
+      "raster_cap_area_mm2": 696.4425000000001
+    },
+    {
+      "net": "B-W001",
+      "grid_mm": 0.05,
+      "overlap_mm2": 315.87313361485,
+      "cap_nF_at_10pFmm2": 3.1587313361485,
+      "mean_delay_max_us": 48.61322751908928,
+      "mean_delay_p50_us": 44.74033090470943,
+      "nodes": 134885,
+      "lost_conductor_pixels": 278,
+      "raster_cap_area_mm2": 322.4150000000001
+    }
+  ]
+}
