@@ -25,8 +25,10 @@ extern "C" {
 #include "src/moida_hal.h"
 #include "piezo.h"
 #include "i2c.h"
+#include "ht16c24a.h"
+#include "lcd_glass.h"
 }
-#define HT16C24A_ADDR 0x3D
+
 #include "src/expected.h"
 // Small integer-only reporting avoids Arduino Print's general number formatter.
 static void emit(const char *s) { while (*s) PORT.write((uint8_t)*s++); }
@@ -48,6 +50,23 @@ void SysTick_Handler(void) { ++msTick; osSystickHandler(); piezo_tick_1ms(); Sys
 }
 #include "src/moida_lcd_lut.h"
 static uint8_t lcdCells[16][6];
+static bool lcdReady, lcdSuspend;
+static int lcdResult;
+static uint32_t lcdWriteUs, lcdWriteMaxUs;
+static uint32_t measurementMicros();
+static void writeGlass() {
+  if(!lcdReady || lcdSuspend)return;
+  uint8_t ram[120];
+  uint32_t start=measurementMicros();
+  moida_glass_ram(lcdCells,ram);
+  lcdResult=ht16c24a_write_ram(0,ram,sizeof ram);
+  lcdWriteUs=measurementMicros()-start;
+  if(lcdWriteUs>lcdWriteMaxUs)lcdWriteMaxUs=lcdWriteUs;
+}
+static void initGlass() {
+  lcdResult=ht16c24a_init();lcdReady=lcdResult==I2C_OK;
+  writeGlass();
+}
 static uint32_t lcdMaxUs, lcdLastUs, lcdHash;
 static uint32_t measurementMicros();
 static MoidaHost host;
@@ -74,6 +93,7 @@ static void present(void*, const MoidaFrame *f) {
   for(unsigned c=0;c<16;c++)for(unsigned b=0;b<6;b++){
     lcdHash^=lcdCells[c][b];lcdHash*=16777619u;
   }
+  writeGlass();
   if(soundOn && f->beeper_duration_ms) piezo_play(f->beeper_hz, f->beeper_duration_ms);
   // Canonical byte order; no struct padding or floating-point representation.
   for (unsigned i=0;i<20;i++) for (unsigned b=0;b<4;b++) {
@@ -101,7 +121,7 @@ static void resetGame() {
   ready = moida_host_init(&host,1700000000000LL,&hal);
   initUs = measurementMicros()-start;
   digest=2166136261u; lcdHash=2166136261u; lcdLastUs=lcdMaxUs=0; ticks=0; maxTickUs=0; nextButtons=0;
-  latest={}; physicalButtons.discard(); lastTick=millis();
+  latest={}; for(unsigned c=0;c<16;c++)for(unsigned b=0;b<6;b++)lcdCells[c][b]=0; writeGlass(); physicalButtons.discard(); lastTick=millis();
 }
 static bool step(uint8_t buttons) {
   uint32_t start=measurementMicros();
@@ -113,6 +133,10 @@ static bool step(uint8_t buttons) {
 }
 static void status() {
   emit("ready="); emit(ready);
+  emit(" lcd_ready="); emit(lcdReady);
+  emit(" lcd_result="); emit((uint32_t)lcdResult);
+  emit(" lcd_write_us="); emit(lcdWriteUs);
+  emit(" lcd_write_max_us="); emit(lcdWriteMaxUs);
   emit(" sound="); emit(soundOn);
   emit(" running="); emit(running);
   emit(" gpio_pressed="); emit(uint32_t(~GPIOA->INDR)&15);
@@ -134,12 +158,13 @@ static void status() {
 }
 static void selfTest() {
   bool previousSound=soundOn;
+  lcdSuspend=true; // Deterministic CPU benchmark: do not queue 1000 I2C frames.
   running=false; piezo_stop(); soundOn=false; resetGame();
   for(unsigned i=0;i<1000 && ready;i++) {
     uint8_t b=(i%23==0)?(1u<<((i/23)%4)):0;
     if(!step(b)) break;
   }
-  soundOn=previousSound;
+  soundOn=previousSound; lcdSuspend=false; writeGlass();
   emit(ready && ticks==1000 && digest==MOIDA_EXPECTED_HASH && lcdHash==MOIDA_EXPECTED_LCD_HASH ? "PASS " : "FAIL ");
   emit("expected="); line(MOIDA_EXPECTED_HASH,HEX);
   status(); // Test leaves its final state paused. 'r' starts a fresh game.
@@ -195,7 +220,7 @@ static void probeLcdDriver() {
 static void help() {
   line("Moida C test: t=self-test, r=reset/run, p=pause/resume, i=stats, d=display");
   line("a=left, f=right, w=stairs, s=search; b=piezo test tone; m=mute, u=unmute");
-  line("l=HT16C24A probe + RAM read/write test (I2C SDA=PC18, SCL=PC19); h=help");
+  line("L=LCD init/retry; l=HT16C24A probe + RAM read/write test (I2C SDA=PC18, SCL=PC19); h=help");
   PORT.flush();
 }
 void setup() {
@@ -203,6 +228,8 @@ void setup() {
   // Direct access avoids linking Arduino's general pin/peripheral dispatch.
   piezo_init();
   i2c_init();
+  delay(2);
+  initGlass();
   PORT.begin(115200);
   RCC->APB2PCENR |= RCC_IOPAEN;
   (void)RCC->APB2PCENR; // Read back the clock enable before accessing GPIO.
@@ -210,7 +237,7 @@ void setup() {
   // Select pull-up after configuring input mode. Explicit OUTDR avoids the
   // ineffective early BSHR write observed on the board (OUTDR stayed zero).
   GPIOA->OUTDR |= 0x0Fu;
-  resetGame(); running=false;
+  resetGame(); running=ready;
   // No wait-for-terminal: send h/i/t after opening it.
   help(); status();
 }
@@ -228,6 +255,7 @@ void loop() {
     case 'u': soundOn=true; status(); break;
     case 'b': if(soundOn) piezo_play(440,500); break;
     case 'l': probeLcdDriver(); break;
+    case 'L': initGlass(); status(); break;
     case 'a': nextButtons=MOIDA_BUTTON_LEFT; break;
     case 'f': nextButtons=MOIDA_BUTTON_RIGHT; break;
     case 'w': nextButtons=MOIDA_BUTTON_STAIRS; break;

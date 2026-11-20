@@ -4,6 +4,7 @@ import argparse,json,re,threading,time
 from pathlib import Path
 from http.server import SimpleHTTPRequestHandler,ThreadingHTTPServer
 import serial
+STATUS_PATTERN=r'(?:[^\r\n]* )?ready=[01](?: [^\r\n]*)?'
 ROOT=Path(__file__).resolve().parents[2]
 
 class SerialLink:
@@ -28,12 +29,12 @@ class SerialLink:
  def start_game(self,enabled=True):
   if type(enabled) is not bool:raise ValueError('Expected enabled boolean')
   self.reconnect()
-  status=self.reply_line(b'i',r'ready=.*')
+  status=self.reply_line(b'i',STATUS_PATTERN)
   if re.search(r'(?:^| )sound=([01])(?: |$)',status):
    self.set_sound(enabled)
   elif not enabled:
    raise ValueError('Update CH32X035 firmware before starting muted')
-  result=self.reply_line(b'r',r'ready=.*')
+  result=self.reply_line(b'r',STATUS_PATTERN)
   if re.search(r'(?:^| )sound=([01])(?: |$)',status):
    confirmed=re.search(r'(?:^| )sound=([01])(?: |$)',result)
    if not confirmed or bool(int(confirmed[1]))!=enabled:
@@ -42,7 +43,7 @@ class SerialLink:
   return result
  def set_sound(self,enabled):
   if type(enabled) is not bool:raise ValueError('Expected enabled boolean')
-  line=self.reply_line(b'u' if enabled else b'm',r'ready=.*')
+  line=self.reply_line(b'u' if enabled else b'm',STATUS_PATTERN)
   sound=re.search(r'(?:^| )sound=([01])(?: |$)',line)
   if not sound or bool(int(sound[1]))!=enabled:raise ValueError('Board did not confirm the piezo setting')
   return enabled
@@ -95,7 +96,7 @@ def main():
      if self.path=='/api/mcu/start':
       state.update(started=False,paused=True)
       line=link.start_game(data.get('enabled',True))
-      if not line.startswith('ready=1 '):raise ValueError(line)
+      if not re.search(r'(?:^| )ready=1(?: |$)',line):raise ValueError(line)
       sound=re.search(r'(?:^| )sound=([01])(?: |$)',line)
       state.update(started=True,paused=False,sound=bool(int(sound[1])) if sound else None)
       return self.reply(200,dict(state,status=line))
@@ -111,7 +112,7 @@ def main():
       desired=data.get('paused')
       if type(desired) is not bool:raise ValueError('Expected paused boolean')
       if desired!=state['paused']:
-       reply_line(b'p',r'ready=.*');state['paused']=desired
+       reply_line(b'p',STATUS_PATTERN);state['paused']=desired
       return self.reply(200,dict(state))
      if self.path=='/api/mcu/button':
       command={'left':b'a','right':b'f','stairs':b'w','search':b's'}.get(data.get('button'))

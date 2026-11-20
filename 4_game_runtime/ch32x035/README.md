@@ -518,3 +518,58 @@ always times out.
 Display and LCD-map hashes are unchanged (`98D3E4E`, `3E37DCCC`). Disassembly
 confirms the `PCFR1` write (`SW_CFG=100`, `I2C1_RM=011`) and PC18/PC19
 alternate-function mode.
+
+## Factory LCD + simultaneous computer preview (2026-11-19)
+
+The game sketch now reuses `ht16c24a.c/.h` from the working sibling LCD test.
+It initializes the driver on PC18/PC19, waits 2 ms after I2C setup, and starts
+the game on power-up. Existing physical buttons and piezo remain enabled.
+The original USB `d` frame response is unchanged, so `mcu.html` shows the same
+MCU game concurrently with the glass. `live.html` is the independent desktop
+simulation; use the MCU page when comparing with the physical LCD.
+
+`lcd_glass.h` transposes the logical COM-major LUT into the driver's SEG-major
+RAM. Based on the user's SEG0/COM0 lower-right observation and the routed
+lower-right segment on SEG47/COM15, both axes are reversed. This is electrical
+index reversal, not mirroring the computer artwork. Confirm the whole picture
+on hardware; the two reversal switches can be adjusted independently. Driver
+SEG12..59 receive the 96 used bytes; the remaining 24 RAM bytes are cleared.
+
+Initialization/drive defaults match the working standalone test, including its
+external-VLCD setting, duty/bias and frame-rate command. No new electrical
+settings were inferred. I2C initialization disables SWD as in the existing test;
+continue using USB flashing.
+
+Each presented frame updates both the USB snapshot and LCD. If the LCD is absent
+at startup, the game/USB continue. `L` (uppercase) reinitializes and retries the
+LCD, then writes the current mapped frame. `l` retains the prior probe/readback
+command. Status adds `lcd_ready`, numeric `lcd_result` (0=OK, other values from
+`i2c.h`), `lcd_write_us` and `lcd_write_max_us`. Ready means initialization
+succeeded; check result for later transfer errors. Live max_tick_us includes
+LCD transfer. Serial output is flushed.
+
+`t` suspends LCD transfers for its 1,000-tick deterministic CPU/LUT test and
+writes the final frame afterward. Its tick timing therefore excludes physical
+LCD transfer; use `i` during normal play for actual display-transfer timing.
+Expected hashes remain `98D3E4E` and `3E37DCCC`.
+
+Build: `python3 4_game_runtime/ch32x035/build.py`.
+Measured combined build: 60,120 B flash, 14,228 B static RAM, 4,096 B reserved
+stack. Flash margin 3,368 B; RAM beyond globals+reserved stack 2,156 B.
+The write path uses temporary RAM/packet arrays on the stack, not a persistent
+framebuffer; hardware stack-watermark validation is still outstanding.
+
+Tests: `python3 4_game_runtime/ch32x035/test-glass.py` verifies all 768 cells,
+all-on/off and clearing the unused driver RAM; `lcd/test-lut.py` verifies all
+game bits. Both passed with sanitizers. Firmware compiled; not flashed or
+visually validated on the new glass by the agent.
+
+After flashing, run:
+
+```sh
+python3 4_game_runtime/ch32v307/serial_server.py --device /dev/cu.usbmodemCH32X0351
+```
+
+Use the actual enumerated device path if different, and open
+http://127.0.0.1:8768/4_game_runtime/mcu.html. Start / Reset begins a fresh game
+on both screens; standalone operation does not require a computer.

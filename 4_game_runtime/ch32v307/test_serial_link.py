@@ -1,8 +1,16 @@
 import unittest
 from unittest.mock import MagicMock,patch
-from serial_server import SerialLink
+from serial_server import SerialLink, STATUS_PATTERN
 
 class ReconnectTests(unittest.TestCase):
+ def test_status_accepts_lcd_prefix_but_not_lcd_ready_alone(self):
+  import re
+  self.assertIsNone(re.fullmatch(STATUS_PATTERN,'lcd_ready=1'))
+  for status in ['ready=1','ready=1 sound=0','lcd_ready=1 lcd_result=0 ready=1 sound=0']:
+   dev=MagicMock();dev.read_until.return_value=(status+'\n').encode()
+   link=SerialLink('/dev/test');link.device=dev
+   self.assertEqual(link.reply_line(b'i',STATUS_PATTERN),status)
+
  def test_reset_reopens_and_closes_old_handle(self):
   old,new=MagicMock(),MagicMock()
   new.read_until.return_value=b'ready=1\r\n'
