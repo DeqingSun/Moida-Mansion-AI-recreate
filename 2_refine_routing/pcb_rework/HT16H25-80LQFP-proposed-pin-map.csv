@@ -1,0 +1,72 @@
+existing_board_net,old_U1_pin,old_chip_signal,proposed_new_U1_pin,new_chip_signal,note
+COM0,5,COM0,19,COM0,Proposed; preserve existing glass contact
+COM1,6,COM1,20,COM1,Proposed; preserve existing glass contact
+COM2,7,COM2,21,COM2,Proposed; preserve existing glass contact
+COM3,8,COM3,22,COM3,Proposed; preserve existing glass contact
+COM4,9,COM4,23,COM4,Proposed; preserve existing glass contact
+COM5,10,COM5,24,COM5,Proposed; preserve existing glass contact
+COM6,11,COM6,25,COM6,Proposed; preserve existing glass contact
+COM7,12,COM7,26,COM7,Proposed; preserve existing glass contact
+COM8,13,COM8,27,COM8,Proposed; preserve existing glass contact
+COM9,14,COM9,28,COM9,Proposed; preserve existing glass contact
+COM10,15,COM10,29,COM10,Proposed; preserve existing glass contact
+COM11,16,COM11,30,COM11,Proposed; preserve existing glass contact
+COM12,17,COM12,31,COM12,Proposed; preserve existing glass contact
+COM13,18,COM13,32,COM13,Proposed; preserve existing glass contact
+COM14,19,COM14,33,COM14,Proposed; preserve existing glass contact
+COM15,20,COM15,34,COM15,Proposed; preserve existing glass contact
+SEG0,21,SEG12,2,SEG0,Proposed logical mapping; firmware translation required
+SEG1,22,SEG13,1,SEG2,Proposed logical mapping; firmware translation required
+SEG2,23,SEG14,80,SEG4,Proposed logical mapping; firmware translation required
+SEG3,24,SEG15,79,SEG5,Proposed logical mapping; firmware translation required
+SEG4,25,SEG16,78,SEG6,Proposed logical mapping; firmware translation required
+SEG5,26,SEG17,77,SEG7,Proposed logical mapping; firmware translation required
+SEG6,27,SEG18,76,SEG8,Proposed logical mapping; firmware translation required
+SEG7,28,SEG19,75,SEG9,Proposed logical mapping; firmware translation required
+SEG8,29,SEG20,74,SEG10,Proposed logical mapping; firmware translation required
+SEG9,30,SEG21,73,SEG11,Proposed logical mapping; firmware translation required
+SEG10,31,SEG22,72,SEG12,Proposed logical mapping; firmware translation required
+SEG11,32,SEG23,71,SEG13,Proposed logical mapping; firmware translation required
+SEG12,33,SEG24,70,SEG14,Proposed logical mapping; firmware translation required
+SEG13,34,SEG25,69,SEG15,Proposed logical mapping; firmware translation required
+SEG14,35,SEG26,68,SEG16,Proposed logical mapping; firmware translation required
+SEG15,36,SEG27,67,SEG17,Proposed logical mapping; firmware translation required
+SEG16,37,SEG28,66,SEG18,Proposed logical mapping; firmware translation required
+SEG17,38,SEG29,65,SEG19,Proposed logical mapping; firmware translation required
+SEG18,39,SEG30,64,SEG20,Proposed logical mapping; firmware translation required
+SEG19,40,SEG31,63,SEG21,Proposed logical mapping; firmware translation required
+SEG20,41,SEG32,62,SEG22,Proposed logical mapping; firmware translation required
+SEG21,42,SEG33,61,SEG23,Proposed logical mapping; firmware translation required
+SEG22,43,SEG34,60,SEG24,Proposed logical mapping; firmware translation required
+SEG23,44,SEG35,59,SEG25,Proposed logical mapping; firmware translation required
+SEG24,45,SEG36,58,SEG26,Proposed logical mapping; firmware translation required
+SEG25,46,SEG37,57,SEG27,Proposed logical mapping; firmware translation required
+SEG26,47,SEG38,56,SEG28,Proposed logical mapping; firmware translation required
+SEG27,48,SEG39,55,SEG29,Proposed logical mapping; firmware translation required
+SEG28,49,SEG40,54,SEG30,Proposed logical mapping; firmware translation required
+SEG29,50,SEG41,53,SEG31,Proposed logical mapping; firmware translation required
+SEG30,51,SEG42,52,SEG32,Proposed logical mapping; firmware translation required
+SEG31,52,SEG43,51,SEG33,Proposed logical mapping; firmware translation required
+SEG32,53,SEG44,50,SEG34,Proposed logical mapping; firmware translation required
+SEG33,54,SEG45,49,SEG35,Proposed logical mapping; firmware translation required
+SEG34,55,SEG46,48,SEG36,Proposed logical mapping; firmware translation required
+SEG35,56,SEG47,47,SEG37,Proposed logical mapping; firmware translation required
+SEG36,57,SEG48,46,SEG38,Proposed logical mapping; firmware translation required
+SEG37,58,SEG49,45,SEG39,Proposed logical mapping; firmware translation required
+SEG38,59,SEG50,44,SEG50,Proposed logical mapping; firmware translation required
+SEG39,60,SEG51,43,SEG51,Proposed logical mapping; firmware translation required
+SEG40,61,SEG52,42,SEG52,Proposed logical mapping; firmware translation required
+SEG41,62,SEG53,41,SEG53,Proposed logical mapping; firmware translation required
+SEG42,63,SEG54,40,SEG54,Proposed logical mapping; firmware translation required
+SEG43,64,SEG55,39,SEG55,Proposed logical mapping; firmware translation required
+SEG44,65,SEG56,38,SEG56,Proposed logical mapping; firmware translation required
+SEG45,66,SEG57,37,SEG57,Proposed logical mapping; firmware translation required
+SEG46,67,SEG58,36,SEG58,Proposed logical mapping; firmware translation required
+SEG47,68,SEG59,35,SEG59,Proposed logical mapping; firmware translation required
+VCC,1,VDD,11,VDD,3.3 V
+GND,4,VSS,12,VSS,Ground
+SDA,2,SDA,10,SDA/DIO,Preserve CN1 pin 3
+SCL,3,SCL,9,SCL/CLK,Preserve CN1 pin 4
+VLCD,80,VLCD,13,VLCD,Direct 3.3 V supply; old 1 kΩ feed removed by user
+VCC,,,7,IFS,Tie to VDD for I2C
+VCC,,,8,CSB,Tie to VDD for I2C

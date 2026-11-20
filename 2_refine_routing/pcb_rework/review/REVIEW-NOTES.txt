@@ -1,0 +1,32 @@
+HT16H25-80LQFP schematic review — 2026-11-20
+
+Open the existing project and select board HT16H25_3V3_REVIEW / P1.
+The standalone HT16H25_3V3_REVIEW.epro2 also contains the schematic and libraries.
+HT16H25-3V3-schematic.png is a 4096-pixel preview.
+
+Supply: VCC = VDD = VLCD = 3.3 V, direct feed without the old 1k resistor.
+CN1: pin 1 GND, pin 2 VCC, pin 3 SDA, pin 4 SCL. Mechanical pins marked NC.
+IFS and CSB tied high for I2C; address 0x3C.
+R2/R3: 4.7k pull-ups. C1/C2: 100nF. C3: 4.7uF.
+R4-R8: optional equal 4.7k bias ladder V0 -> V1 -> V2 -> V3 -> V4 -> GND.
+All five ladder resistors DNP initially; choose whether to populate after bench measurements.
+GPO0-3 unused and marked NC.
+
+LCD interface preserves logical glass nets COM0-15 and SEG0-47.
+SEG labels are glass net names, not identical to chip SEG numbers.
+Firmware must remap logical SEG0-47 to physical SEG0, SEG2, SEG4-39, SEG50-59.
+See the proposed pin-map CSV in the parent folder.
+Use 1/16 duty, 1/5 bias; explicitly configure 50Hz (88h,00h), external VLCD/
+resistor divider (D0h,13h), and internal bias resistor 4k (D4h,00h).
+These settings are requirements, not a complete firmware initialization sequence.
+
+Verification: saved review page reopened in LCEDA Pro; 12 physical components plus
+sheet, 80 driver pins, 96 wires. Independent geometry/net audit checked all 76
+connected driver pins, four driver NC pins, 64 glass signals, connector, pull-ups,
+all capacitor and ladder connections, and differently named wire intersections.
+Audit passed. CSV includes all 106 component pins. Native ERC was not established.
+Original PCB SHA256 unchanged; original schematic restored exactly from pre-edit backup.
+No PCB conversion or routing performed. This is a schematic for manual review.
+
+Bench verification remains necessary: measure V0-V4 and compare 50/80Hz and Type A/B
+waveforms on the glass. The driver change cannot guarantee elimination of the glass RC issue.

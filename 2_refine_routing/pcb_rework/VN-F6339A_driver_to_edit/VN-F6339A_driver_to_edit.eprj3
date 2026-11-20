@@ -13,11 +13,14 @@
   "g_ticket": 1,
   "boards": [],
   "block_symbol_attrs_groups": {},
-  "default_sheet": "",
+  "default_sheet": "a02391400815a495",
   "branch_uuid": "",
   "pcb_count": 0,
   "format": "folder",
-  "config": "{\"type\":\"DOCHEAD\",\"ticket\":142}||{\"docType\":\"BOARD\",\"client\":\"776815ea08059c78\",\"uuid\":\"fa5d16e435aede7f\",\"updateTime\":1792552901002,\"version\":\"1792552901002\",\"editVersion\":\"4.1.78\",\"user\":{\"uuid\":\"fa5d16e435aede7f\"}}|\n{\"type\":\"META\",\"ticket\":142,\"id\":\"META\",\"firstTicket\":3}||{\"title\":\"VN-F6339A_driver\",\"zIndex\":1}|\n{\"type\":\"META_MODIFY\",\"ticket\":143,\"id\":\"META_MODIFY\"}||{\"updateTime\":1792552901113}",
+  "config": {
+    "defaultSheet": "a02391400815a495",
+    "settings": {}
+  },
   "profile": {
     "boards": {
       "fa5d16e435aede7f": {
@@ -32,8 +35,8 @@
         "name": "VN-F6339A_driver",
         "board": "fa5d16e435aede7f",
         "source": "",
-        "version": "1792553334267",
-        "updateTime": 1792553334267
+        "version": "1795210470513",
+        "updateTime": 1795210470513
       }
     },
     "sheets": {
@@ -43,8 +46,8 @@
         "schematic_uuid": "70ed7ce3db112b8a",
         "zIndex": 1,
         "source": "",
-        "version": "1792555964140",
-        "updateTime": 1792555964140
+        "version": "1795210470513",
+        "updateTime": 1795210470513
       }
     },
     "pcbs": {
@@ -52,19 +55,18 @@
         "uuid": "5aa108449e830b36",
         "title": "VN-F6339A_driver",
         "board": "fa5d16e435aede7f",
-        "zIndex": null,
         "parent_uuid": "",
         "source": "",
-        "version": "1792631685941",
-        "updateTime": 1792631685941
+        "version": "1795210606589",
+        "updateTime": 1795210606589
       }
     },
     "panels": {},
     "blockSymbols": {},
     "owner": {
-      "uuid": "/Users/deqinguser/Documents/GitHub/Moida-Mansion-AI-recreate/2_refine_routing/pcb_rework",
-      "username": "",
-      "nickname": ""
-    }
+      "uuid": "47619bad2c864f32ad60dbd428e0701b"
+    },
+    "simSchematics": {},
+    "simulations": {}
   }
 }
