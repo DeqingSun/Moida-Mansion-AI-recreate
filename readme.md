@@ -2,12 +2,16 @@
 
 The goal of this project is a real handheld version of Moida Mansion: a custom segment LCD, a small microcontroller running the original game logic, four buttons and a piezo beeper. Most of the work is done together with AI agents, and this README is the log of how it went.
 
-**Current status**
+**Current status — November 22, 2026**
 
 - The original LCD artwork (631 segments) is extracted and the LCD is routed on a 16 COM x 48 SEG matrix, with drawings exported for the LCD factory.
 - The game is ported to portable C and matches the original browser game tick by tick in all tested sessions.
 - The C game runs on a CH32X035 microcontroller and passed a 1,000-tick hardware test.
-- Not done yet: the real LCD glass and driver, the final PCB, buttons and case. A smaller second LCD layout is being planned.
+- The first custom LCD has arrived, and the prototype works electrically with an HT16C24A driver. Display quality is still unresolved: some segments are faint or disappear, and there is ghosting.
+- The next experiment is an HT16H25 driver at 50 Hz instead of 80 Hz, to see whether slower scanning improves the suspected glass RC problem. This has not been tested yet.
+- Still in progress: resolving the LCD drive issue, a smaller second LCD layout, the final PCB, buttons and case.
+
+> Photo coming soon: the first manufactured LCD and the current test setup. See [Testing the first LCD](#testing-the-first-lcd) for the results so far.
 
 **Credits**
 
@@ -141,9 +145,29 @@ Sound uses a piezo driven by TIM1 with complementary outputs (PB9/PB6), so both 
 
 The game only knows 631 segment bits, but the LCD has sliced islands on COM/SEG pairs. A generated lookup table (`4_game_runtime/lcd`) maps every one of the 768 COM/SEG cells to its game bit. All islands of a segment light together, even when they are on different pairs. The table is 1.5 KB of flash, and converting one frame takes about 0.8 ms on the X035. It is generated from the same saved routing file as the simulator artwork, so the two always agree.
 
+## Testing the first LCD
+
+The first **150 x 108 mm custom LCD is back from the factory**. The prototype works electrically and I can drive the glass with the HT16C24A, but the display does not look right yet.
+
+When I turn on a whole COM row, segments near the connection look better, while farther ones become faint or disappear. Driving a SEG column gives a different result: the segments show, although the large one near the bottom is dim. There is also ghosting, so simply increasing contrast does not solve the problem.
+
+> Photo coming soon: the manufactured LCD connected to the test board.
+
+> Photo coming soon: row and column test patterns showing the faint segments and ghosting.
+
+The main suspect is **resistance and capacitance inside the glass**. The long, narrow transparent ITO traces have resistance, and the segment electrodes form capacitors. Together they can slow the drive waveforms enough that distant segments do not receive the intended voltage. Meeting the factory's minimum trace width and clearance rules was not enough to guarantee good display performance.
+
+The manufacturer described the ITO as “30 ohms,” which the analysis assumes means **30 Ω/square**. At the artwork's 0.12 mm trace width, that would mean about **250 Ω per millimetre** of narrow trace. An RC model of the final manufacturing DXF supports this as a plausible contributor, but the glass capacitance is still an assumption and the model does not predict brightness. The calculations and limitations are in the [final DXF RC review](2_refine_routing/analysis/Final-DXF-RC-review.md).
+
+The diagnosis also found a bias-setting mismatch in the test firmware and a possible supply limitation from the 1 kΩ VLCD feed. I removed that resistor and connected VLCD directly to 3.3 V, which gave acceptable brightness, but uniform contrast and ghosting remain the issues to resolve.
+
+My next step is to try the **Holtek HT16H25**. Its [datasheet](https://www.holtek.com/webapi/116711/HT16H25v140.pdf) includes **50 Hz operation at 1/16 duty**, compared with the HT16C24A's minimum of 80 Hz. Moving from 80 Hz to 50 Hz gives each scan interval **60% more time**, which may let the glass waveforms settle more fully. This is a recovery experiment, not a confirmed fix: it cannot remove the ITO resistance, and slower scanning may make flicker more visible. It also needs a revised driver board and firmware because the two chips are not pin-compatible.
+
+I plan to compare the HT16H25 at 80 Hz and 50 Hz using the same voltage, bias and test patterns, checking both intended segments and ghosting. The existing glass may still be usable; that is what this experiment will establish.
+
 ## Routing v3: a smaller LCD
 
-The 150 x 108 mm layout works, but I am now planning a second layout from scratch: **75 x 54 mm** (half the width and height, a quarter of the area) on a **16 COM x 60 SEG** matrix, which uses all 60 segment lines of the Holtek drivers above.
+Alongside testing the first glass, I am planning a second layout from scratch: **75 x 54 mm** (half the width and height, a quarter of the area) on a **16 COM x 60 SEG** matrix. The smaller layout targets a driver package exposing all 60 SEG outputs; the 80-pin HT16H25 being considered for the first glass exposes 48.
 
 <!-- TODO: explain why I restarted with a smaller screen -->
 
@@ -153,8 +177,9 @@ The new tool (`5_routing_v3`) starts from the original artwork with no inherited
 
 ## Next steps
 
-- Get the LCD glass made, confirm the contact numbering and orientation from the factory drawing, and check it against the lookup table.
-- Choose the LCD driver and write its HAL: map logical SEG/COM to driver memory, bias, duty and voltage.
+- Test the existing glass with an HT16H25 driver board and firmware, verifying the COM/SEG mapping, bias, duty and voltage.
+- Compare 80 Hz and 50 Hz on identical patterns to check contrast uniformity, faint segments, ghosting and flicker.
+- Add photos of the first LCD and its test patterns.
 - Measure the real stack usage on the MCU across seeds, endings, restart, audio and USB.
 - Longer gameplay tests on hardware: physical buttons, debounce, sleep and wake, power supply.
 - Finish routing v3, then design the PCB and the case.
