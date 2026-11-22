@@ -1,4 +1,23 @@
-# Original case artwork
+# Case artwork and mechanical models
+
+## Mechanical STEP models
+
+[`step_files/`](step_files/) contains the current mechanical design models:
+
+| File | Part |
+|---|---|
+| `case_back.STEP` | Case back |
+| `btn_cover_round.STEP` | Round button cover |
+| `btn_cover_long.STEP` | Long button cover |
+| `btn_back.STEP` | Button backing |
+| `buzzer_back.STEP` | Buzzer backing |
+| `lcd.STEP` | LCD model |
+| `screenMountTest.STEP` | Screen mounting test part |
+| `screenTopHold.STEP` | Screen top holder |
+
+The final case is still in progress.
+
+## Original case artwork
 
 Extracted from [Moida Mansion by Lucas Pope / dukope](https://dukope.itch.io/moida-mansion),
 [public browser build 11926521](https://html-classic.itch.zone/html/11926521/index.html).

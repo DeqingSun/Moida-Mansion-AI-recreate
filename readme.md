@@ -141,6 +141,8 @@ Sound uses a piezo driven by TIM1 with complementary outputs (PB9/PB6), so both 
 
 <!-- Photo to add: workingLog/14_hardware_test.jpg (CH32X035 board running the test) -->
 
+Mechanical STEP models are available in [`3_case_design/step_files/`](3_case_design/step_files/): the case back, round and long button covers, button backing, buzzer backing, LCD, and screen mounting parts. These document the current mechanical design work; the final case is still in progress.
+
 ## From game bits to LCD electrodes
 
 The game only knows 631 segment bits, but the LCD has sliced islands on COM/SEG pairs. A generated lookup table (`4_game_runtime/lcd`) maps every one of the 768 COM/SEG cells to its game bit. All islands of a segment light together, even when they are on different pairs. The table is 1.5 KB of flash, and converting one frame takes about 0.8 ms on the X035. It is generated from the same saved routing file as the simulator artwork, so the two always agree.
@@ -190,7 +192,7 @@ The new tool (`5_routing_v3`) starts from the original artwork with no inherited
 |---|---|
 | `1_preliminary_routing/` | Original game source and artwork, the first manual routing tool and the finished routing |
 | `2_refine_routing/` | Refine tool, EDA exchange and DXF export |
-| `3_case_design/` | Original case, button and glass artwork |
+| `3_case_design/` | Original case, button and glass artwork, plus STEP models for the case back, buttons, LCD and mounting parts |
 | `4_game_runtime/` | C port of the game, HAL, simulators, CH32X035/CH32V307 builds, LCD lookup table |
 | `5_routing_v3/` | Mesh-based routing tool for the smaller LCD |
 | `workingLog/` | Images used in this README and the manufacture CAD file |
