@@ -47,7 +47,7 @@ nm = next((package.parents[2] / 'tools').glob(
     'riscv-none-embed-gcc/*/bin/riscv-wch-elf-nm'))
 symbols = subprocess.check_output(
     [str(nm), str(build / 'sleep_test.ino.elf')], text=True)
-for handler in ['SysTick_Handler', 'EXTI7_0_IRQHandler']:
+for handler in ['SysTick_Handler', 'EXTI7_0_IRQHandler', 'USBFS_IRQHandler']:
     if not re.search(r' T ' + handler + r'$', symbols, re.M):
         raise RuntimeError('Missing strong interrupt handler: ' + handler)
 print('Flash bytes:', flash, 'static RAM:', ram)
