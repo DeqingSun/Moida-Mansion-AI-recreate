@@ -11,7 +11,8 @@
 
 /* 1/16 duty (Duty1=1) + 1/5 bias (Bias1=1) => 0b00001010. */
 #define MODE_1_16_1_5 0x0Au
-/* Oscillator on, display on/off. */
+/* Oscillator / display: standby = both off (ISTB). */
+#define SYS_STANDBY      0x00u
 #define SYS_OSC_ON       0x02u
 #define SYS_OSC_DISPLAY  0x03u
 /* External VLCD via 1K to VDD: DE=0 VE=0 DA=0000, follower off. */
@@ -55,6 +56,10 @@ int ht16c24a_set_iva(uint8_t control) {
 
 int ht16c24a_display(int on) {
   return ht16c24a_cmd(CMD_SYS, on ? SYS_OSC_DISPLAY : SYS_OSC_ON);
+}
+
+int ht16c24a_standby(void) {
+  return ht16c24a_cmd(CMD_SYS, SYS_STANDBY);
 }
 
 int ht16c24a_fill(uint8_t value) {

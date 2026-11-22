@@ -47,26 +47,38 @@ Physical buttons connect each pin to **GND when pressed**, using internal pull-u
 | Left | PA2 | 11 | 4 |
 | Right | PA3 | 12 | 8 |
 
-The firmware polls these inputs with 20 ms debouncing; no EXTI setup is needed.
-Short debounced taps are retained until the next game tick, and held buttons use
-normal game input handling. Physical and webpage buttons both work. Start the game
-with **Start / Reset** on the webpage; physical buttons do not start a paused game.
-The updated firmware must be flashed for these inputs to work. GPIO reads and
-pull-up configuration use direct PA0–PA3 register access to avoid the flash cost
-of Arduino's general pin dispatch. Build using the optimized script:
+The firmware polls these inputs with 20 ms debouncing during play. Short debounced
+taps are retained until the next game tick, and held buttons use normal game input
+handling. Physical and webpage buttons both work in the USB debug build. Start the
+game with **Start / Reset** on the webpage; physical buttons do not un-pause a
+paused game. GPIO reads and pull-up configuration use direct PA0–PA3 register
+access. Build using the optimized script:
 
 ```sh
 python3 4_game_runtime/ch32x035/build.py
 ```
 
-With physical buttons, piezo control and the HT16C24A I2C probe, this build uses
-59,416 bytes of flash (4,072 bytes spare) and 14,212 bytes of static RAM. These
-figures include sections omitted by the Arduino summary. The script builds only;
-it does not flash.
+Product (no USB serial console; game auto-starts):
+
+```sh
+python3 4_game_runtime/ch32x035/build.py --standalone
+```
+
+### Idle sleep / wake
+
+After **90 s** with no button pressed (and no USB console activity in the debug
+build), the firmware puts the HT16C24A in standby (oscillator off), disables the
+ME2107 via **PB12** (MCU VDD stays up through the diode), and enters STOP.
+Hold any button for **≥2 s** to wake and `SystemReset` for a fresh boot. Short
+taps while asleep are ignored. Defaults: `MOIDA_IDLE_SLEEP_MS=90000`,
+`MOIDA_WAKE_HOLD_MS=2000`.
+
+`MOIDA_STANDALONE` omits SimpleUsbSerial traffic; USB pins remain available for
+the ROM bootloader. Wake the board (2 s hold) before kicking ISP if it was asleep.
 
 This firmware **turns off SWD** at startup so PC18/PC19 can carry I2C to the LCD
-driver. Flash it over USB (the bootloader), as usual. Serial command `l` checks
-whether the HT16C24A answers; see [HT16C24A I2C](#ht16c24a-i2c--2026-11-09).
+driver. Flash it over USB (the bootloader), as usual. Serial command `l` (USB
+build only) checks whether the HT16C24A answers; see [HT16C24A I2C](#ht16c24a-i2c--2026-11-09).
 
 After reconnecting USB or resetting the board, click **Start / Reset** again.
 If its serial port changes, restart the Python command with the new `--device`.

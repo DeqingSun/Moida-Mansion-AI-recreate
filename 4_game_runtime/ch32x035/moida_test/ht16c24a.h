@@ -12,6 +12,7 @@ enum { HT16C24A_RAM_BYTES = 120 }; /* 0x00..0x77 in 1/16 mode */
 int ht16c24a_cmd(uint8_t command, uint8_t setting);
 int ht16c24a_init(void);
 int ht16c24a_display(int on); /* osc stays on; on=0 blanks the glass */
+int ht16c24a_standby(void); /* osc+display off (lowest driver power) */
 int ht16c24a_set_bias(unsigned bias_index);
 int ht16c24a_set_iva(uint8_t control); /* DE/VE/DA packed in low 6 bits */
 int ht16c24a_write_ram(uint8_t address, const uint8_t *data, unsigned count);

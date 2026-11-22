@@ -1,4 +1,16 @@
 // Run build.py first to populate src/ from the canonical portable C core.
+//
+// Product (no USB CDC). Comment out for USB debug console, or use build.py --standalone.
+#define MOIDA_STANDALONE 1
+#ifndef MOIDA_STANDALONE
+#define MOIDA_STANDALONE 0
+#endif
+#ifndef MOIDA_IDLE_SLEEP_MS
+#define MOIDA_IDLE_SLEEP_MS 90000u
+#endif
+#ifndef MOIDA_WAKE_HOLD_MS
+#define MOIDA_WAKE_HOLD_MS 2000u
+#endif
 
 // GPIO assignment:
 // PA0: button stairs
@@ -15,9 +27,11 @@
 // PB12: EN_DCDC for ME2107A33M5G
 
 #include <Arduino.h>
+#if !MOIDA_STANDALONE
 #include <SimpleUsbSerial.h>
-#include "buttons.h"
 #define PORT SerialUSB
+#endif
+#include "buttons.h"
 #if !defined(SYSCLK_FREQ_48MHz_HSI)
 #error "Select CH32X035 internal 48 MHz clock."
 #endif
@@ -27,8 +41,12 @@ extern "C" {
 #include "i2c.h"
 #include "ht16c24a.h"
 #include "lcd_glass.h"
+#include "power_sleep.h"
 }
+/* SysTick_Handler / USBFS_IRQHandler live in irq_handlers.c (Arduino .ino
+   prototype injection must not touch them — it breaks overloads / attributes). */
 
+#if !MOIDA_STANDALONE
 #include "src/expected.h"
 // Small integer-only reporting avoids Arduino Print's general number formatter.
 static void emit(const char *s) { while (*s) PORT.write((uint8_t)*s++); }
@@ -40,19 +58,14 @@ static void emit(uint32_t n, unsigned base=10) {
 static void line() { emit("\n"); }
 static void line(const char *s) { emit(s); line(); }
 static void line(uint32_t n, unsigned base=10) { emit(n,base); line(); }
-// Explicit strong handler: startup and Arduino both supply weak handlers, so
-// archive linking otherwise selects startup's infinite-loop default.
-extern "C" {
-extern volatile uint64_t msTick;
-void osSystickHandler(void);
-void SysTick_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-void SysTick_Handler(void) { ++msTick; osSystickHandler(); piezo_tick_1ms(); SysTick->SR=0; }
-}
+#endif
+
 #include "src/moida_lcd_lut.h"
 static uint8_t lcdCells[16][6];
 static bool lcdReady, lcdSuspend;
 static int lcdResult;
 static uint32_t lcdWriteUs, lcdWriteMaxUs;
+static uint32_t lastActivityMs;
 static uint32_t measurementMicros();
 static void writeGlass() {
   if(!lcdReady || lcdSuspend)return;
@@ -77,8 +90,10 @@ static uint8_t nextButtons;
 static PhysicalButtons physicalButtons;
 static_assert(MOIDA_BUTTON_STAIRS==1 && MOIDA_BUTTON_SEARCH==2 &&
               MOIDA_BUTTON_LEFT==4 && MOIDA_BUTTON_RIGHT==8, "Button mapping changed");
+static void noteActivity() { lastActivityMs = millis(); }
 static void pollButtons() {
   const uint8_t pressed=uint8_t(~GPIOA->INDR)&0x0F;
+  if(pressed) noteActivity();
   physicalButtons.update(pressed,millis());
   if(!running) physicalButtons.discard();
 }
@@ -131,6 +146,7 @@ static bool step(uint8_t buttons) {
   if(ok) ticks++; else {ready=false; running=false;}
   return ok;
 }
+#if !MOIDA_STANDALONE
 static void status() {
   emit("ready="); emit(ready);
   emit(" lcd_ready="); emit(lcdReady);
@@ -223,14 +239,27 @@ static void help() {
   line("L=LCD init/retry; l=HT16C24A probe + RAM read/write test (I2C SDA=PC18, SCL=PC19); h=help");
   PORT.flush();
 }
+#endif
+
+static void enterIdleSleep() {
+  running = false;
+  piezo_stop();
+  if (lcdReady) ht16c24a_standby();
+  power_enter_deep_sleep(MOIDA_WAKE_HOLD_MS);
+}
+
 void setup() {
+  dcdc_init();
+  dcdc_on();
   // PA0..PA3 input pull-up (WCH GPIO_Mode_IPU = 0x48).
   // Direct access avoids linking Arduino's general pin/peripheral dispatch.
   piezo_init();
   i2c_init();
   delay(2);
   initGlass();
+#if !MOIDA_STANDALONE
   PORT.begin(115200);
+#endif
   RCC->APB2PCENR |= RCC_IOPAEN;
   (void)RCC->APB2PCENR; // Read back the clock enable before accessing GPIO.
   GPIOA->CFGLR = (GPIOA->CFGLR & ~0xFFFFu) | 0x8888u;
@@ -238,12 +267,17 @@ void setup() {
   // ineffective early BSHR write observed on the board (OUTDR stayed zero).
   GPIOA->OUTDR |= 0x0Fu;
   resetGame(); running=ready;
+  noteActivity();
+#if !MOIDA_STANDALONE
   // No wait-for-terminal: send h/i/t after opening it.
   help(); status();
+#endif
 }
 void loop() {
   pollButtons();
+#if !MOIDA_STANDALONE
   if(PORT.available()) {
+    noteActivity();
     char c=PORT.read();
     switch(c) {
     case 'h': help(); break;
@@ -265,7 +299,9 @@ void loop() {
       line(); PORT.flush(); break;
     }
   }
+#endif
   if(running && uint32_t(millis()-lastTick)>=MOIDA_TICK_MS) {
     lastTick=millis(); step(nextButtons|physicalButtons.take()); nextButtons=0;
   }
+  if(uint32_t(millis()-lastActivityMs)>=MOIDA_IDLE_SLEEP_MS) enterIdleSleep();
 }

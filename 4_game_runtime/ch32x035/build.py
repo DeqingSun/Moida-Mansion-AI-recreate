@@ -5,6 +5,7 @@ HERE=pathlib.Path(__file__).resolve().parent
 CORE=HERE.parent/'native'
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--cli',default=str(pathlib.Path.home()/'Documents/GitHub/CH32V003-Automatic-Test-Tool/controllerCode/ch32v305_controller/build/arduino_cli/bin/arduino-cli'))
+p.add_argument('--standalone',action='store_true',help='Define MOIDA_STANDALONE (no USB CDC console)')
 a=p.parse_args()
 package=pathlib.Path.home()/'Library/Arduino15/packages/WCH/hardware/ch32v/26.1.1'
 sketch=HERE/'moida_test'; src=sketch/'src'; src.mkdir(exist_ok=True)
@@ -16,7 +17,7 @@ for f in CORE.iterdir():
   if f.suffix=='.c': content=content.replace('_tables.inc', '_tables.h')
   (src/name).write_text(content)
 (src/'moida_lcd_lut.h').write_text((HERE.parent/'lcd/moida_lcd_lut.h').read_text())
-mode='usb-hsi'
+mode='standalone-hsi' if a.standalone else 'usb-hsi'
 build=HERE/'build'/mode; build.mkdir(parents=True,exist_ok=True)
 oracle=build/'oracle.c'
 oracle.write_text('''#include "moida_game.h"
@@ -53,17 +54,26 @@ recipe=recipe.replace('-Wl,--whole-archive ', '').replace('-Wl,--no-whole-archiv
 clock='48MHz_HSI' 
 fqbn=f'WCH:ch32v:CH32X035_EVT:pnum=CH32X035G8U,clock={clock},opt=oslto'
 cmd=[a.cli,'compile','--fqbn',fqbn,'--build-path',str(build),
- '--build-property','recipe.c.combine.pattern='+recipe,str(sketch)]
-print('Expected 1000-tick display hash:',hex(expected),'LCD hash:',hex(expected_lcd),flush=True)
+ '--build-property','recipe.c.combine.pattern='+recipe]
+if a.standalone:
+ cmd += ['--build-property','compiler.cpp.extra_flags=-DMOIDA_STANDALONE=1',
+         '--build-property','compiler.c.extra_flags=-DMOIDA_STANDALONE=1']
+cmd.append(str(sketch))
+print('Mode:',mode,'Expected 1000-tick display hash:',hex(expected),'LCD hash:',hex(expected_lcd),flush=True)
 subprocess.run(cmd,check=True)
-(build/'settings.json').write_text(json.dumps({'fqbn':fqbn,'expected_hash':expected,'stack_bytes':4096,'compile_command':cmd},indent=2)+'\n')
+(build/'settings.json').write_text(json.dumps({'fqbn':fqbn,'mode':mode,'standalone':a.standalone,'expected_hash':expected,'stack_bytes':4096,'compile_command':cmd},indent=2)+'\n')
 from assess import map_metrics
 metrics=map_metrics(build/'moida_test.ino.map')
 (build/'memory.json').write_text(json.dumps(metrics,indent=2)+'\n')
 nm=next((package.parents[2]/'tools').glob('riscv-none-embed-gcc/*/bin/riscv-wch-elf-nm'))
 symbols=subprocess.check_output([str(nm),str(build/'moida_test.ino.elf')],text=True)
-for handler in ['SysTick_Handler','USBFS_IRQHandler']:
- if not re.search(r' T '+handler+r'$',symbols,re.M):
-  raise RuntimeError('Missing strong interrupt handler: '+handler)
+if not re.search(r' T SysTick_Handler$',symbols,re.M):
+ raise RuntimeError('Missing strong interrupt handler: SysTick_Handler')
+# USB build: SimpleUsbSerial must supply a strong USBFS handler.
+# Standalone: weak stub in irq_handlers.c is enough (nm shows W or T).
+if not a.standalone and not re.search(r' T USBFS_IRQHandler$',symbols,re.M):
+ raise RuntimeError('Missing strong interrupt handler: USBFS_IRQHandler')
+if a.standalone and not re.search(r' [TW] USBFS_IRQHandler$',symbols,re.M):
+ raise RuntimeError('Missing USBFS_IRQHandler stub')
 print('Flash bytes:',metrics['flash_bytes'],'static RAM:',metrics['static_ram_bytes'])
 print('Build only; nothing uploaded. Artifacts:',build)
