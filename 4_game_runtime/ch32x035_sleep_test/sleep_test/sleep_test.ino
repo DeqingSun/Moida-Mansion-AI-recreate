@@ -2,9 +2,9 @@
 //
 // PC3:  LED (active-high)
 // PA0..PA3: buttons to GND (internal pull-up)
-// PB12: EN_DCDC (kept high — button levels need the boost rail on this board)
+// PB12: EN_DCDC for ME2107A33M5G (off during STOP, on around boot/wake)
 //
-// Boot: blink LED 50 ms -> STOP sleep -> any button EXTI wake -> SystemReset -> blink again.
+// Boot: blink LED 50 ms -> DCDC off -> STOP -> button EXTI wake -> DCDC on -> reset -> blink.
 
 #include <Arduino.h>
 #if !defined(SYSCLK_FREQ_48MHz_HSI)
@@ -31,13 +31,15 @@ static void delay_ms(uint32_t ms) {
   }
 }
 
-static void dcdc_on(void) {
+static void dcdc_init(void) {
   RCC->APB2PCENR |= RCC_IOPBEN;
   (void)RCC->APB2PCENR;
   /* PB12 CFGHR nibble bits 16..19: 50 MHz push-pull. */
   GPIOB->CFGHR = (GPIOB->CFGHR & ~(0xFu << 16)) | (0x3u << 16);
-  GPIOB->BSHR = PB12_BIT;
 }
+
+static void dcdc_on(void)  { GPIOB->BSHR = PB12_BIT; }
+static void dcdc_off(void) { GPIOB->BCR = PB12_BIT; }
 
 static void led_init(void) {
   RCC->APB2PCENR |= RCC_IOPCEN;
@@ -54,6 +56,10 @@ static void led_blink(void) {
   led_on();
   delay_ms(50);
   led_off();
+}
+
+static int any_button_pressed(void) {
+  return (int)((~GPIOA->INDR) & BUTTON_MASK);
 }
 
 static void buttons_and_exti(void) {
@@ -91,11 +97,16 @@ static void enter_stop(void) {
 }
 
 void setup() {
+  dcdc_init();
   dcdc_on();
   led_init();
   led_blink();
   buttons_and_exti();
+  /* Arm EXTI while levels are valid, then drop EN for sleep current. */
+  while (any_button_pressed()) delay_ms(10);
+  dcdc_off();
   enter_stop();
+  dcdc_on();
   NVIC_SystemReset();
 }
 
