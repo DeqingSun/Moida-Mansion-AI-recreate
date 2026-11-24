@@ -2,6 +2,8 @@
 
 The goal of this project is a real handheld version of Moida Mansion: a custom segment LCD, a small microcontroller running the original game logic, four buttons and a piezo beeper. Most of the work is done together with AI agents, and this README is the log of how it went.
 
+AI helped a lot with coding, converting the game code, building new tools and analysing the design. I did the manual LCD routing, steered the direction of the AI's work, and carried out all real hardware tests. Getting the first version manufactured took roughly **100–200 hours of my time** and AI usage equivalent to **about six weekly quotas on the US$20/month OpenAI Plus plan**.
+
 **Current status — November 22, 2026**
 
 - The original LCD artwork (631 segments) is extracted and the LCD is routed on a 16 COM x 48 SEG matrix, with drawings exported for the LCD factory.
