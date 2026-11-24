@@ -1,4 +1,4 @@
-> Superseded for final-artwork analysis by [Final-DXF-RC-review.md](Final-DXF-RC-review.md). The original trace lengths below came from the saved EDA project, not the manufactured DXF.
+> Historical estimate from the saved EDA project. For the confirmed vendor DXF, use the current [resistance and area analysis](resistance-area/README.txt). This historical capacitance estimate has not been recalculated for the vendor DXF.
 
 # LCD RC diagnostic — 2026-11-20
 

@@ -1,0 +1,1736 @@
+{
+  "source_sha256": "4633f597bd76cf24610a720be6c34838f4a7751a5d0c47e7d57bfc22d9c51d3b",
+  "grid_mm": 0.025,
+  "sheet_ohm_per_square": 30,
+  "model": "Full 2D sheet. Ideal 0V clamp on outer bottom half (1.5 mm) of the vendor contact and ideal 1V clamp on the entire tested visible island. Other islands keep their finite sheet resistance and float. R=1/terminal current. Excludes zebra, PCB, and driver resistance.",
+  "nets": [
+    {
+      "net": "B-W001",
+      "electrode": "COM0",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C02S93_0",
+          "squares": 1100.791029782592,
+          "resistance_ohm": 33023.73089347776,
+          "route_distance_mm": 133.96579002701313,
+          "condensed_resistance_ohm": 33023.73087996901,
+          "nodes": 539707,
+          "residual": 4.9960036108132044e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S81_2",
+          "squares": 1718.8835750360163,
+          "resistance_ohm": 51566.50725108049,
+          "route_distance_mm": 264.76414857101565,
+          "condensed_resistance_ohm": 48753.71977669794,
+          "nodes": 548119,
+          "residual": 9.547918011776346e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "B-W002",
+      "electrode": "COM1",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C01S211",
+          "squares": 1146.7582571671496,
+          "resistance_ohm": 34402.74771501449,
+          "route_distance_mm": 126.56045994112186,
+          "condensed_resistance_ohm": 34402.74770872352,
+          "nodes": 432700,
+          "residual": 6.5503158452884236e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S80_0",
+          "squares": 2338.520954364465,
+          "resistance_ohm": 70155.62863093395,
+          "route_distance_mm": 329.8816719656758,
+          "condensed_resistance_ohm": 66160.7310909216,
+          "nodes": 451427,
+          "residual": 4.107825191113079e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "B-W003",
+      "electrode": "COM2",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C02S51",
+          "squares": 1000.2053898339558,
+          "resistance_ohm": 30006.161695018673,
+          "route_distance_mm": 114.07700756320465,
+          "condensed_resistance_ohm": 30006.161684897852,
+          "nodes": 747177,
+          "residual": 4.884981308350689e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S52",
+          "squares": 1953.21479320699,
+          "resistance_ohm": 58596.4437962097,
+          "route_distance_mm": 337.3814717349956,
+          "condensed_resistance_ohm": 53798.3388277515,
+          "nodes": 748221,
+          "residual": 4.440892098500626e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "B-W004",
+      "electrode": "COM3",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C01S240",
+          "squares": 892.1799793437633,
+          "resistance_ohm": 26765.399380312898,
+          "route_distance_mm": 110.6759667991955,
+          "condensed_resistance_ohm": 26765.399373719098,
+          "nodes": 736506,
+          "residual": 5.10702591327572e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S132",
+          "squares": 2255.2139458027164,
+          "resistance_ohm": 67656.41837408149,
+          "route_distance_mm": 374.3671102429528,
+          "condensed_resistance_ohm": 62385.10854569475,
+          "nodes": 750704,
+          "residual": 4.107825191113079e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "B-W005",
+      "electrode": "COM4",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C02S18",
+          "squares": 853.135224685319,
+          "resistance_ohm": 25594.056740559572,
+          "route_distance_mm": 105.8434289194402,
+          "condensed_resistance_ohm": 25594.05673789589,
+          "nodes": 1109148,
+          "residual": 5.440092820663267e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S226",
+          "squares": 2091.2235949623814,
+          "resistance_ohm": 62736.70784887144,
+          "route_distance_mm": 405.23297423476413,
+          "condensed_resistance_ohm": 55583.025267112745,
+          "nodes": 1127268,
+          "residual": 5.773159728050814e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "B-W006",
+      "electrode": "COM5",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C01S117",
+          "squares": 828.1152669664845,
+          "resistance_ohm": 24843.458008994534,
+          "route_distance_mm": 102.94919010389734,
+          "condensed_resistance_ohm": 24843.45800133561,
+          "nodes": 1059572,
+          "residual": 5.662137425588298e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S09",
+          "squares": 2085.0995585025717,
+          "resistance_ohm": 62552.98675507715,
+          "route_distance_mm": 389.1267206772801,
+          "condensed_resistance_ohm": 55845.58784088904,
+          "nodes": 1036129,
+          "residual": 5.10702591327572e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "B-W007",
+      "electrode": "COM6",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C02S15",
+          "squares": 904.9180468756169,
+          "resistance_ohm": 27147.54140626851,
+          "route_distance_mm": 97.3219823100315,
+          "condensed_resistance_ohm": 27147.54138760435,
+          "nodes": 820701,
+          "residual": 7.66053886991358e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S125",
+          "squares": 2429.430588193171,
+          "resistance_ohm": 72882.91764579513,
+          "route_distance_mm": 409.90675490388116,
+          "condensed_resistance_ohm": 66591.32785545134,
+          "nodes": 848444,
+          "residual": 3.9968028886505635e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "B-W008",
+      "electrode": "COM7",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C02S08",
+          "squares": 775.906283110641,
+          "resistance_ohm": 23277.18849331923,
+          "route_distance_mm": 91.14416485072523,
+          "condensed_resistance_ohm": 23277.188483920272,
+          "nodes": 797876,
+          "residual": 5.662137425588298e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S34",
+          "squares": 2020.5481343405793,
+          "resistance_ohm": 60616.444030217375,
+          "route_distance_mm": 354.6414699403048,
+          "condensed_resistance_ohm": 54726.61662478148,
+          "nodes": 800478,
+          "residual": 3.9968028886505635e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "B-W009",
+      "electrode": "COM8",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C01S215",
+          "squares": 743.2507801804436,
+          "resistance_ohm": 22297.523405413307,
+          "route_distance_mm": 92.07878425849626,
+          "condensed_resistance_ohm": 22297.523405229746,
+          "nodes": 735096,
+          "residual": 5.551115123125783e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S14",
+          "squares": 1923.6270557840687,
+          "resistance_ohm": 57708.81167352206,
+          "route_distance_mm": 351.61533354768636,
+          "condensed_resistance_ohm": 51404.46287048254,
+          "nodes": 718680,
+          "residual": 4.6629367034256575e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "B-W010",
+      "electrode": "COM9",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C01S108",
+          "squares": 713.9808139016139,
+          "resistance_ohm": 21419.42441704842,
+          "route_distance_mm": 88.96352993211474,
+          "condensed_resistance_ohm": 21419.424414080742,
+          "nodes": 874221,
+          "residual": 5.10702591327572e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S177",
+          "squares": 2017.6171530278834,
+          "resistance_ohm": 60528.5145908365,
+          "route_distance_mm": 381.7655121145364,
+          "condensed_resistance_ohm": 54248.71545029532,
+          "nodes": 871116,
+          "residual": 4.107825191113079e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "B-W011",
+      "electrode": "COM10",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C02S19",
+          "squares": 676.1067979829455,
+          "resistance_ohm": 20283.203939488365,
+          "route_distance_mm": 80.19533188057868,
+          "condensed_resistance_ohm": 20283.203935971487,
+          "nodes": 609349,
+          "residual": 3.885780586188048e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S53",
+          "squares": 2596.7533570247438,
+          "resistance_ohm": 77902.6007107423,
+          "route_distance_mm": 428.36361812678905,
+          "condensed_resistance_ohm": 70717.24019022325,
+          "nodes": 638878,
+          "residual": 3.1086244689504383e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "B-W012",
+      "electrode": "COM11",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C01S212",
+          "squares": 621.3670900683406,
+          "resistance_ohm": 18641.01270205022,
+          "route_distance_mm": 67.24281925399079,
+          "condensed_resistance_ohm": 18641.012699071314,
+          "nodes": 217837,
+          "residual": 4.107825191113079e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S83_1",
+          "squares": 1737.5099286023963,
+          "resistance_ohm": 52125.297858071885,
+          "route_distance_mm": 256.182965261415,
+          "condensed_resistance_ohm": 47655.560922762495,
+          "nodes": 237867,
+          "residual": 3.3306690738754696e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "B-W013",
+      "electrode": "COM12",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C01S193",
+          "squares": 498.09659893897145,
+          "resistance_ohm": 14942.897968169143,
+          "route_distance_mm": 57.17033188057563,
+          "condensed_resistance_ohm": 14942.897966995768,
+          "nodes": 232269,
+          "residual": 3.552713678800501e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S169",
+          "squares": 1312.6709703321992,
+          "resistance_ohm": 39380.12910996598,
+          "route_distance_mm": 218.72968606631056,
+          "condensed_resistance_ohm": 34763.016983845155,
+          "nodes": 233462,
+          "residual": 3.4416913763379853e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "B-W014",
+      "electrode": "COM13",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C01S124",
+          "squares": 455.38412620960327,
+          "resistance_ohm": 13661.523786288099,
+          "route_distance_mm": 56.251093065033,
+          "condensed_resistance_ohm": 13661.523787889442,
+          "nodes": 216702,
+          "residual": 4.551914400963142e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S69_0",
+          "squares": 1472.5623496859635,
+          "resistance_ohm": 44176.870490578905,
+          "route_distance_mm": 225.2662607362525,
+          "condensed_resistance_ohm": 40259.76194654747,
+          "nodes": 227611,
+          "residual": 2.7755575615628914e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "B-W015",
+      "electrode": "COM14",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C01S66",
+          "squares": 509.2941778669525,
+          "resistance_ohm": 15278.825336008575,
+          "route_distance_mm": 60.88858223313628,
+          "condensed_resistance_ohm": 15278.825337355629,
+          "nodes": 312457,
+          "residual": 4.9960036108132044e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S55",
+          "squares": 1917.777528740846,
+          "resistance_ohm": 57533.32586222538,
+          "route_distance_mm": 270.21801576775374,
+          "condensed_resistance_ohm": 53821.936937022576,
+          "nodes": 206143,
+          "residual": 4.9960036108132044e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "B-W016",
+      "electrode": "COM15",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C02S65_sub0",
+          "squares": 274.3051372210616,
+          "resistance_ohm": 8229.15411663185,
+          "route_distance_mm": 34.61187950266096,
+          "condensed_resistance_ohm": 8229.154116795407,
+          "nodes": 789029,
+          "residual": 6.328271240363392e-15
+        },
+        {
+          "role": "last",
+          "id": "C00S01",
+          "squares": 1714.9653976537552,
+          "resistance_ohm": 51448.961929612655,
+          "route_distance_mm": 273.90819612930255,
+          "condensed_resistance_ohm": 47231.343845479714,
+          "nodes": 923952,
+          "residual": 4.218847493575595e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N001",
+      "electrode": "SEG0",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C02S65_sub0",
+          "squares": 334.8371088733019,
+          "resistance_ohm": 10045.113266199056,
+          "route_distance_mm": 40.730077554194715,
+          "condensed_resistance_ohm": 10045.11326635717,
+          "nodes": 390180,
+          "residual": 4.440892098500626e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S93_1",
+          "squares": 629.462762024545,
+          "resistance_ohm": 18883.88286073635,
+          "route_distance_mm": 167.29970414073105,
+          "condensed_resistance_ohm": 15631.269413476015,
+          "nodes": 524029,
+          "residual": 3.552713678800501e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N002",
+      "electrode": "SEG1",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S250",
+          "squares": 371.98000728645326,
+          "resistance_ohm": 11159.400218593597,
+          "route_distance_mm": 42.182159082211854,
+          "condensed_resistance_ohm": 11159.400217955928,
+          "nodes": 325617,
+          "residual": 5.773159728050814e-15
+        },
+        {
+          "role": "last",
+          "id": "C00S217",
+          "squares": 1136.477974862616,
+          "resistance_ohm": 34094.33924587848,
+          "route_distance_mm": 196.0394534037249,
+          "condensed_resistance_ohm": 31437.816067219537,
+          "nodes": 327959,
+          "residual": 3.4416913763379853e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N003",
+      "electrode": "SEG2",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C01S02",
+          "squares": 325.6269870781913,
+          "resistance_ohm": 9768.809612345738,
+          "route_distance_mm": 37.83319984622072,
+          "condensed_resistance_ohm": 9768.809612446734,
+          "nodes": 328045,
+          "residual": 4.3298697960381105e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S110_2",
+          "squares": 1015.0368689199669,
+          "resistance_ohm": 30451.106067599005,
+          "route_distance_mm": 179.6333134217223,
+          "condensed_resistance_ohm": 27582.558803901335,
+          "nodes": 313134,
+          "residual": 3.4416913763379853e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N004",
+      "electrode": "SEG3",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C01S13",
+          "squares": 284.6143739363392,
+          "resistance_ohm": 8538.431218090176,
+          "route_distance_mm": 33.47713382904295,
+          "condensed_resistance_ohm": 8538.431218077267,
+          "nodes": 202503,
+          "residual": 4.3298697960381105e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S61",
+          "squares": 1335.9421583330213,
+          "resistance_ohm": 40078.26474999064,
+          "route_distance_mm": 197.79770555097372,
+          "condensed_resistance_ohm": 37764.12194579121,
+          "nodes": 198910,
+          "residual": 2.55351295663786e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N005",
+      "electrode": "SEG4",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C01S09",
+          "squares": 241.59217457394243,
+          "resistance_ohm": 7247.765237218273,
+          "route_distance_mm": 30.479036790186647,
+          "condensed_resistance_ohm": 7247.765236813951,
+          "nodes": 218339,
+          "residual": 3.6637359812630166e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S48",
+          "squares": 1212.5359193645215,
+          "resistance_ohm": 36376.07758093565,
+          "route_distance_mm": 182.1995562110866,
+          "condensed_resistance_ohm": 34107.117549038405,
+          "nodes": 164139,
+          "residual": 3.219646771412954e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N006",
+      "electrode": "SEG5",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C02S65_sub1",
+          "squares": 192.85743752156944,
+          "resistance_ohm": 5785.723125647083,
+          "route_distance_mm": 24.063351365237814,
+          "condensed_resistance_ohm": 5785.723125738454,
+          "nodes": 288477,
+          "residual": 4.773959005888173e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S79_7",
+          "squares": 1192.3333127474366,
+          "resistance_ohm": 35769.9993824231,
+          "route_distance_mm": 201.17580617919964,
+          "condensed_resistance_ohm": 33065.52396114068,
+          "nodes": 423961,
+          "residual": 3.4416913763379853e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N007",
+      "electrode": "SEG6",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C01S209",
+          "squares": 184.22238513281647,
+          "resistance_ohm": 5526.6715539844945,
+          "route_distance_mm": 21.045889244992058,
+          "condensed_resistance_ohm": 5526.671554073305,
+          "nodes": 220406,
+          "residual": 4.218847493575595e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S41",
+          "squares": 965.2045952120422,
+          "resistance_ohm": 28956.137856361267,
+          "route_distance_mm": 167.241713498612,
+          "condensed_resistance_ohm": 26329.808431674945,
+          "nodes": 170181,
+          "residual": 2.886579864025407e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N008",
+      "electrode": "SEG7",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S194",
+          "squares": 242.75000164372216,
+          "resistance_ohm": 7282.500049311665,
+          "route_distance_mm": 29.939696961966686,
+          "condensed_resistance_ohm": 7282.500049565508,
+          "nodes": 188633,
+          "residual": 3.6637359812630166e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S173",
+          "squares": 901.274324228178,
+          "resistance_ohm": 27038.22972684534,
+          "route_distance_mm": 149.92468247693037,
+          "condensed_resistance_ohm": 25011.859462115914,
+          "nodes": 175937,
+          "residual": 2.886579864025407e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N009",
+      "electrode": "SEG8",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C01S54",
+          "squares": 172.0020999453795,
+          "resistance_ohm": 5160.062998361385,
+          "route_distance_mm": 20.985838738653257,
+          "condensed_resistance_ohm": 5160.062998288644,
+          "nodes": 244978,
+          "residual": 5.10702591327572e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S171",
+          "squares": 913.572252016273,
+          "resistance_ohm": 27407.16756048819,
+          "route_distance_mm": 160.5791503656851,
+          "condensed_resistance_ohm": 24846.67098626444,
+          "nodes": 238535,
+          "residual": 3.3306690738754696e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N010",
+      "electrode": "SEG9",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C01S43",
+          "squares": 228.7727967100516,
+          "resistance_ohm": 6863.183901301548,
+          "route_distance_mm": 24.794291116568846,
+          "condensed_resistance_ohm": 6863.183900995848,
+          "nodes": 150092,
+          "residual": 5.440092820663267e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S225",
+          "squares": 1435.8025510020225,
+          "resistance_ohm": 43074.07653006067,
+          "route_distance_mm": 196.06082604831195,
+          "condensed_resistance_ohm": 41154.73566598032,
+          "nodes": 135072,
+          "residual": 4.773959005888173e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N011",
+      "electrode": "SEG10",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C01S47",
+          "squares": 190.5334483484678,
+          "resistance_ohm": 5716.0034504540345,
+          "route_distance_mm": 22.6936814511278,
+          "condensed_resistance_ohm": 5716.003450375291,
+          "nodes": 163953,
+          "residual": 5.440092820663267e-15
+        },
+        {
+          "role": "last",
+          "id": "C00S219",
+          "squares": 1117.3461918578935,
+          "resistance_ohm": 33520.3857557368,
+          "route_distance_mm": 152.44858941189867,
+          "condensed_resistance_ohm": 31880.74803473285,
+          "nodes": 168955,
+          "residual": 3.1086244689504383e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N012",
+      "electrode": "SEG11",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S144",
+          "squares": 233.5130709892349,
+          "resistance_ohm": 7005.392129677047,
+          "route_distance_mm": 28.30611831820402,
+          "condensed_resistance_ohm": 7005.392129690812,
+          "nodes": 261308,
+          "residual": 4.218847493575595e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S11",
+          "squares": 958.5350338871226,
+          "resistance_ohm": 28756.051016613677,
+          "route_distance_mm": 157.61958325893997,
+          "condensed_resistance_ohm": 26582.132370762236,
+          "nodes": 230168,
+          "residual": 3.885780586188048e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N013",
+      "electrode": "SEG12",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S145",
+          "squares": 257.51072231692035,
+          "resistance_ohm": 7725.321669507611,
+          "route_distance_mm": 30.57952018978093,
+          "condensed_resistance_ohm": 7725.321669313044,
+          "nodes": 181549,
+          "residual": 8.659739592076221e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S203",
+          "squares": 1515.822555478447,
+          "resistance_ohm": 45474.67666435341,
+          "route_distance_mm": 195.14027227326704,
+          "condensed_resistance_ohm": 44042.64512238031,
+          "nodes": 165208,
+          "residual": 5.551115123125783e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N014",
+      "electrode": "SEG13",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S196",
+          "squares": 269.04295906959476,
+          "resistance_ohm": 8071.2887720878425,
+          "route_distance_mm": 32.76769298814547,
+          "condensed_resistance_ohm": 8071.288772137658,
+          "nodes": 217033,
+          "residual": 4.6629367034256575e-15
+        },
+        {
+          "role": "last",
+          "id": "C00S255",
+          "squares": 1037.0197669437,
+          "resistance_ohm": 31110.593008311,
+          "route_distance_mm": 161.6389700041298,
+          "condensed_resistance_ohm": 29629.535756953792,
+          "nodes": 213795,
+          "residual": 2.4424906541753444e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N015",
+      "electrode": "SEG14",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S146",
+          "squares": 323.1561685927668,
+          "resistance_ohm": 9694.685057783005,
+          "route_distance_mm": 35.81340366626416,
+          "condensed_resistance_ohm": 9694.68505784544,
+          "nodes": 210116,
+          "residual": 7.327471962526033e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S146",
+          "squares": 990.059168085136,
+          "resistance_ohm": 29701.77504255408,
+          "route_distance_mm": 157.25569619308575,
+          "condensed_resistance_ohm": 27800.972411964445,
+          "nodes": 197953,
+          "residual": 4.440892098500626e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N016",
+      "electrode": "SEG15",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C01S217",
+          "squares": 206.9285954710354,
+          "resistance_ohm": 6207.857864131062,
+          "route_distance_mm": 24.181549416771766,
+          "condensed_resistance_ohm": 6207.857864387843,
+          "nodes": 233357,
+          "residual": 5.551115123125783e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S74",
+          "squares": 926.2388642806023,
+          "resistance_ohm": 27787.16592841807,
+          "route_distance_mm": 154.62376797877107,
+          "condensed_resistance_ohm": 26096.24251936839,
+          "nodes": 244664,
+          "residual": 2.9976021664879227e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N017",
+      "electrode": "SEG16",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S197",
+          "squares": 252.9833403656663,
+          "resistance_ohm": 7589.500210969989,
+          "route_distance_mm": 30.13761543394942,
+          "condensed_resistance_ohm": 7589.500210693247,
+          "nodes": 147532,
+          "residual": 4.218847493575595e-15
+        },
+        {
+          "role": "last",
+          "id": "C00S242",
+          "squares": 974.9803466434216,
+          "resistance_ohm": 29249.410399302647,
+          "route_distance_mm": 147.81985745443149,
+          "condensed_resistance_ohm": 27481.997899771566,
+          "nodes": 145148,
+          "residual": 3.1086244689504383e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N018",
+      "electrode": "SEG17",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S148",
+          "squares": 260.67296845182904,
+          "resistance_ohm": 7820.189053554871,
+          "route_distance_mm": 31.62033188057697,
+          "condensed_resistance_ohm": 7820.189053848002,
+          "nodes": 231209,
+          "residual": 5.329070518200751e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S156",
+          "squares": 765.7447194742025,
+          "resistance_ohm": 22972.341584226077,
+          "route_distance_mm": 139.40533905933657,
+          "condensed_resistance_ohm": 20952.380577622942,
+          "nodes": 218938,
+          "residual": 3.552713678800501e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N019",
+      "electrode": "SEG18",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S149",
+          "squares": 285.227735529245,
+          "resistance_ohm": 8556.83206587735,
+          "route_distance_mm": 34.06591629284874,
+          "condensed_resistance_ohm": 8556.83206567604,
+          "nodes": 136392,
+          "residual": 5.551115123125783e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S17",
+          "squares": 1108.0649326791613,
+          "resistance_ohm": 33241.94798037484,
+          "route_distance_mm": 167.97554467406758,
+          "condensed_resistance_ohm": 31086.647391806564,
+          "nodes": 132146,
+          "residual": 2.3314683517128287e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N020",
+      "electrode": "SEG19",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S198",
+          "squares": 301.0442847798749,
+          "resistance_ohm": 9031.328543396246,
+          "route_distance_mm": 36.27479976933193,
+          "condensed_resistance_ohm": 9031.328543363672,
+          "nodes": 376385,
+          "residual": 5.10702591327572e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S105_0",
+          "squares": 1218.497081346944,
+          "resistance_ohm": 36554.91244040832,
+          "route_distance_mm": 173.80308793788046,
+          "condensed_resistance_ohm": 34888.4152871851,
+          "nodes": 376337,
+          "residual": 2.9976021664879227e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N021",
+      "electrode": "SEG20",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C02S23",
+          "squares": 193.52632910301892,
+          "resistance_ohm": 5805.789873090568,
+          "route_distance_mm": 21.708630944789014,
+          "condensed_resistance_ohm": 5805.789873160853,
+          "nodes": 202644,
+          "residual": 3.9968028886505635e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S37",
+          "squares": 1502.5961077642055,
+          "resistance_ohm": 45077.883232926164,
+          "route_distance_mm": 211.3386001800203,
+          "condensed_resistance_ohm": 43202.1419246887,
+          "nodes": 232657,
+          "residual": 3.885780586188048e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N022",
+      "electrode": "SEG21",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C02S07_1",
+          "squares": 117.91808952712869,
+          "resistance_ohm": 3537.5426858138608,
+          "route_distance_mm": 13.540432893255124,
+          "condensed_resistance_ohm": 3537.5426858608184,
+          "nodes": 355310,
+          "residual": 5.440092820663267e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S38",
+          "squares": 1145.7265986872558,
+          "resistance_ohm": 34371.797960617674,
+          "route_distance_mm": 175.48468965567872,
+          "condensed_resistance_ohm": 32428.773422740927,
+          "nodes": 371951,
+          "residual": 3.219646771412954e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N023",
+      "electrode": "SEG22",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S199",
+          "squares": 250.0472517941199,
+          "resistance_ohm": 7501.417553823597,
+          "route_distance_mm": 29.423454172602867,
+          "condensed_resistance_ohm": 7501.417553709071,
+          "nodes": 27064,
+          "residual": 3.219646771412954e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S13_sub1",
+          "squares": 328.7960497801077,
+          "resistance_ohm": 9863.88149340323,
+          "route_distance_mm": 43.50617061922989,
+          "condensed_resistance_ohm": 9509.757279022171,
+          "nodes": 20595,
+          "residual": 2.220446049250313e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N024",
+      "electrode": "SEG23",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S152",
+          "squares": 250.358199994326,
+          "resistance_ohm": 7510.74599982978,
+          "route_distance_mm": 30.390611460128284,
+          "condensed_resistance_ohm": 7510.745999839355,
+          "nodes": 467073,
+          "residual": 4.440892098500626e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S37",
+          "squares": 1073.5847744491575,
+          "resistance_ohm": 32207.543233474724,
+          "route_distance_mm": 192.82182169003497,
+          "condensed_resistance_ohm": 29593.592863903406,
+          "nodes": 415007,
+          "residual": 2.6645352591003757e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N025",
+      "electrode": "SEG24",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S153",
+          "squares": 264.1119471811118,
+          "resistance_ohm": 7923.358415433355,
+          "route_distance_mm": 30.320636713297766,
+          "condensed_resistance_ohm": 7923.358415534095,
+          "nodes": 267750,
+          "residual": 3.774758283725532e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S68",
+          "squares": 1294.7018455696038,
+          "resistance_ohm": 38841.05536708811,
+          "route_distance_mm": 190.72245301927302,
+          "condensed_resistance_ohm": 36775.48981685618,
+          "nodes": 259534,
+          "residual": 2.7755575615628914e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N026",
+      "electrode": "SEG25",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S200",
+          "squares": 255.92222206596858,
+          "resistance_ohm": 7677.666661979058,
+          "route_distance_mm": 30.867083322704406,
+          "condensed_resistance_ohm": 7677.6666615568565,
+          "nodes": 134908,
+          "residual": 3.885780586188048e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S135",
+          "squares": 1138.4564638469878,
+          "resistance_ohm": 34153.69391540963,
+          "route_distance_mm": 159.7941738241682,
+          "condensed_resistance_ohm": 32484.87216088317,
+          "nodes": 123572,
+          "residual": 2.886579864025407e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N027",
+      "electrode": "SEG26",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S154",
+          "squares": 269.15535911423,
+          "resistance_ohm": 8074.6607734269,
+          "route_distance_mm": 31.589265863399135,
+          "condensed_resistance_ohm": 8074.660773410307,
+          "nodes": 36930,
+          "residual": 3.885780586188048e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S13_sub2",
+          "squares": 322.84615298333614,
+          "resistance_ohm": 9685.384589500085,
+          "route_distance_mm": 43.31665222413633,
+          "condensed_resistance_ohm": 9314.726180407735,
+          "nodes": 20399,
+          "residual": 2.55351295663786e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N028",
+      "electrode": "SEG27",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C02S25",
+          "squares": 175.75594127981716,
+          "resistance_ohm": 5272.678238394515,
+          "route_distance_mm": 19.228300858899363,
+          "condensed_resistance_ohm": 5272.678238263717,
+          "nodes": 265640,
+          "residual": 4.551914400963142e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S81_0",
+          "squares": 1030.580314624226,
+          "resistance_ohm": 30917.409438726783,
+          "route_distance_mm": 167.62694257182497,
+          "condensed_resistance_ohm": 28607.94569136575,
+          "nodes": 297351,
+          "residual": 4.107825191113079e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N029",
+      "electrode": "SEG28",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S201",
+          "squares": 269.6862636537935,
+          "resistance_ohm": 8090.587909613805,
+          "route_distance_mm": 30.734419177103398,
+          "condensed_resistance_ohm": 8090.587909464501,
+          "nodes": 217513,
+          "residual": 4.440892098500626e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S80_0",
+          "squares": 1038.6308269423462,
+          "resistance_ohm": 31158.924808270385,
+          "route_distance_mm": 159.11082604830577,
+          "condensed_resistance_ohm": 29015.420371031098,
+          "nodes": 218468,
+          "residual": 3.3306690738754696e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N030",
+      "electrode": "SEG29",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S156",
+          "squares": 259.7744432595368,
+          "resistance_ohm": 7793.233297786103,
+          "route_distance_mm": 31.599799769332243,
+          "condensed_resistance_ohm": 7793.2332976700145,
+          "nodes": 231358,
+          "residual": 4.440892098500626e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S111_0",
+          "squares": 962.4839017632653,
+          "resistance_ohm": 28874.517052897958,
+          "route_distance_mm": 156.21892129247567,
+          "condensed_resistance_ohm": 26802.366581015758,
+          "nodes": 213945,
+          "residual": 3.552713678800501e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N031",
+      "electrode": "SEG30",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S157",
+          "squares": 266.0074348422597,
+          "resistance_ohm": 7980.223045267792,
+          "route_distance_mm": 30.875104602052875,
+          "condensed_resistance_ohm": 7980.223045410635,
+          "nodes": 221750,
+          "residual": 4.6629367034256575e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S19",
+          "squares": 805.1854735886781,
+          "resistance_ohm": 24155.564207660344,
+          "route_distance_mm": 136.1951622871509,
+          "condensed_resistance_ohm": 22537.364315598068,
+          "nodes": 217221,
+          "residual": 2.4424906541753444e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N032",
+      "electrode": "SEG31",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S202",
+          "squares": 269.349876533894,
+          "resistance_ohm": 8080.49629601682,
+          "route_distance_mm": 32.17553570062024,
+          "condensed_resistance_ohm": 8080.496295948035,
+          "nodes": 25297,
+          "residual": 2.9976021664879227e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S244_sub0",
+          "squares": 309.4246223040542,
+          "resistance_ohm": 9282.738669121625,
+          "route_distance_mm": 41.95868324581493,
+          "condensed_resistance_ohm": 8916.592608222722,
+          "nodes": 20458,
+          "residual": 2.3314683517128287e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N033",
+      "electrode": "SEG32",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C01S218",
+          "squares": 192.53250531215483,
+          "resistance_ohm": 5775.975159364645,
+          "route_distance_mm": 20.119722215136427,
+          "condensed_resistance_ohm": 5775.975159290512,
+          "nodes": 58837,
+          "residual": 5.773159728050814e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S109_3",
+          "squares": 616.2587417150589,
+          "resistance_ohm": 18487.762251451768,
+          "route_distance_mm": 77.24769657752142,
+          "condensed_resistance_ohm": 17954.27265417408,
+          "nodes": 53524,
+          "residual": 2.1094237467877974e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N034",
+      "electrode": "SEG33",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S159",
+          "squares": 270.73074524920895,
+          "resistance_ohm": 8121.922357476268,
+          "route_distance_mm": 31.616525958290048,
+          "condensed_resistance_ohm": 8121.92235762229,
+          "nodes": 493020,
+          "residual": 5.551115123125783e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S57",
+          "squares": 795.363482246254,
+          "resistance_ohm": 23860.90446738762,
+          "route_distance_mm": 129.47935059635103,
+          "condensed_resistance_ohm": 22262.96615606067,
+          "nodes": 378048,
+          "residual": 4.9960036108132044e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N035",
+      "electrode": "SEG34",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S203",
+          "squares": 290.45710892512255,
+          "resistance_ohm": 8713.713267753677,
+          "route_distance_mm": 32.721551211459364,
+          "condensed_resistance_ohm": 8713.713267758229,
+          "nodes": 32285,
+          "residual": 2.7755575615628914e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S244_sub1",
+          "squares": 441.45974026779146,
+          "resistance_ohm": 13243.792208033743,
+          "route_distance_mm": 54.792009357883124,
+          "condensed_resistance_ohm": 12896.071053923546,
+          "nodes": 22599,
+          "residual": 3.1086244689504383e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N036",
+      "electrode": "SEG35",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S160",
+          "squares": 293.88744712021133,
+          "resistance_ohm": 8816.62341360634,
+          "route_distance_mm": 33.555865786510026,
+          "condensed_resistance_ohm": 8816.623413533473,
+          "nodes": 117033,
+          "residual": 6.439293542825908e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S65",
+          "squares": 1064.3334217528384,
+          "resistance_ohm": 31930.00265258515,
+          "route_distance_mm": 159.72366337672412,
+          "condensed_resistance_ohm": 30145.90794694736,
+          "nodes": 109021,
+          "residual": 1.887379141862766e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N037",
+      "electrode": "SEG36",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S161",
+          "squares": 279.3773793906275,
+          "resistance_ohm": 8381.321381718824,
+          "route_distance_mm": 33.21799782086597,
+          "condensed_resistance_ohm": 8381.32138152333,
+          "nodes": 205104,
+          "residual": 5.662137425588298e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S53",
+          "squares": 1071.3995808087634,
+          "resistance_ohm": 32141.9874242629,
+          "route_distance_mm": 154.47523984134574,
+          "condensed_resistance_ohm": 30676.93536560327,
+          "nodes": 102020,
+          "residual": 1.7763568394002505e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N038",
+      "electrode": "SEG37",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C02S29",
+          "squares": 165.7527721426115,
+          "resistance_ohm": 4972.583164278345,
+          "route_distance_mm": 19.89441738241587,
+          "condensed_resistance_ohm": 4972.583164043319,
+          "nodes": 237150,
+          "residual": 4.6629367034256575e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S153",
+          "squares": 1102.6175568275366,
+          "resistance_ohm": 33078.5267048261,
+          "route_distance_mm": 159.63686681231223,
+          "condensed_resistance_ohm": 31467.83534538787,
+          "nodes": 270165,
+          "residual": 3.4416913763379853e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N039",
+      "electrode": "SEG38",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S162",
+          "squares": 285.222068737889,
+          "resistance_ohm": 8556.662062136671,
+          "route_distance_mm": 34.7545201897807,
+          "condensed_resistance_ohm": 8556.66206224594,
+          "nodes": 67580,
+          "residual": 3.1086244689504383e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S254_0",
+          "squares": 602.0299303336832,
+          "resistance_ohm": 18060.897910010495,
+          "route_distance_mm": 86.18409268059015,
+          "condensed_resistance_ohm": 17237.682206461537,
+          "nodes": 68230,
+          "residual": 2.6645352591003757e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N040",
+      "electrode": "SEG39",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S163",
+          "squares": 308.36696754376527,
+          "resistance_ohm": 9251.009026312959,
+          "route_distance_mm": 35.378479425772305,
+          "condensed_resistance_ohm": 9251.0090264995,
+          "nodes": 46411,
+          "residual": 2.886579864025407e-15
+        },
+        {
+          "role": "last",
+          "id": "C00S239",
+          "squares": 543.0399736007073,
+          "resistance_ohm": 16291.199208021219,
+          "route_distance_mm": 75.03434521228323,
+          "condensed_resistance_ohm": 15591.017767646397,
+          "nodes": 43998,
+          "residual": 2.886579864025407e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N041",
+      "electrode": "SEG40",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S205",
+          "squares": 328.4056182989375,
+          "resistance_ohm": 9852.168548968126,
+          "route_distance_mm": 36.522844507161714,
+          "condensed_resistance_ohm": 9852.168548419111,
+          "nodes": 223785,
+          "residual": 3.6637359812630166e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S111_1",
+          "squares": 1191.0182799418246,
+          "resistance_ohm": 35730.54839825474,
+          "route_distance_mm": 173.6156727346031,
+          "condensed_resistance_ohm": 33798.50351916133,
+          "nodes": 215179,
+          "residual": 3.552713678800501e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N042",
+      "electrode": "SEG41",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S164",
+          "squares": 311.8457153208878,
+          "resistance_ohm": 9355.371459626635,
+          "route_distance_mm": 36.961017305526276,
+          "condensed_resistance_ohm": 9355.371459515114,
+          "nodes": 119918,
+          "residual": 5.329070518200751e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S111_3",
+          "squares": 1121.9403115099876,
+          "resistance_ohm": 33658.20934529963,
+          "route_distance_mm": 152.3855951804051,
+          "condensed_resistance_ohm": 32409.501658846766,
+          "nodes": 95118,
+          "residual": 2.3314683517128287e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N043",
+      "electrode": "SEG42",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S165",
+          "squares": 301.7227411289557,
+          "resistance_ohm": 9051.68223386867,
+          "route_distance_mm": 37.1950270478564,
+          "condensed_resistance_ohm": 9051.68223383666,
+          "nodes": 158028,
+          "residual": 4.3298697960381105e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S126",
+          "squares": 1003.0056557077696,
+          "resistance_ohm": 30090.16967123309,
+          "route_distance_mm": 159.37836213337224,
+          "condensed_resistance_ohm": 28103.281057109867,
+          "nodes": 147078,
+          "residual": 3.9968028886505635e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N044",
+      "electrode": "SEG43",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S206",
+          "squares": 309.74706017384216,
+          "resistance_ohm": 9292.411805215264,
+          "route_distance_mm": 37.74251442127167,
+          "condensed_resistance_ohm": 9292.411804759664,
+          "nodes": 132244,
+          "residual": 3.9968028886505635e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S94_0",
+          "squares": 1028.1885355583615,
+          "resistance_ohm": 30845.656066750846,
+          "route_distance_mm": 166.05115433950843,
+          "condensed_resistance_ohm": 28400.891987483017,
+          "nodes": 131584,
+          "residual": 3.4416913763379853e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N045",
+      "electrode": "SEG44",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C00S166",
+          "squares": 321.68474201930655,
+          "resistance_ohm": 9650.542260579197,
+          "route_distance_mm": 37.97639789775488,
+          "condensed_resistance_ohm": 9650.542260077927,
+          "nodes": 221827,
+          "residual": 5.88418203051333e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S207",
+          "squares": 993.9370056931672,
+          "resistance_ohm": 29818.110170795015,
+          "route_distance_mm": 161.27371567774648,
+          "condensed_resistance_ohm": 27843.45935734261,
+          "nodes": 204641,
+          "residual": 3.885780586188048e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N046",
+      "electrode": "SEG45",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C02S61_2",
+          "squares": 203.0242853820473,
+          "resistance_ohm": 6090.728561461419,
+          "route_distance_mm": 21.69368145112777,
+          "condensed_resistance_ohm": 6090.728561445481,
+          "nodes": 275659,
+          "residual": 5.88418203051333e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S52",
+          "squares": 819.5851006512523,
+          "resistance_ohm": 24587.55301953757,
+          "route_distance_mm": 165.5414086658909,
+          "condensed_resistance_ohm": 21680.44156113139,
+          "nodes": 338267,
+          "residual": 5.218048215738236e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N047",
+      "electrode": "SEG46",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C02S63_1",
+          "squares": 69.69168221066923,
+          "resistance_ohm": 2090.750466320077,
+          "route_distance_mm": 8.934493141924193,
+          "condensed_resistance_ohm": 2090.7504663420013,
+          "nodes": 282775,
+          "residual": 4.3298697960381105e-15
+        },
+        {
+          "role": "last",
+          "id": "C02S16",
+          "squares": 425.3042647106092,
+          "resistance_ohm": 12759.127941318275,
+          "route_distance_mm": 113.55067093991033,
+          "condensed_resistance_ohm": 10204.659752493631,
+          "nodes": 407903,
+          "residual": 3.1086244689504383e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    },
+    {
+      "net": "T-N048",
+      "electrode": "SEG47",
+      "terminals": [
+        {
+          "role": "first",
+          "id": "C02S55",
+          "squares": 167.40147278370404,
+          "resistance_ohm": 5022.044183511121,
+          "route_distance_mm": 20.895153313703876,
+          "condensed_resistance_ohm": 5022.044183467593,
+          "nodes": 262912,
+          "residual": 4.107825191113079e-15
+        },
+        {
+          "role": "last",
+          "id": "C01S132",
+          "squares": 603.6322887913313,
+          "resistance_ohm": 18108.96866373994,
+          "route_distance_mm": 111.54828457917058,
+          "condensed_resistance_ohm": 16521.32801226318,
+          "nodes": 366267,
+          "residual": 4.107825191113079e-15
+        }
+      ],
+      "lost_conductor_area_mm2": 0.0
+    }
+  ]
+}
