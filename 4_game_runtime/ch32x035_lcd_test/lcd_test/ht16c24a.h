@@ -19,5 +19,7 @@ int ht16c24a_read_ram(uint8_t address, uint8_t *data, unsigned count);
 int ht16c24a_fill(uint8_t value);
 int ht16c24a_checkerboard(void);
 int ht16c24a_com_only(unsigned com); /* 0..15, all SEGs */
+int ht16c24a_com_half(unsigned com); /* 0..15, even SEGs only (RC test) */
 int ht16c24a_seg_only(unsigned seg); /* 0..47, all COMs */
+int ht16c24a_seg_half(unsigned seg); /* 0..47, even COMs only (RC test) */
 #endif

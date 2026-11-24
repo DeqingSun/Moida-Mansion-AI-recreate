@@ -83,12 +83,34 @@ int ht16c24a_com_only(unsigned com) {
   return ht16c24a_write_ram(0, ram, HT16C24A_RAM_BYTES);
 }
 
+int ht16c24a_com_half(unsigned com) {
+  uint8_t ram[HT16C24A_RAM_BYTES];
+  if (com >= HT16C24A_COM_COUNT) return I2C_BUSY;
+  for (unsigned i = 0; i < HT16C24A_RAM_BYTES; i++) ram[i] = 0;
+  /* Even SEGs only: half capacitive load for RC / ghosting checks. */
+  for (unsigned s = 0; s < HT16C24A_SEG_COUNT; s += 2u) {
+    unsigned addr = 2u * s + (com >= 8u ? 1u : 0u);
+    ram[addr] = (uint8_t)(1u << (com & 7u));
+  }
+  return ht16c24a_write_ram(0, ram, HT16C24A_RAM_BYTES);
+}
+
 int ht16c24a_seg_only(unsigned seg) {
   uint8_t ram[HT16C24A_RAM_BYTES];
   if (seg >= HT16C24A_SEG_COUNT) return I2C_BUSY;
   for (unsigned i = 0; i < HT16C24A_RAM_BYTES; i++) ram[i] = 0;
   ram[2u * seg] = 0xFFu;
   ram[2u * seg + 1u] = 0xFFu;
+  return ht16c24a_write_ram(0, ram, HT16C24A_RAM_BYTES);
+}
+
+int ht16c24a_seg_half(unsigned seg) {
+  uint8_t ram[HT16C24A_RAM_BYTES];
+  if (seg >= HT16C24A_SEG_COUNT) return I2C_BUSY;
+  for (unsigned i = 0; i < HT16C24A_RAM_BYTES; i++) ram[i] = 0;
+  /* Even COMs only (0,2,4,6 and 8,10,12,14). */
+  ram[2u * seg] = 0x55u;
+  ram[2u * seg + 1u] = 0x55u;
   return ht16c24a_write_ram(0, ram, HT16C24A_RAM_BYTES);
 }
 

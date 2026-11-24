@@ -51,11 +51,14 @@ Open the USB serial port (`/dev/cu.usbmodemCH32X0351` or similar), then:
 | `a` | All pixels on |
 | `c` | All clear |
 | `m` | Checkerboard |
-| `C n` | Light only common `n` (0..15) |
-| `S n` | Light only segment `n` (0..47) |
+| `C n` | Light only common `n` (0..15), all SEGs |
+| `D n` | COM `n` with **even** SEGs only (half load, RC check) |
+| `S n` | Light only segment `n` (0..47), all COMs |
+| `T n` | SEG `n` with **even** COMs only (half load, RC check) |
 | `b n` | Bias: `0`=1/3, `1`=1/4, `2`=1/5 (duty stays 1/16) |
 | `v n` | IVA control byte 0..63 (DE/VE/DA) |
 | `r` | Dump first 8 RAM bytes |
 
-Primary path: `p` → `i` → `a` → `c` → `C 0` / `S 0` walking lines. Use `b` /
-`v` if contrast looks wrong before changing the 1K.
+Primary path: `p` → `i` → `a` → `c` → `C 0` / `S 0` walking lines. Compare
+`D n` / `T n` against full `C` / `S` if RC ghosting is suspected. Use `b` / `v`
+if contrast looks wrong before changing the 1K.

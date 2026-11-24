@@ -6,6 +6,31 @@
 // PC18: I2C SDA
 // PC19: I2C SCL
 // VLCD: external through 1K to VDD (IVA DE=VE=DA=0)
+//
+// Init sequence (command `i` / ht16c24a_init):
+//   1. Wait >=1 ms after power-on (setup delay(2))
+//   2. Mode: 1/16 duty + 1/5 bias (0x82, 0x0A)
+//   3. IVA: external VLCD, follower off (0x8A, 0x00)
+//   4. Frame: 80 Hz (0x86, 0x00)
+//   5. Blink off (0x88, 0x00)
+//   6. Clear RAM (120 bytes @ 0x00)
+//   7. System: osc + display on (0x84, 0x03)
+//
+// Serial @ 115200 (line-based; send CR/LF after each command):
+//   h       help
+//   p       probe addr 0x3D
+//   i       run init sequence above
+//   o / z   display on / off (osc stays on)
+//   a / c   all pixels on / clear
+//   m       checkerboard
+//   C n     COM n only, all SEGs (n=0..15)
+//   D n     COM n, even SEGs only (half load / RC)
+//   S n     SEG n only, all COMs (n=0..47)
+//   T n     SEG n, even COMs only (half load / RC)
+//   b n     bias 0=1/3, 1=1/4, 2=1/5
+//   v n     IVA control byte 0..63
+//   r       dump first 8 RAM bytes
+// Typical: p -> i -> a -> c -> C 0 / S 0; compare D/T vs C/S for RC.
 
 #include <Arduino.h>
 #include <SimpleUsbSerial.h>
@@ -65,7 +90,8 @@ static int parseUint(const char *s, unsigned *out) {
 
 static void help() {
   line("LCD test: p=probe i=init o=on z=off a=all-on c=clear m=checker");
-  line("C n=COM-only S n=SEG-only b n=bias(0=1/3,1=1/4,2=1/5) v n=IVA r=ram h=help");
+  line("C n=COM-only D n=COM-half(even SEG) S n=SEG-only T n=SEG-half(even COM)");
+  line("b n=bias(0=1/3,1=1/4,2=1/5) v n=IVA r=ram h=help");
   PORT.flush();
 }
 
@@ -143,6 +169,17 @@ static void handleLine(char *s) {
     emit(arg);
     report(result);
     break;
+  case 'D':
+    if (!parseUint(s, &arg) || arg >= HT16C24A_COM_COUNT) {
+      line("need D 0..15");
+      PORT.flush();
+      break;
+    }
+    result = ht16c24a_com_half(arg);
+    emit("com_half=");
+    emit(arg);
+    report(result);
+    break;
   case 'S':
     if (!parseUint(s, &arg) || arg >= HT16C24A_SEG_COUNT) {
       line("need S 0..47");
@@ -151,6 +188,17 @@ static void handleLine(char *s) {
     }
     result = ht16c24a_seg_only(arg);
     emit("seg=");
+    emit(arg);
+    report(result);
+    break;
+  case 'T':
+    if (!parseUint(s, &arg) || arg >= HT16C24A_SEG_COUNT) {
+      line("need T 0..47");
+      PORT.flush();
+      break;
+    }
+    result = ht16c24a_seg_half(arg);
+    emit("seg_half=");
     emit(arg);
     report(result);
     break;
