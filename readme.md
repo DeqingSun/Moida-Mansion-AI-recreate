@@ -11,7 +11,9 @@ The goal of this project is a real handheld version of Moida Mansion: a custom s
 - The next experiment is an HT16H25 driver at 50 Hz instead of 80 Hz, to see whether slower scanning improves the suspected glass RC problem. This has not been tested yet.
 - Still in progress: resolving the LCD drive issue, a smaller second LCD layout, the final PCB, buttons and case.
 
-> Photo coming soon: the first manufactured LCD and the current test setup. See [Testing the first LCD](#testing-the-first-lcd) for the results so far.
+![First assembled Moida Mansion prototype with a blank LCD](workingLog/12_moida_v1_front_blank.jpg)
+
+The first assembled prototype. See [Testing the first LCD](#testing-the-first-lcd) for the display results so far.
 
 **Credits**
 
@@ -139,7 +141,9 @@ On real hardware, the X035 passed a 1,000-tick self-test with both the game disp
 
 Sound uses a piezo driven by TIM1 with complementary outputs (PB9/PB6), so both legs are driven in opposite phase for a louder beep. For the four buttons, PA0 to PA3 are the planned pins: they avoid USB, I2C and the piezo, they map directly to the game's button bits, and each one can wake the chip from deep sleep.
 
-<!-- Photo to add: workingLog/14_hardware_test.jpg (CH32X035 board running the test) -->
+![Inside the prototype, showing the LCD driver board, microcontroller, button wiring and battery holder](workingLog/14_moida_v1_internal.jpg)
+
+Inside the prototype: the LCD driver board sits above the microcontroller and button wiring, with the battery holder mounted in the back cover.
 
 Mechanical STEP models are available in [`3_case_design/step_files/`](3_case_design/step_files/): the case back, round and long button covers, button backing, buzzer backing, LCD, and screen mounting parts. These document the current mechanical design work; the final case is still in progress.
 
@@ -153,9 +157,11 @@ The first **150 x 108 mm custom LCD is back from the factory**. The prototype wo
 
 When I turn on a whole COM row, segments near the connection look better, while farther ones become faint or disappear. Driving a SEG column gives a different result: the segments show, although the large one near the bottom is dim. There is also ghosting, so simply increasing contrast does not solve the problem.
 
-> Photo coming soon: the manufactured LCD connected to the test board.
+![First prototype displaying the entrance scene, with uneven LCD contrast and faint unwanted segments](workingLog/13_moida_v1_front.jpg)
 
-> Photo coming soon: row and column test patterns showing the faint segments and ghosting.
+The entrance scene on the real LCD. The uneven contrast and ghosting are visible in this photo.
+
+<!-- Photos to add: dedicated row and column test patterns showing the faint segments and ghosting. -->
 
 The main suspect is **resistance and capacitance inside the glass**. The long, narrow transparent ITO traces have resistance, and the segment electrodes form capacitors. Together they can slow the drive waveforms enough that distant segments do not receive the intended voltage. Meeting the factory's minimum trace width and clearance rules was not enough to guarantee good display performance.
 
@@ -181,7 +187,7 @@ The new tool (`5_routing_v3`) starts from the original artwork with no inherited
 
 - Test the existing glass with an HT16H25 driver board and firmware, verifying the COM/SEG mapping, bias, duty and voltage.
 - Compare 80 Hz and 50 Hz on identical patterns to check contrast uniformity, faint segments, ghosting and flicker.
-- Add photos of the first LCD and its test patterns.
+- Photograph dedicated row and column test patterns to document the display issue.
 - Measure the real stack usage on the MCU across seeds, endings, restart, audio and USB.
 - Longer gameplay tests on hardware: physical buttons, debounce, sleep and wake, power supply.
 - Finish routing v3, then design the PCB and the case.
@@ -198,22 +204,4 @@ The new tool (`5_routing_v3`) starts from the original artwork with no inherited
 | `workingLog/` | Images used in this README and the manufacture CAD file |
 
 More detailed notes are in [HANDOFF.md](HANDOFF.md) and [ROUTING_HANDOFF.md](ROUTING_HANDOFF.md).
-
-## Quick start
-
-Play the C port in the browser simulator (needs Python 3 and a C compiler), from the repository root:
-
-```sh
-python3 4_game_runtime/serve.py --port 8767
-```
-
-Then open http://127.0.0.1:8767/4_game_runtime/live.html and press **Start / Reset**. Use the arrow keys, Enter and Space, or the on-screen buttons.
-
-Open the v3 routing tool:
-
-```sh
-python3 -m http.server 8773 --bind 127.0.0.1
-```
-
-Then open http://127.0.0.1:8773/5_routing_v3/.
 
