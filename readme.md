@@ -39,7 +39,7 @@ There are 631 segments, that is way more segments than those Game & Watch or Tig
 
 The biggest LCD driver I could find is Holtek [HT16C24A](https://www.holtek.com/page/vg/HT16C24A) or [HT1626](https://www.holtek.com/page/vg/HT1626). They have up to 16 commons and 60 segments. That is 16*60=960 segments. So it is possible to drive a Moida Mansion LCD.
 
-On the LCD side, I found a vendor that can customize LCD for samples. The specs are: 
+On the LCD side, I found **[hzvonen](https://www.hzvonen.com/)**, a vendor that makes custom LCD prototypes. My prototype order was **10 pieces for about US$800 total**, with a lead time of **about 20 days**. The specs are:
 
 Min track width and spacing: 0.12mm
 
