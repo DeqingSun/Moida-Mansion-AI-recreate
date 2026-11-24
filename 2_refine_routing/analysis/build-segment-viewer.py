@@ -7,7 +7,9 @@ data = here / 'resistance-area'
 geometry = json.loads((data / 'geometry.json').read_text())
 results = json.loads((data / 'results.json').read_text())
 assert geometry['source_sha256'] == results['source_sha256']
-payload = {'geometry': geometry, 'results': results}
+capacitance = json.loads((data / 'capacitance.json').read_text())
+assert capacitance['source_sha256'] == geometry['source_sha256']
+payload = {'geometry': geometry, 'results': results, 'capacitance': capacitance}
 template = (here / 'segment-viewer.template.html').read_text()
 output = here.parent / 'outputs/lcd-resistance-area-20261124/Moida-LCD-segment-viewer.html'
 output.parent.mkdir(parents=True, exist_ok=True)

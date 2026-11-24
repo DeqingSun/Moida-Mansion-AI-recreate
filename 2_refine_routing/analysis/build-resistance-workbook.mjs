@@ -3,6 +3,8 @@ import {Workbook, SpreadsheetFile} from '@oai/artifact-tool';
 
 const root='/Users/deqinguser/Documents/GitHub/Moida-Mansion-AI-recreate';
 const d=JSON.parse(await fs.readFile(`${root}/2_refine_routing/analysis/resistance-area/results.json`,'utf8'));
+const cap=JSON.parse(await fs.readFile(`${root}/2_refine_routing/analysis/resistance-area/capacitance.json`,'utf8'));
+if(cap.source_sha256!==d.source_sha256)throw Error('Capacitance source mismatch');
 const out=`${root}/2_refine_routing/outputs/lcd-resistance-area-20261124`;
 await fs.mkdir(out,{recursive:true});
 const wb=Workbook.create();
@@ -26,12 +28,13 @@ const gs=sh['Game segments'];gs.getRange('A1:C632').values=[['Original segment',
 gs.getRange('B2:C632').formulas=d.original_segments.map((s,i)=>{const r=i+2;return [`=COUNTIFS('Islands'!$B$2:$B$781,A${r})`,`=SUMIFS('Islands'!$E$2:$E$781,'Islands'!$B$2:$B$781,A${r})`];});
 format(gs,'C632');header(gs,'A1:C1');band(gs,2,632,'C');gs.getRange('A1:C632').format.columnWidth=23;gs.getRange('B2:B632').setNumberFormat('0');gs.getRange('C2:C632').setNumberFormat('0.000');gs.freezePanes.freezeRows(1);
 
-const me=sh.Method;format(me,'B25');me.getRange('A1:A25').format.columnWidth=27;me.getRange('B1:B25').format.columnWidth=105;
+const me=sh.Method;format(me,'B32');me.getRange('A1:A32').format.columnWidth=27;me.getRange('B1:B32').format.columnWidth=105;
 me.getRange('A2').values=[['Method and assumptions']];me.getRange('A2').format.font={name:'Arial',size:14,bold:true};
 me.getRange('A4:B6').values=[['Sheet resistance (Ω/□)',30],['Report mesh (mm)',.025],['Verification mesh (mm)',.02]];
 me.getRange('B4').format.fill='#FFF0B3';me.getRange('B4:B6').format.horizontalAlignment='left';me.getRange('B5:B6').setNumberFormat('0.000');
+me.getRange('A7:B8').values=[['C base (pF/mm²)',10],['C sensitivity (pF/mm²)',30]];me.getRange('B7:B8').format.fill='#FFF0B3';me.getRange('B7:B8').setNumberFormat('0.00');
 const notes=[
- ['Scope','Glass ITO resistance and visible segment area. Zebra contacts, PCB copper, driver output impedance and capacitance are excluded.'],
+ ['Scope','Glass ITO resistance and area-based capacitance estimates. Zebra, PCB and driver impedance are excluded. Density inputs B7:B8 are assumptions, not measurements.'],
  ['Sheet resistance','The factory said “30欧”. This workbook assumes 30 Ω/square. Change B4 after confirming the units; all resistance outputs scale linearly.'],
  ['Contact terminal','All contacts are at the bottom. Ideal voltage clamp on the outer 1.5 mm strip of each 1 × 3 mm contact, representing half usable contact length. The resistance of the rubber itself is excluded.'],
  ['Segment terminal','The entire tested visible island is held at one voltage. All other visible islands retain their finite ITO sheet resistance and float. R equals applied voltage divided by total terminal current.'],
@@ -49,9 +52,13 @@ const notes=[
  ['Reconciliation','Sum of areas over all COMs = sum over all SEGs = sum over all islands = sum over all electrical cells. Resistance equations and area sums remain visible in the workbook.'],
  ['Excluded terms','Do not add first and last resistance: they are two alternative pad-to-island measurements on the same electrode. COM-side and SEG-side values describe different glass conductors.'],
 ];
-me.getRange(`A8:B${7+notes.length}`).values=notes;me.getRange(`B8:B${7+notes.length}`).format.wrapText=true;me.getRange(`A8:B${7+notes.length}`).format.rowHeight=42;
+notes.push(['Capacitance model','C = overlap area × assumed pF/mm². Island and game-group C use visible area. Cell/electrode C use full TOP/BOTTOM overlap, including crossing traces. OFF elements remain capacitive loads.']);
+notes.push(['C density source','NXP AN11491, §4.3: https://www.nxp.com/docs/en/application-note/AN11491.pdf uses a realistic example of 10 pF/mm². 30 pF/mm² is a sensitivity assumption, not a measured upper bound.']);
+notes.push(['C totals','COM sums and SEG sums describe the same capacitors from opposite terminals. Do not add the COM total to the SEG total. Electrode sums assume other electrodes are held at fixed AC potentials.']);
+notes.push(['RC interpretation','For one lumped linear RC: τ = R×C; 90%, 95%, 99% settling = 2.303τ, 2.996τ, 4.605τ. The glass is a distributed, coupled network; endpoint R × total net C is only a screening model, not an extracted settling time.']);
+me.getRange(`A10:B${9+notes.length}`).values=notes;me.getRange(`B10:B${9+notes.length}`).format.wrapText=true;me.getRange(`A10:B${9+notes.length}`).format.rowHeight=42;
 
-const el=sh.Electrodes;format(el,'M73');el.getRange('A2').values=[['LCD glass resistance and segment area']];el.getRange('A2').format.font={name:'Arial',size:14,bold:true};
+const el=sh.Electrodes;format(el,'M73');el.getRange('A2').values=[['LCD glass resistance, area and capacitance']];el.getRange('A2').format.font={name:'Arial',size:14,bold:true};
 el.getRange('A4').values=[['Sheet Ω/□']];el.getRange('B4').formulas=[["='Method'!B4"]];el.getRange('D4').values=[['Total area mm²']];el.getRange('E4').formulas=[["=SUM('Islands'!E2:E781)"]];el.getRange('G4').values=[['Used LCD cells']];el.getRange('H4').formulas=[["=COUNTIFS('Cells'!D2:D769,\">0\")"]];el.getRange('E4').setNumberFormat('0.000');
 el.getRange('A6').values=[['Vendor DXF: bottom contacts, including COM feeds up the left side. First/last follow connected ITO paths.']];
 el.getRange('A7').values=[['Glass only. 30 Ω/□ assumed. See Method for terminal definitions, mesh verification and exclusions.']];
@@ -66,13 +73,32 @@ header(el,'A9:M9');band(el,10,73,'M');
 el.getRange('A1:A73').format.columnWidth=13;el.getRange('B1:B73').format.columnWidth=14;el.getRange('C1:D73').format.columnWidth=11;el.getRange('E1:E73').format.columnWidth=16;el.getRange('F1:F73').format.columnWidth=23;el.getRange('G1:G73').format.columnWidth=16;el.getRange('H1:H73').format.columnWidth=23;el.getRange('I1:I73').format.columnWidth=16;el.getRange('J1:M73').format.columnWidth=18;
 el.getRange('C10:D73').setNumberFormat('0');el.getRange('E10:E73').setNumberFormat('0.00');el.getRange('G10:G73').setNumberFormat('0.0');el.getRange('I10:K73').setNumberFormat('0.0');el.getRange('L10:M73').setNumberFormat('0.00');el.freezePanes.freezeRows(9);el.freezePanes.freezeColumns(2);
 
+
+// Capacitance columns retain the established sheets and editable drivers.
+is.getRange('I1:J1').values=[['C base (pF)','C sensitivity (pF)']];
+is.getRange('I2:J781').formulas=d.islands.map((_,i)=>[`=E${i+2}*'Method'!$B$7`,`=E${i+2}*'Method'!$B$8`]);
+is.getRange('I1:J781').format.font={name:'Arial',size:10,color:'#172235'};is.getRange('I1:J781').format.columnWidth=20;is.getRange('I2:J781').setNumberFormat('0.000');header(is,'I1:J1');band(is,2,781,'J');
+ce.getRange('E1:G1').values=[['Full overlap (mm²)','C base (nF)','C sensitivity (nF)']];
+ce.getRange('E2:E769').values=cap.cells.map(c=>[c.overlap_area_mm2]);
+ce.getRange('F2:G769').formulas=d.cells.map((_,i)=>[`=E${i+2}*'Method'!$B$7/1000`,`=E${i+2}*'Method'!$B$8/1000`]);
+ce.getRange('E1:G769').format.font={name:'Arial',size:10,color:'#172235'};ce.getRange('E1:G769').format.columnWidth=21;ce.getRange('E2:G769').setNumberFormat('0.000000');header(ce,'E1:G1');band(ce,2,769,'G');
+gs.getRange('D1:E1').values=[['C base (pF)','C sensitivity (pF)']];
+gs.getRange('D2:E632').formulas=d.original_segments.map((_,i)=>[`=SUMIFS('Islands'!$I$2:$I$781,'Islands'!$B$2:$B$781,A${i+2})`,`=SUMIFS('Islands'!$J$2:$J$781,'Islands'!$B$2:$B$781,A${i+2})`]);
+gs.getRange('D1:E632').format.font={name:'Arial',size:10,color:'#172235'};gs.getRange('D1:E632').format.columnWidth=22;gs.getRange('D2:E632').setNumberFormat('0.000');header(gs,'D1:E1');band(gs,2,632,'E');
+el.getRange('N9:P9').values=[['Full overlap (mm²)','C base (nF)','C sensitivity (nF)']];
+for(const [i,g]of d.electrodes.entries()){const r=i+10,key=g.electrode.startsWith('COM')?'A':'B';el.getRange(`N${r}:P${r}`).formulas=[['E','F','G'].map(col=>`=SUMIFS('Cells'!$${col}$2:$${col}$769,'Cells'!$${key}$2:$${key}$769,A${r})`)];}
+el.getRange('N9:P73').format.font={name:'Arial',size:10,color:'#172235'};el.getRange('N9:P73').format.columnWidth=22;el.getRange('N10:P73').setNumberFormat('0.000');header(el,'N9:P9');band(el,10,73,'P');
+el.getRange('J4').values=[['C base pF/mm²']];el.getRange('K4').formulas=[["='Method'!B7"]];el.getRange('M4').values=[['Total C base nF']];el.getRange('N4').formulas=[["=SUM('Cells'!F2:F769)"]];el.getRange('N4').setNumberFormat('0.000');
+
 wb.recalculate();
 const first=Number(el.getRange('G10').values[0][0]);me.getRange('B4').values=[[60]];wb.recalculate();const doubled=Number(el.getRange('G10').values[0][0]);if(Math.abs(doubled-2*first)>1e-8)throw Error('Sheet resistance scaling failed');me.getRange('B4').values=[[30]];wb.recalculate();
+const c0=Number(el.getRange('O10').values[0][0]);me.getRange('B7').values=[[20]];wb.recalculate();if(Math.abs(Number(el.getRange('O10').values[0][0])-2*c0)>1e-8)throw Error('C scaling failed');me.getRange('B7').values=[[10]];wb.recalculate();
+if(Math.abs(Number(el.getRange('N4').values[0][0])-cap.C_10_pF_per_mm2_pF/1000)>1e-7)throw Error('C total reconciliation failed');
 const total=Number(el.getRange('E4').values[0][0]);if(Math.abs(total-d.total_area_mm2)>1e-6)throw Error('Workbook area reconciliation failed');
 const count=Number(el.getRange('H4').values[0][0]);if(count!==664)throw Error('Workbook occupied-cell count failed');
 console.log((await wb.inspect({kind:'table',range:'Electrodes!A9:I13',include:'values,formulas',tableMaxRows:5,tableMaxCols:9,maxChars:3500})).ndjson);
 console.log((await wb.inspect({kind:'match',searchTerm:'#REF!|#DIV/0!|#VALUE!|#NAME\\?|#N/A|#NUM!|#NULL!|#SPILL!|#CALC!',options:{useRegex:true,maxResults:20},summary:'Formula error scan'})).ndjson);
-for(const [name,range] of [['Electrodes','A1:I26'],['Islands','A1:H12'],['Cells','A1:D12'],['Game segments','A1:C12'],['Method','A1:B16']]){
+for(const [name,range] of [['Electrodes','N9:P25'],['Islands','A1:J12'],['Cells','A1:G12'],['Game segments','A1:E12'],['Method','A1:B12']]){
  const preview=await wb.render({sheetName:name,range,scale:1.5,format:'png'});await fs.writeFile(`${out}/${name.toLowerCase()}-preview.png`,new Uint8Array(await preview.arrayBuffer()));
 }
 await (await SpreadsheetFile.exportXlsx(wb)).save(`${out}/Moida-LCD-resistance-area.xlsx`);
