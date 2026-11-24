@@ -1,0 +1,4 @@
+{"type":"DOCHEAD","ticket":69466}||{"docType":"SCH","client":"9eff4b68ecde6f78","uuid":"8a777405762dff6a","updateTime":1792792696863,"version":"1792792696863","editVersion":"4.1.78","user":{"uuid":"8a777405762dff6a"}}|
+{"type":"META","ticket":69466,"id":"META"}||{"title":"mcu_control_board","source":"","board":"9bbf22f98faf470c","zIndex":null}|
+{"type":"RULE","ticket":13039,"id":"[\"RULE\",\"TRACK\",\"copperThickness1oz\"]"}||{"ruleState":"DEFAULT","ruleContext":{"unit":"mm","track":{"isOpen":true,"content":[{"layerId":1,"stroDef":0.254,"stroMax":2.54,"stroMin":0.127}]}}}|
+{"type":"RULE","ticket":13040,"id":"[\"RULE\",\"TRACK\",\"copperThickness2oz\"]"}||{"ruleState":"NORMAL","ruleContext":{"unit":"mm","track":{"isOpen":true,"content":[{"layerId":1,"stroDef":0.254,"stroMax":2.54,"stroMin":0.203}]}}}
